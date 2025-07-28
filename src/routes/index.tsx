@@ -1,9 +1,13 @@
 import { Title } from "@solidjs/meta";
 import Link from "~/components/Link";
+import Ball from "~/components/Ball";
+import Bird from "~/components/Bird";
 
 export default function Home() {
   return (
-    <main class="text-center p-4 mx-auto font-mono text-violet-200 pb-20">
+    <>
+      <Bird />
+      <main class="text-center p-4 mx-auto font-mono text-violet-200 pb-20">
       <Title>Hunter Chen</Title>
       <h1 class="text-2xl sm:text-4xl font-thin leading-tight my-16 mx-auto max-w-[14rem] md:max-w-none">
         hello there!👋
@@ -52,5 +56,6 @@ export default function Home() {
         .
       </p>
     </main>
+    </>
   );
 }
