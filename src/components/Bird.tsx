@@ -141,7 +141,7 @@ export default function Bird() {
 
   return (
     <div
-      class="fixed pointer-events-none z-10"
+      class="fixed pointer-events-none z-10 hidden md:block"
       style={{
         left: `${position().x}px`,
         top: `${position().y}px`,
