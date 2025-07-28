@@ -6,12 +6,8 @@ export default function Footer() {
       <nav class="flex justify-center items-center gap-6 font-mono text-lg">
         <Link href="/">home</Link>
         <Link href="/about">about</Link>
-        <Link href="https://github.com/hunterchen7" external>
-          github
-        </Link>
-        <Link href="https://www.linkedin.com/in/hunterchen" external>
-          linkedin
-        </Link>
+        <Link href="/projects">projects</Link>
+        <Link href="/gallery">gallery</Link>
       </nav>
     </footer>
   );

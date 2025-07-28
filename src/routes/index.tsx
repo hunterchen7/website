@@ -16,7 +16,7 @@ export default function Home() {
         alt="Profile"
         class="rounded-full w-72 h-72 mx-auto mb-4"
       />
-      <p class="mx-auto mt-8 leading-snug md:max-w-none text-lg">
+      <p class="mx-auto mt-8 leading-snug text-lg max-w-[47rem]">
         currently 4th year CS @{" "}
         <Link href="https://www.uwo.ca" external>
           western university
@@ -29,16 +29,19 @@ export default function Home() {
             class="inline w-18 bg-gray-200 rounded-lg px-2 mb-1 hover:scale-105 transition-all"
           />
         </Link>
-        ,
-      </p>
-      <p class="mx-auto mt-0 leading-snug md:max-w-none text-lg">
-        also working on{" "}
+        , also working on{" "}
         <Link href="https://github.com/hackwestern/hackwestern" external>
-          hack western 12.
+          hack western 12
         </Link>
+        .
       </p>
       <p class="mx-auto my-8 leading-snug md:max-w-none text-lg">
-        find me on{" "}
+        see my{" "}
+        <Link href="https://hunterchen.ca/resume.pdf" external>
+          resume
+        </Link>
+        {", "}
+        or find me on{" "}
         <Link href="https://github.com/hunterchen7" external>
           github
         </Link>
@@ -48,7 +51,6 @@ export default function Home() {
         </Link>
         .
       </p>
-
     </main>
   );
 }
