@@ -8,7 +8,8 @@ interface LinkProps {
 }
 
 export default function Link(props: LinkProps) {
-  const baseClasses = "hover:scale-105 transition-all text-blue-500 hover:text-blue-300";
+  const baseClasses =
+    "hover:scale-105 transition-all text-violet-700 hover:text-violet-300";
   const classes = props.class ? `${baseClasses} ${props.class}` : baseClasses;
 
   if (props.external) {

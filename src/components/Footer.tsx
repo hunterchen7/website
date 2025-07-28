@@ -3,7 +3,7 @@ import Link from "./Link";
 export default function Footer() {
   return (
     <footer class="fixed bottom-0 left-0 right-0 bg-black/80 backdrop-blur-sm border-t border-violet-600/30 py-4">
-      <nav class="flex justify-center items-center gap-6 font-mono text-lg">
+      <nav class="flex md:justify-center items-center gap-6 font-mono text-lg overflow-x-auto whitespace-nowrap px-2 scrollbar-hide overflow-y-hidden">
         <Link href="/">home</Link>
         <Link href="/about">about</Link>
         <Link href="/projects">projects</Link>

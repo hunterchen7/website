@@ -37,11 +37,13 @@ export default function About() {
         when possible! 🧗‍♂️), playing video games, and reading books..
       </p>
       <div class="mx-auto text-sm">
-        <img
-          src="/climb.png"
-          alt="Rock Climbing"
-          class="rounded-xl h-84 mx-auto mb-1"
-        />
+        <div class="relative w-full max-w-md aspect-[3/2] mx-auto mb-1 rounded-xl overflow-hidden">
+          <img
+            src="/climb.png"
+            alt="Rock Climbing"
+            class="absolute inset-0 w-full h-full object-cover"
+          />
+        </div>
         kananskis, alberta, canada 🇨🇦
       </div>
     </main>
