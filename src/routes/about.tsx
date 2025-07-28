@@ -34,14 +34,7 @@ export default function About() {
       </p>
       <p class="mx-auto my-8 leading-snug text-base">
         outside of tech, I spend most of my time rock climbing (on real rocks
-        when possible! 🧗‍♂️), playing video games, and reading books (current{" "}
-        <Link
-          href="https://www.goodreads.com/book/show/40121985-how-to-hide-an-empire"
-          external
-        >
-          favourite book
-        </Link>
-        )..
+        when possible! 🧗‍♂️), playing video games, and reading books..
       </p>
       <div class="mx-auto text-sm">
         <img

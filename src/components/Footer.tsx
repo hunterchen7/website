@@ -8,6 +8,10 @@ export default function Footer() {
         <Link href="/about">about</Link>
         <Link href="/projects">projects</Link>
         <Link href="/gallery">gallery</Link>
+        <Link href="/contact">contact</Link>
+        <Link href="/resume.pdf" class="underline" external>
+          resume
+        </Link>
       </nav>
     </footer>
   );
