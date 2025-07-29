@@ -4,7 +4,7 @@ import Geneial from "~/components/logos/Geneial";
 
 export default function About() {
   return (
-    <main class="text-center p-4 mx-auto my-auto justify-center flex flex-col font-mono text-violet-200 pb-20 md:h-screen md:max-w-[47rem] text-sm md:text-base gap-8">
+    <main class="text-center p-4 mx-auto my-auto flex flex-col xl:justify-center xl:h-screen font-mono text-violet-200 pb-20 md:max-w-[47rem] text-sm text-base gap-8 mt-0">
       <Title>About Me</Title>
       <h1 class="text-2xl sm:text-4xl font-thin leading-tight mx-auto max-w-[14rem] md:max-w-none">
         about me..
