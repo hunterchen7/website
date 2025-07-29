@@ -7,10 +7,10 @@ import Project from "../components/Project";
 
 export default function Projects() {
   const [search, setSearch] = createSignal("");
-  const [selectedTags, setSelectedTags] = createSignal<string[]>([]);
+  const [selectedTags, setSelectedTags] = createSignal<Tags[]>([]);
   const [selectedTech, setSelectedTech] = createSignal<string[]>([]);
 
-  const handleTagToggle = (tag: string) => {
+  const handleTagToggle = (tag: Tags) => {
     setSelectedTags((tags) =>
       tags.includes(tag) ? tags.filter((t) => t !== tag) : [...tags, tag]
     );

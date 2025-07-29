@@ -9,11 +9,11 @@ import {
 interface ProjectFiltersProps {
   search: string;
   setSearch: (value: string) => void;
-  selectedTags: string[];
-  setSelectedTags: (tags: string[]) => void;
+  selectedTags: Tags[];
+  setSelectedTags: (tags: Tags[]) => void;
   selectedTech: string[];
   setSelectedTech: (techs: string[]) => void;
-  handleTagToggle: (tag: string) => void;
+  handleTagToggle: (tag: Tags) => void;
   handleTechToggle: (tech: string) => void;
 }
 
@@ -33,8 +33,8 @@ export default function ProjectFilters(props: ProjectFiltersProps) {
           {(tag) => (
             <button
               type="button"
-              class={getTagButtonClass(tag, props.selectedTags.includes(tag))}
-              onClick={() => props.handleTagToggle(tag)}
+              class={getTagButtonClass(tag as Tags, props.selectedTags.includes(tag as Tags))}
+              onClick={() => props.handleTagToggle(tag as Tags)}
             >
               {tag}
             </button>

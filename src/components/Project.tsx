@@ -3,6 +3,7 @@ import {
   TechnologyIcons,
   ProjectProps,
 } from "~/constants/projects";
+import { createSignal } from "solid-js";
 import { Globe, Link } from "lucide-solid";
 
 export default function Project(props: ProjectProps) {
@@ -88,7 +89,52 @@ export default function Project(props: ProjectProps) {
           </div>
         )}
       </div>
-
+      {props.images && props.images.length > 0 && (
+        <div class="mt-4 flex flex-col items-center">
+          {(() => {
+            const [current, setCurrent] = createSignal(0);
+            const total = props.images.length;
+            const arrowClass =
+              total > 1
+                ? "absolute top-1/2 -translate-y-1/2 bg-black/60 text-white rounded-full p-1 px-2 hover:bg-black/80 cursor-pointer border"
+                : "hidden";
+            return (
+              <>
+                <div class="relative flex items-center justify-center h-96 w-full bg-gray-900 rounded-lg overflow-hidden">
+                  <button
+                    type="button"
+                    class={arrowClass + " left-0"}
+                    disabled={current() === 0}
+                    onClick={() =>
+                      setCurrent((i: number) => Math.max(i - 1, 0))
+                    }
+                  >
+                    &#8592;
+                  </button>
+                  <img
+                    src={props.images[current()]}
+                    alt={props.title}
+                    class="w-full h-full object-contain"
+                  />
+                  <button
+                    type="button"
+                    class={arrowClass + " right-0"}
+                    disabled={current() === total - 1}
+                    onClick={() =>
+                      setCurrent((i: number) => Math.min(i + 1, total - 1))
+                    }
+                  >
+                    &#8594;
+                  </button>
+                </div>
+                <div class="mt-2 text-xs text-gray-400">
+                  {current() + 1} / {total}
+                </div>
+              </>
+            );
+          })()}
+        </div>
+      )}
       {props.description && (
         <p class="text-gray-400 mt-2 text-left text-sm">{props.description}</p>
       )}

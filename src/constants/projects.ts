@@ -15,38 +15,38 @@ export enum Technology {
 export enum Tags {
   frontend = "frontend",
   backend = "backend",
-  fullstack = "fullstack",
-  fun = "fun",
-  game = "game",
-  AI = "AI",
-  database = "database",
+  AI = "AI/ML",
   web3 = "web3",
+  database = "database",
+  game = "game",
+  school = "school",
+  fun = "fun",
 }
 
-export const TagColorsHover: Record<string, string> = {
-  frontend: "blue-600",
-  backend: "green-600",
-  fullstack: "purple-600",
-  fun: "orange-600",
-  game: "red-600",
-  AI: "yellow-600",
-  database: "gray-600",
-  web3: "teal-600",
+export const TagColorsHover: Record<Tags, string> = {
+  [Tags.frontend]: "blue-600",
+  [Tags.backend]: "green-600",
+  [Tags.school]: "purple-600",
+  [Tags.fun]: "orange-600",
+  [Tags.game]: "red-600",
+  [Tags.AI]: "yellow-600",
+  [Tags.database]: "gray-600",
+  [Tags.web3]: "teal-600",
 };
 
-export const TagColors: Record<string, string> = {
-  frontend: "blue-400",
-  backend: "green-400",
-  fullstack: "purple-400",
-  fun: "orange-400",
-  game: "red-400",
-  AI: "yellow-400",
-  database: "gray-400",
-  web3: "teal-400",
+export const TagColors: Record<Tags, string> = {
+  [Tags.frontend]: "blue-400",
+  [Tags.backend]: "green-400",
+  [Tags.school]: "purple-400",
+  [Tags.fun]: "orange-400",
+  [Tags.game]: "red-400",
+  [Tags.AI]: "yellow-400",
+  [Tags.database]: "gray-400",
+  [Tags.web3]: "teal-400",
 };
 
 // Helper to generate static Tailwind classes for tag buttons
-export const getTagButtonClass = (tag: string, selected: boolean) => {
+export const getTagButtonClass = (tag: Tags, selected: boolean) => {
   const base =
     "px-2 py-1 rounded-full border text-xs cursor-pointer transition-colors";
   const border = `border-${TagColors[tag] ?? "gray-400"}`;
@@ -79,7 +79,7 @@ export interface ProjectProps {
   otherUrl?: string;
   technologies: Technology[];
   tags: Tags[];
-  imageUrl?: string;
+  images?: string[];
 }
 
 export const projects: ProjectProps[] = [
@@ -96,30 +96,32 @@ export const projects: ProjectProps[] = [
       Technology.PostgreSQL,
       Technology.SQL,
     ],
-    tags: [Tags.frontend, Tags.fullstack, Tags.backend, Tags.database],
-    imageUrl: "https://via.placeholder.com/150",
+    tags: [Tags.frontend, Tags.backend, Tags.database],
+    images: ["/projects/hw12/image.png"],
   },
   {
-    title: "chessbench",
+    title: "chessbench LLM",
     description:
       "play chess against llama-4-scout; I pay for it, please be nice.. also contains benchmarks from different LLMs playing chess puzzles, with their Elo ratings, models also play games against each other. React frontend, TS cloudflare worker backend. Python to run the games and aggregate 1,000,000+ puzzles from Lichess's database.",
     repoUrl: "https://github.com/hunterchen7/chessbench-llm",
     demoUrl: "https://chessbench.pages.dev/",
     technologies: [Technology.TypeScript, Technology.React, Technology.Python],
     tags: [Tags.AI, Tags.backend, Tags.frontend, Tags.fun],
+    images: ["/projects/chessbench/image.png", "/projects/chessbench/game.png"],
   },
   {
     title: "hack western archive",
     description:
       "compilation of the past 10 years of hack western websites; features a mix of Next.js, CRA, Vue, Pug, Express, PHP, Bootstrap & JQuery sites, all compiled & combined into a single static site.",
     demoUrl: "https://archive.hackwestern.com/",
-    tags: [Tags.frontend],
+    tags: [Tags.frontend, Tags.fun],
     technologies: [
       Technology.TypeScript,
       Technology.JavaScript,
       Technology.React,
       Technology.NextJS,
     ],
+    images: ["/projects/hw-archive/image.png"],
   },
   {
     title: "hack western 11",
@@ -134,18 +136,9 @@ export const projects: ProjectProps[] = [
       Technology.PostgreSQL,
       Technology.SQL,
     ],
-    tags: [Tags.frontend, Tags.fullstack, Tags.backend, Tags.database],
-    imageUrl: "https://via.placeholder.com/150",
+    tags: [Tags.frontend, Tags.backend, Tags.database],
+    images: ["/projects/hw11/image.png", "/projects/hw11/live.png"],
   },
-  {
-    title: "viewr",
-    description:
-      "a high-performance image viewer with multi-threaded buffering & caching, built with C++ and Qt. decompresses JPEGs into memory for near instant loading times; for 20 MP images, loading times go from ~200 ms to <1 ms.",
-    repoUrl: "https://github.com/hunterchen7/viewr",
-    technologies: [Technology.CPlusPlus],
-    tags: [Tags.backend],
-  },
-
   {
     title: "marvin",
     description:
@@ -153,30 +146,56 @@ export const projects: ProjectProps[] = [
     repoUrl: "https://github.com/hunterchen7/marvin",
     technologies: [Technology.TypeScript],
     tags: [Tags.AI, Tags.backend, Tags.fun],
+    images: ["/projects/marvin/image.png"],
   },
+  {
+    title: "viewr",
+    description:
+      "a high-performance image viewer with multi-threaded buffering & caching, built with C++ and Qt. decompresses JPEGs into memory for near instant loading times; for 20 MP images, loading times go from ~200 ms to <1 ms.",
+    repoUrl: "https://github.com/hunterchen7/viewr",
+    technologies: [Technology.CPlusPlus],
+    tags: [Tags.backend, Tags.school],
+    images: [
+      "/projects/viewr/image.png",
+      "/projects/viewr/image2.png",
+      "/projects/viewr/image3.png",
+    ],
+  },
+
   {
     title: '"pawfect pitch"',
     description:
       "AI-driven speech coaching; upload audio to get feedback. built for NWhacks 2025. React frontend, Python/fastAPI backend, uses local ~1B LLM & whisper, among other models; see the devpost link for more info.",
     repoUrl: "https://github.com/hunterchen7/pawfect-pitch",
     demoUrl: "https://devpost.com/software/pawfect-pitch",
-    tags: [Tags.AI, Tags.fullstack, Tags.backend, Tags.frontend],
+    tags: [Tags.AI, Tags.backend, Tags.frontend],
     technologies: [Technology.TypeScript, Technology.React, Technology.Python],
+    images: [
+      "/projects/pawfect/1.png",
+      "/projects/pawfect/2.png",
+      "/projects/pawfect/3.png",
+      "/projects/pawfect/4.png",
+    ],
   },
   {
     title: "typing game",
     description:
-      "led a group of 4 to build a Java/LibGDX typing game where you type words to destroy asteroids. built for CS2212 Introduction to Software Engineering @ Western University.",
+      "led a group of 4 to build a Java/LibGDX typing game where you type words to destroy asteroids.",
     repoUrl: "https://github.com/hunterchen7/typing-game",
     technologies: [Technology.Java, Technology.SQLite, Technology.SQL],
-    tags: [Tags.game, Tags.backend, Tags.database, Tags.fun],
+    tags: [Tags.game, Tags.backend, Tags.database, Tags.school],
+    images: ["/projects/typing/demo.gif"],
   },
   {
-    title: "pointless",
-    description: `infinite drawing canvas desktop app built with Tauri (Rust) and React. added the colour picker feature, not that impressive, but it's my first open source contribution so I wanted to share :^)`,
-    repoUrl: "https://github.com/kkoomen/pointless",
-    technologies: [Technology.Rust, Technology.React, Technology.JavaScript],
+    title: "docket",
+    description:
+      "markdown note-taking chrome extension, my friend built most of it but I implemented a couple features :)",
+    repoUrl: "https://github.com/LordExodius/docket",
+    demoUrl:
+      "https://chromewebstore.google.com/detail/docket/hlfjljigolpdfpljaogaiklelolbemfc?hl=en&authuser=0&pli=1",
+    technologies: [Technology.TypeScript],
     tags: [Tags.frontend, Tags.fun],
+    images: ["/projects/docket/image.png"],
   },
   {
     title: "waveformer",
@@ -185,19 +204,34 @@ export const projects: ProjectProps[] = [
     repoUrl: "https://github.com/hunterchen7/waveformer",
     technologies: [Technology.Rust],
     tags: [Tags.backend, Tags.fun],
+    images: [
+      "/projects/waveformer/demo.png",
+      "/projects/waveformer/toronto.png",
+      "/projects/waveformer/graph.png",
+    ],
+  },
+  {
+    title: "pointless",
+    description: `infinite drawing canvas desktop app built with Tauri (Rust) and React. added the colour picker feature, not that impressive, but it's my first open source contribution so I wanted to share :^)`,
+    repoUrl: "https://github.com/kkoomen/pointless",
+    technologies: [Technology.Rust, Technology.React, Technology.JavaScript],
+    tags: [Tags.frontend, Tags.fun],
+    images: ["/projects/pointless/image.png"],
   },
   {
     title: "wasm game of life",
     description:
-      "a Rust implementation of Conway's Game of Life, compiled to WebAssembly.",
+      "a Rust implementation of Conway's Game of Life, compiled to WebAssembly. based on a tutorial from the rustwasm book.",
     repoUrl: "https://github.com/hunterchen7/wasm-game-of-life",
     demoUrl: "https://hunterchen7.github.io/wasm-game-of-life/",
+    otherUrl: "https://rustwasm.github.io/book/game-of-life/introduction.html",
     technologies: [
       Technology.Rust,
       Technology.TypeScript,
       Technology.JavaScript,
     ],
     tags: [Tags.game, Tags.frontend, Tags.fun],
+    images: ["/projects/gameoflife/demo.gif", "/projects/gameoflife/image.png"],
   },
   {
     title: "scavenger hunt",
@@ -206,17 +240,31 @@ export const projects: ProjectProps[] = [
     repoUrl: "https://github.com/hunterchen7/scavenger-hunt",
     demoUrl: "https://scavenger-hunt-pink.vercel.app/",
     technologies: [Technology.TypeScript, Technology.React, Technology.NextJS],
-    tags: [Tags.frontend, Tags.fullstack, Tags.database, Tags.fun],
+    tags: [Tags.frontend, Tags.database, Tags.fun],
+    images: [
+      "/projects/scavenger/image.png",
+      "/projects/scavenger/submission.png",
+    ],
   },
   {
-    title: "dataquest 2023",
+    title: "bluefin",
     description:
-      "used random forest to predict hotel cancellations; built with Python and scikit-learn for the DataQuest 2023 Hackathon. top 5 finalist out of ~50 teams with only 2 team members.",
-    demoUrl:
-      "https://devpost.com/software/random-forest-to-predict-hotel-cancellations",
-    repoUrl: "https://github.com/hunterchen7/DataQuest-2023",
-    technologies: [Technology.Python],
-    tags: [Tags.AI],
+      "a WIP (abandoned) MCTS (monte-carlo tree-search) chess engine using bitboards, built with Rust.",
+    repoUrl: "https://github.com/bluefin-chess/bluefin",
+    technologies: [Technology.Rust],
+    tags: [Tags.game, Tags.AI, Tags.fun],
+    images: ["/projects/bluefin/image.png"],
+  },
+  {
+    title: "voyage",
+    description:
+      "a WIP (abandoned) magic-bitboard chess move-generator intended for use in bluefin (my WIP chess engine). written in Rust. based on a C++ move generator called Gigantua.",
+    repoUrl: "https://github.com/bluefin-chess/voyage",
+    otherUrl:
+      "https://www.codeproject.com/Articles/5313417/Worlds-Fastest-Bitboard-Chess-Movegenerator",
+    technologies: [Technology.Rust],
+    tags: [Tags.game, Tags.fun],
+    images: ["/projects/voyage/image.png"],
   },
   {
     title: "F1 finishes predictor",
@@ -224,23 +272,18 @@ export const projects: ProjectProps[] = [
     repoUrl: "https://github.com/hunterchen7/f1-finishers-predictor",
     technologies: [Technology.Python],
     tags: [Tags.AI],
-  },
-
-  {
-    title: "bluefin",
-    description:
-      "a WIP (abandoned) monte-carlo tree-search (MCTS) chess engine using bitboards, built with Rust.",
-    repoUrl: "https://github.com/bluefin-chess/bluefin",
-    technologies: [Technology.Rust],
-    tags: [Tags.game, Tags.AI],
+    images: ["/projects/f1/image.png"],
   },
   {
-    title: "voyage",
+    title: "dataquest 2023",
     description:
-      "a magic bitboard chess move-generator intended for use in bluefin (my WIP chess engine). written in Rust. based on a C++ move generator called Gigantua.",
-    repoUrl: "https://github.com/bluefin-chess/voyage",
-    technologies: [Technology.Rust],
-    tags: [Tags.game],
+      "used random forest to predict hotel cancellations with ~90% accuracy; built with Python and scikit-learn for the DataQuest 2023 Hackathon. top 5 finalist out of ~50 teams with only 2 team members.",
+    demoUrl:
+      "https://devpost.com/software/random-forest-to-predict-hotel-cancellations",
+    repoUrl: "https://github.com/hunterchen7/DataQuest-2023",
+    technologies: [Technology.Python],
+    tags: [Tags.AI],
+    images: ["/projects/dataquest/image.png", "/projects/dataquest/slide.png"],
   },
   {
     title: "ballotbox",
@@ -249,7 +292,23 @@ export const projects: ProjectProps[] = [
     repoUrl: "https://github.com/KingGizzard/Ballotbox",
     demoUrl: "https://ethglobal.com/showcase/ballotbox-23fge",
     technologies: [Technology.TypeScript, Technology.React],
-    tags: [Tags.web3, Tags.fullstack, Tags.frontend, Tags.backend],
+    tags: [Tags.web3, Tags.frontend, Tags.backend],
+    images: [
+      "/projects/ballotbox/architecture.png",
+      "/projects/ballotbox/answerer.png",
+      "/projects/ballotbox/asker.png",
+    ],
+  },
+  {
+    title: "DAOVOZ",
+    description:
+      "DAOVOZ is a DAO (decentralized autonomous organiztion) forum for DAOs; built website to promote & sell tickets to in-person event in Davos, Switzerland.",
+    repoUrl: "https://github.com/hunterchen7/daovos-website",
+    demoUrl: "https://daovoz.pages.dev/",
+    otherUrl: "https://www.eventbrite.ch/e/daovoz-tickets-511821651337",
+    technologies: [Technology.TypeScript, Technology.React, Technology.NextJS],
+    tags: [Tags.web3, Tags.frontend],
+    images: ["/projects/daovoz/image.png"],
   },
   {
     title: "spacestagram",
@@ -259,6 +318,10 @@ export const projects: ProjectProps[] = [
     demoUrl: "https://spacestagram.hunterchen.ca",
     technologies: [Technology.JavaScript, Technology.React],
     tags: [Tags.frontend],
+    images: [
+      "/projects/spacestagram/image.png",
+      "/projects/spacestagram/image2.png",
+    ],
   },
   {
     title: "deChess",
@@ -269,17 +332,23 @@ export const projects: ProjectProps[] = [
     otherUrl: "https://blog.streamr.network/hackmoney-round-up/",
     technologies: [Technology.JavaScript, Technology.React],
     tags: [Tags.web3, Tags.frontend, Tags.fun],
+    images: [
+      "/projects/dechess/image.png",
+      "/projects/dechess/image2.png",
+      "/projects/dechess/image3.png",
+    ],
   },
   {
     title: "coinport",
     description:
-      "a DeFi dashboard that shows a detailed history and break down of your portfolio, built for Scaling Ethereum hackathon. built with a python/flask backend, displayed on the frontend with chartJS. won $1000 USD from Covalent.",
+      "a dashboard that breaks down the makeup & history your DeFi portfolio, built for ETHGlobal's Scaling Ethereum. python/flask backend, displayed with chartJS on frontend. won $1000 USD from Covalent (first ever hackathon win!).",
     repoUrl: "https://github.com/Coin-Port/CoinPort",
     demoUrl: "https://ethglobal.com/showcase/coinport-todjy",
     otherUrl:
       "https://web.archive.org/web/20210519170520/https://www.covalenthq.com/blog/scaling-ethereum-winners/",
     technologies: [Technology.Python, Technology.JavaScript],
-    tags: [Tags.web3, Tags.fullstack, Tags.frontend, Tags.backend],
+    tags: [Tags.web3, Tags.frontend, Tags.backend],
+    images: ["/projects/coinport/image.png", "/projects/coinport/image2.png"],
   },
   {
     title: "human benchmark bot",
@@ -288,6 +357,7 @@ export const projects: ProjectProps[] = [
     repoUrl: "https://github.com/hunterchen7/HumanBenchmarkBot",
     technologies: [Technology.Python],
     tags: [Tags.AI, Tags.backend, Tags.fun],
+    images: ["/projects/benchmark/image.png"],
   },
   {
     title: "seCrypt",
@@ -296,5 +366,20 @@ export const projects: ProjectProps[] = [
     repoUrl: "https://github.com/hunterchen7/SeCrypt",
     technologies: [Technology.Python],
     tags: [Tags.backend],
+    images: ["/projects/secrypt/image.png", "/projects/secrypt/image2.png"],
+  },
+  {
+    title: "tank game",
+    description:
+      "a birds-eye view tank game I made in high school with gamemaker, has a tutorial, 3 normal levels, and a boss level. has different enemy types, ammo types and a menu screen. download & install the .exe at your own discretion, also has a .gmz file if you want to compile it yourself with gamemaker studio.",
+    demoUrl: "https://hunterchen.ca/tank/tankgame.exe",
+    otherUrl: "https://hunterchen.ca/tank/tankgame.gmz",
+    technologies: [],
+    tags: [Tags.game],
+    images: [
+      "/projects/tank/level1.png",
+      "/projects/tank/level2.png",
+      "/projects/tank/level3.png",
+    ],
   },
 ];
