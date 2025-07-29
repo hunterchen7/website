@@ -1,5 +1,6 @@
 import { Title } from "@solidjs/meta";
 import Link from "~/components/Link";
+import Geneial from "~/components/logos/Geneial";
 
 export default function About() {
   return (
@@ -13,31 +14,40 @@ export default function About() {
         <Link href="https://www.uwo.ca" external>
           western university
         </Link>
-        , currently interning as a frontend & mobile engineer @{" "}
-        <Link href="https://www.geneial.com" external>
-          <img
-            src="/geneial_logo-color.png"
-            alt="geneial"
-            class="inline w-18 bg-gray-200 rounded-lg px-2 mb-1 hover:scale-105 transition-all"
-          />
-        </Link>
-        . I'm also currently the co-lead of the dev team @{" "}
+        , currently building web & mobile @ <Geneial />. also currently web team
+        lead @{" "}
         <Link href="https://hackwestern.com" external>
           hack western 🐎
         </Link>
         .
       </p>
       <p class="mx-auto my-8 leading-snug text-base">
-        I've been building with react & typescript/javascript since 2021, and
-        doing littler things with python since before that.. familiar with C,
-        C++ and Java from school, but I've also been trying to learn rust 🦀!
+        at <Geneial />, I work on react & react native apps. I work with AG grid
+        on web to build performant data-heavy applications. On mobile, I build
+        cross-platform applications with react native.
+      </p>
+      <p class="mx-auto my-8 leading-snug text-base">
+        previously, I contracted as a frontend developer @{" "}
+        <Link href="https://aramid.finance" external>
+          <img
+            src="/aramid.png"
+            alt="aramid finance"
+            class="inline w-18 rounded-lg hover:scale-105 transition-all"
+          />
+        </Link>
+        , where I built the landing website and the core web3 bridge
+        application. I've also contracted at{" "}
+        <Link href="https://mora.do" external>
+          mora.do
+        </Link>{" "}
+        to build various web app & sites.
       </p>
       <p class="mx-auto my-8 leading-snug text-base">
         outside of tech, I spend most of my time rock climbing (on real rocks
         when possible! 🧗‍♂️), playing video games, and reading books..
       </p>
       <div class="mx-auto text-sm">
-        <div class="relative w-full max-w-md aspect-[3/2] mx-auto mb-1 rounded-xl overflow-hidden">
+        <div class="relative h-64 max-w-md aspect-[3/2] mx-auto mb-1 rounded-xl overflow-hidden">
           <img
             src="/climb.png"
             alt="Rock Climbing"
