@@ -60,3 +60,21 @@ body {
     max-width: 110rem;
   }
 }
+
+/* Custom scrollbar styles for black background */
+::-webkit-scrollbar {
+  width: 8px;
+  background: #000;
+}
+::-webkit-scrollbar-thumb {
+  background: oklch(49.1% 0.27 292.581);
+  border-radius: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #000;
+}
+/* For Firefox */
+html {
+  scrollbar-color: oklch(49.1% 0.27 292.581) #000;
+  scrollbar-width: thin;
+}

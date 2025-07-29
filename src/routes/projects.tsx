@@ -43,7 +43,7 @@ export default function Projects() {
     });
 
   return (
-    <main class="text-center p-4 mx-auto font-mono text-violet-200 pb-20">
+    <main class="text-center p-4 mx-auto font-mono text-violet-200 pb-20 h-screen overflow-y-auto">
       <Title>Projects</Title>
       <h1 class="text-2xl sm:text-4xl font-thin leading-tight mt-12 mb-6 mx-auto max-w-[14rem] md:max-w-none">
         projects
