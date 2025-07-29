@@ -1,9 +1,12 @@
 import { createSignal, onMount, onCleanup } from "solid-js";
+import { Eye, EyeOff } from "lucide-solid";
 
 export default function Bird() {
   const [position, setPosition] = createSignal({ x: 100, y: 100 });
   const [velocity, setVelocity] = createSignal({ x: 2, y: 0 });
   const [mousePosition, setMousePosition] = createSignal({ x: 0, y: 0 });
+  // SSR-safe: initialize with default, update from localStorage in onMount
+  const [showBird, setShowBird] = createSignal(true);
 
   let animationId: number;
   let time = 0;
@@ -12,12 +15,12 @@ export default function Bird() {
   const flightSpeed = 1.5;
   const turnStrength = 0.05;
   const verticalVariation = 2;
-  const mouseAvoidDistance = 600;
+  const mouseAvoidDistance = 400;
   const mouseAvoidStrength = 10;
 
   const animate = () => {
     if (typeof window === "undefined") return;
-    time += 0.016; // 60 fps
+    time += 0.008;
     const pos = position();
     const vel = velocity();
 
@@ -113,6 +116,9 @@ export default function Bird() {
 
   onMount(() => {
     if (typeof window === "undefined") return;
+    // Read showBird from localStorage on mount
+    const stored = window.localStorage.getItem("showBird");
+    if (stored !== null) setShowBird(stored === "true");
     window.addEventListener("mousemove", handleMouseMove);
     setPosition({
       x: Math.random() * window.innerWidth,
@@ -124,6 +130,14 @@ export default function Bird() {
     });
     animate();
   });
+
+  // Update localStorage whenever showBird changes
+  const toggleShowBird = () => {
+    setShowBird((v) => {
+      window.localStorage.setItem("showBird", (!v).toString());
+      return !v;
+    });
+  };
 
   onCleanup(() => {
     if (animationId) {
@@ -140,21 +154,32 @@ export default function Bird() {
   };
 
   return (
-    <div
-      class="fixed pointer-events-none z-10 hidden md:block"
-      style={{
-        left: `${position().x}px`,
-        top: `${position().y}px`,
-        transform: `rotate(${rotation()}deg) translateZ(0)`,
-        "transform-origin": "center center",
-      }}
-    >
-      <div
-        class="w-0 h-0 border-l-[8px] border-r-[8px] border-b-[24px] border-l-transparent border-r-transparent border-b-violet-700"
-        style={{
-          transform: "translateX(-50%) translateY(-50%) rotate(90deg)",
-        }}
-      />
-    </div>
+    <>
+      <button
+        class="fixed hidden md:block bottom-3 right-4 z-500 text-violet-600 p-2 rounded-full shadow hover:text-violet-300 transition-colors flex items-center justify-center cursor-pointer"
+        onClick={toggleShowBird}
+        aria-label={showBird() ? "Hide bird" : "Show bird"}
+      >
+        {showBird() ? <Eye size={24} /> : <EyeOff size={24} />}
+      </button>
+      {showBird() && (
+        <div
+          class="fixed pointer-events-none z-10 hidden md:block"
+          style={{
+            left: `${position().x}px`,
+            top: `${position().y}px`,
+            transform: `rotate(${rotation()}deg) translateZ(0)`,
+            "transform-origin": "center center",
+          }}
+        >
+          <div
+            class="w-0 h-0 border-l-[8px] border-r-[8px] border-b-[24px] border-l-transparent border-r-transparent border-b-violet-700"
+            style={{
+              transform: "translateX(-50%) translateY(-50%) rotate(90deg)",
+            }}
+          />
+        </div>
+      )}
+    </>
   );
 }

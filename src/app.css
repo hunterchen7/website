@@ -4,6 +4,11 @@ body {
   background-color: rgb(0, 0, 0);
 }
 
+::selection {
+  background: #ac7fff;
+  color: #000000;
+}
+
 @keyframes wave {
   0% {
     transform: rotate(0deg);
@@ -35,4 +40,23 @@ body {
   display: inline-block;
   animation: wave 2s infinite;
   transform-origin: 70% 70%;
+}
+
+/* Custom 3xl breakpoint styles for screens > 1920px */
+@media (min-width: 1921px) {
+  .three-xl-grid-cols-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .three-xl-max-w {
+    max-width: 110rem;
+  }
+}
+/* Custom 3xl breakpoint styles for screens > 1920px */
+@media (min-width: 1921px) {
+  .three-xl-grid-cols-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .three-xl-max-w {
+    max-width: 110rem;
+  }
 }

@@ -4,7 +4,7 @@ import Geneial from "~/components/logos/Geneial";
 
 export default function Home() {
   return (
-    <main class="text-center p-4 mx-auto my-auto justify-center flex flex-col font-mono text-violet-200 pb-20 h-screen ">
+    <main class="text-center p-4 mx-auto my-auto justify-center flex flex-col font-mono text-violet-200 pb-20 h-screen">
       <Title>Hunter Chen</Title>
       <h1 class="text-2xl sm:text-4xl font-thin leading-tight mb-2 mx-auto max-w-[14rem] md:max-w-none flex">
         hello there! <div class="wave-emoji">👋</div>

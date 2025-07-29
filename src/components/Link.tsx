@@ -1,4 +1,5 @@
 import { JSX } from "solid-js";
+import { A } from "@solidjs/router";
 
 interface LinkProps {
   href: string;
@@ -6,7 +7,6 @@ interface LinkProps {
   external?: boolean;
   class?: string;
 }
-
 export default function Link(props: LinkProps) {
   const baseClasses =
     "hover:scale-105 transition-all text-violet-700 hover:text-violet-300";
@@ -26,8 +26,8 @@ export default function Link(props: LinkProps) {
   }
 
   return (
-    <a href={props.href} class={classes}>
+    <A href={props.href} class={classes}>
       {props.children}
-    </a>
+    </A>
   );
 }

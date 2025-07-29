@@ -10,7 +10,8 @@ export default function About() {
         about me..
       </h1>
       <p class="mx-auto my-8 leading-snug text-base">
-        I&apos;m a 4th year computer science student at{" "}
+        I was born in Taiwan 🇹🇼, and grew up in Calgary, Canada 🇨🇦. I&apos;m
+        currently a 4th year computer science student at{" "}
         <Link href="https://www.uwo.ca" external>
           western university
         </Link>
@@ -32,7 +33,7 @@ export default function About() {
           <img
             src="/aramid.png"
             alt="aramid finance"
-            class="inline w-18 rounded-lg hover:scale-105 transition-all"
+            class="inline w-18 rounded-lg hover:scale-105 transition-all -mr-1.5"
           />
         </Link>
         , where I built the landing website and the core web3 bridge
@@ -44,7 +45,8 @@ export default function About() {
       </p>
       <p class="mx-auto my-8 leading-snug text-base">
         outside of tech, I spend most of my time rock climbing (on real rocks
-        when possible! 🧗‍♂️), playing video games, and reading books..
+        when possible! 🧗‍♂️), playing video games, taking pictures, and reading
+        books..
       </p>
       <div class="mx-auto text-sm">
         <div class="relative h-64 max-w-md aspect-[3/2] mx-auto mb-1 rounded-xl overflow-hidden">
