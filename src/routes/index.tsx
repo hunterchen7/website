@@ -6,8 +6,8 @@ export default function Home() {
   return (
     <main class="text-center p-4 mx-auto my-auto justify-center flex flex-col font-mono text-violet-200 pb-20 h-screen ">
       <Title>Hunter Chen</Title>
-      <h1 class="text-2xl sm:text-4xl font-thin leading-tight mb-2 mx-auto max-w-[14rem] md:max-w-none">
-        hello there!👋
+      <h1 class="text-2xl sm:text-4xl font-thin leading-tight mb-2 mx-auto max-w-[14rem] md:max-w-none flex">
+        hello there! <div class="wave-emoji">👋</div>
       </h1>
       <p class="mx-auto my-8 leading-snug md:max-w-none text-lg">
         I&apos;m Hunter, and I like to build things.
@@ -16,6 +16,7 @@ export default function Home() {
         src="/image.png"
         alt="Profile"
         class="rounded-full w-72 h-72 mx-auto mb-4"
+        draggable="false"
       />
       <p class="mx-auto mt-8 leading-snug text-lg max-w-[44rem]">
         currently 4th year CS @{" "}
