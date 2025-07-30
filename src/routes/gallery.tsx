@@ -1,6 +1,6 @@
 import { Title } from "@solidjs/meta";
 import { manifest, type Photo as PhotoType } from "~/constants/photos";
-import { createSignal, Show } from "solid-js";
+import { createSignal, Show, onMount } from "solid-js";
 import ExifReader from "exifreader";
 
 const S3_PREFIX = "https://photos.hunterchen.ca/";
@@ -53,6 +53,21 @@ function shuffle<T>(array: readonly T[]): T[] {
 
 function Photo({ photo, onClick }: { photo: PhotoType; onClick: () => void }) {
   const [loaded, setLoaded] = createSignal(false);
+  let imgRef: HTMLImageElement | null = null;
+
+  // Robustly check if image is already loaded (cached)
+  function handleImgRef(el: HTMLImageElement) {
+    imgRef = el;
+    if (el) {
+      // Use microtask to ensure DOM is updated
+      setTimeout(() => {
+        if (el.complete && el.naturalWidth > 0) {
+          setLoaded(true);
+        }
+      }, 0);
+    }
+  }
+
   return (
     <div class="mb-2 break-inside-avoid rounded shadow-lg overflow-hidden flex flex-col items-center border border-violet-700/50 p-1 bg-violet-900/20">
       <div class="w-full h-auto min-h-[180px] flex items-center justify-center relative">
@@ -60,6 +75,7 @@ function Photo({ photo, onClick }: { photo: PhotoType; onClick: () => void }) {
           <></>
         </Show>
         <img
+          ref={handleImgRef}
           src={`${S3_PREFIX}${photo.thumbnail}`}
           alt="Gallery photo"
           class={`w-full h-auto object-contain hover:scale-[1.01] transition-transform cursor-pointer`}
@@ -125,7 +141,7 @@ function Lightbox({
           ref={(el) => (imgRef = el)}
           src={`${S3_PREFIX}${photo.url}`}
           alt="Full photo"
-          class={`min-h-96 min-w-96 max-h-[92vh] max-w-[95vw] rounded shadow-lg transition-opacity ${
+          class={`max-h-[92vh] max-w-[95vw] rounded shadow-lg transition-opacity ${
             loaded() ? "opacity-100" : "opacity-0"
           }`}
           loading="eager"
@@ -143,7 +159,7 @@ function Lightbox({
         >
           x
         </button>
-        <span class="text-xs text-violet-300 mt-2 font-mono flex justify-between w-full">
+        <span class="text-xs text-violet-300 mt-2 font-mono flex flex-col sm:flex-row justify-between w-full">
           {photo.date ? new Date(photo.date).toLocaleString() : ""}
           <div>
             {exif().model && <span>{exif().model} |</span>}
