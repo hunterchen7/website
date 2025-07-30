@@ -43,7 +43,7 @@ function seededRandom(seed: number) {
 
 function shuffle<T>(array: readonly T[]): T[] {
   let arr = [...array];
-  const rand = seededRandom(10);
+  const rand = seededRandom(32);
   for (let i = arr.length - 1; i > 0; i--) {
     const j = Math.floor(rand() * (i + 1));
     [arr[i], arr[j]] = [arr[j], arr[i]];
@@ -97,6 +97,7 @@ function Lightbox({
       const buffer = await response.arrayBuffer();
       const tags = ExifReader.load(buffer);
       setExif({
+        model: tags.Make?.description + " " + tags.Model?.description,
         iso: tags.ISOSpeedRatings?.description,
         shutter: tags.ExposureTime?.description,
         aperture: tags.FNumber?.description,
@@ -145,6 +146,7 @@ function Lightbox({
         <span class="text-xs text-violet-300 mt-2 font-mono flex justify-between w-full">
           {photo.date ? new Date(photo.date).toLocaleString() : ""}
           <div>
+            {exif().model && <span>{exif().model} |</span>}
             {exif().iso && <span> ISO {exif().iso} |</span>}
             {exif().shutter && <span> {exif().shutter}s |</span>}
             {exif().aperture && <span> {exif().aperture} |</span>}
