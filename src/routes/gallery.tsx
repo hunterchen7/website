@@ -32,6 +32,17 @@ function PhotoWithPlaceholder({
   return (
     <div class="mb-2 break-inside-avoid rounded shadow-lg overflow-hidden flex flex-col items-center border border-violet-700/50 p-1 bg-violet-900/20">
       <div class="w-full h-auto min-h-[180px] flex items-center justify-center relative">
+        <img
+          src={`${S3_PREFIX}${photo.url}`}
+          alt="Gallery photo"
+          class={`w-full h-auto object-contain hover:scale-[1.01] transition-transform cursor-pointer`}
+          loading="lazy"
+          draggable="true"
+          onLoad={() => {
+            setLoaded(true);
+            console.log(`Loaded: ${photo.url}`);
+          }}
+        />
         <Show
           when={loaded()}
           fallback={
@@ -62,17 +73,6 @@ function PhotoWithPlaceholder({
         >
           <></>
         </Show>
-        <img
-          src={`${S3_PREFIX}${photo.url}`}
-          alt="Gallery photo"
-          class={`w-full h-auto object-contain hover:scale-[1.01] transition-transform cursor-pointer`}
-          loading="lazy"
-          draggable="true"
-          onLoad={() => {
-            setLoaded(true);
-            console.log(`Loaded: ${photo.url}`);
-          }}
-        />
       </div>
       <span class="text-xs text-violet-300 mt-1 font-mono">
         {photo.date ? new Date(photo.date).toLocaleString() : ""}
