@@ -102,26 +102,38 @@ function Lightbox({
   onClose: () => void;
 }) {
   const [loaded, setLoaded] = createSignal(false);
+  const [imageBuffer, setImageBuffer] = createSignal<ArrayBuffer | null>(null);
   let imgRef: HTMLImageElement | null = null;
 
   const [exif, setExif] = createSignal<any>({});
 
-  async function handleLoad() {
-    setLoaded(true);
+  // Fetch image data once and use it for both display and EXIF extraction
+  onMount(async () => {
     try {
       const response = await fetch(`${S3_PREFIX}${photo.url}`);
       const buffer = await response.arrayBuffer();
-      const tags = ExifReader.load(buffer);
-      setExif({
-        model: tags.Make?.description + " " + tags.Model?.description,
-        iso: tags.ISOSpeedRatings?.description,
-        shutter: tags.ExposureTime?.description,
-        aperture: tags.FNumber?.description,
-        focalLength: tags.FocalLength35efl?.description,
-      });
+      setImageBuffer(buffer);
+
+      // Extract EXIF data from the buffer
+      try {
+        const tags = ExifReader.load(buffer);
+        setExif({
+          model: tags.Make?.description + " " + tags.Model?.description,
+          iso: tags.ISOSpeedRatings?.description,
+          shutter: tags.ExposureTime?.description,
+          aperture: tags.FNumber?.description,
+          focalLength: tags.FocalLength35efl?.description,
+        });
+      } catch (err) {
+        setExif({});
+      }
     } catch (err) {
       setExif({});
     }
+  });
+
+  function handleLoad() {
+    setLoaded(true);
   }
 
   return (
@@ -139,7 +151,7 @@ function Lightbox({
       >
         <img
           ref={(el) => (imgRef = el)}
-          src={`${S3_PREFIX}${photo.url}`}
+          src={imageBuffer() ? URL.createObjectURL(new Blob([imageBuffer()!])) : `${S3_PREFIX}${photo.url}`}
           alt="Full photo"
           class={`max-h-[92vh] max-w-[95vw] rounded shadow-lg transition-opacity ${
             loaded() ? "opacity-100" : "opacity-0"
