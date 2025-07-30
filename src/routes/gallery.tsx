@@ -151,8 +151,12 @@ function Lightbox({
       >
         <img
           ref={(el) => (imgRef = el)}
-          src={imageBuffer() ? URL.createObjectURL(new Blob([imageBuffer()!])) : `${S3_PREFIX}${photo.url}`}
-          alt="Full photo"
+          src={
+            imageBuffer()
+              ? URL.createObjectURL(new Blob([imageBuffer()!]))
+              : `${S3_PREFIX}${photo.url}`
+          }
+          alt={photo.url ?? "Full photo"}
           class={`max-h-[92vh] max-w-[95vw] rounded shadow-lg transition-opacity ${
             loaded() ? "opacity-100" : "opacity-0"
           }`}
@@ -190,7 +194,7 @@ export default function Gallery() {
   const [expanded, setExpanded] = createSignal<PhotoType | null>(null);
   const shuffled = shuffle(manifest);
   return (
-    <main class="text-center p-4 mx-auto font-mono text-violet-200 pb-20">
+    <main class="text-center p-4 mx-auto font-mono text-violet-200 pb-20 h-screen overflow-y-auto">
       <Title>Gallery</Title>
       <h1 class="text-2xl sm:text-4xl font-thin leading-tight mt-12 mb-8 mx-auto max-w-[14rem] md:max-w-none">
         gallery
