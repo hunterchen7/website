@@ -97,7 +97,7 @@ export const projects: ProjectProps[] = [
       Technology.SQL,
     ],
     tags: [Tags.frontend, Tags.backend, Tags.database],
-    images: ["/projects/hw12/image.png"],
+    images: ["/projects/hw12/image.webp"],
   },
   {
     title: "chessbench LLM",
@@ -107,7 +107,10 @@ export const projects: ProjectProps[] = [
     demoUrl: "https://chessbench.pages.dev/",
     technologies: [Technology.TypeScript, Technology.React, Technology.Python],
     tags: [Tags.AI, Tags.backend, Tags.frontend, Tags.fun],
-    images: ["/projects/chessbench/image.png", "/projects/chessbench/game.png"],
+    images: [
+      "/projects/chessbench/image.webp",
+      "/projects/chessbench/game.webp",
+    ],
   },
   {
     title: "hack western archive",
@@ -121,7 +124,7 @@ export const projects: ProjectProps[] = [
       Technology.React,
       Technology.NextJS,
     ],
-    images: ["/projects/hw-archive/image.png"],
+    images: ["/projects/hw-archive/image.webp"],
   },
   {
     title: "hack western 11",
@@ -137,7 +140,7 @@ export const projects: ProjectProps[] = [
       Technology.SQL,
     ],
     tags: [Tags.frontend, Tags.backend, Tags.database],
-    images: ["/projects/hw11/image.png", "/projects/hw11/live.png"],
+    images: ["/projects/hw11/image.webp", "/projects/hw11/live.webp"],
   },
   {
     title: "marvin",
@@ -146,7 +149,7 @@ export const projects: ProjectProps[] = [
     repoUrl: "https://github.com/hunterchen7/marvin",
     technologies: [Technology.TypeScript],
     tags: [Tags.AI, Tags.backend, Tags.fun],
-    images: ["/projects/marvin/image.png"],
+    images: ["/projects/marvin/image.webp"],
   },
   {
     title: "viewr",
@@ -156,9 +159,9 @@ export const projects: ProjectProps[] = [
     technologies: [Technology.CPlusPlus],
     tags: [Tags.backend, Tags.school],
     images: [
-      "/projects/viewr/image.png",
-      "/projects/viewr/image2.png",
-      "/projects/viewr/image3.png",
+      "/projects/viewr/image.webp",
+      "/projects/viewr/image2.webp",
+      "/projects/viewr/image3.webp",
     ],
   },
 
@@ -171,10 +174,10 @@ export const projects: ProjectProps[] = [
     tags: [Tags.AI, Tags.backend, Tags.frontend],
     technologies: [Technology.TypeScript, Technology.React, Technology.Python],
     images: [
-      "/projects/pawfect/1.png",
-      "/projects/pawfect/2.png",
-      "/projects/pawfect/3.png",
-      "/projects/pawfect/4.png",
+      "/projects/pawfect/1.webp",
+      "/projects/pawfect/2.webp",
+      "/projects/pawfect/3.webp",
+      "/projects/pawfect/4.webp",
     ],
   },
   {
@@ -195,7 +198,7 @@ export const projects: ProjectProps[] = [
       "https://chromewebstore.google.com/detail/docket/hlfjljigolpdfpljaogaiklelolbemfc?hl=en&authuser=0&pli=1",
     technologies: [Technology.TypeScript],
     tags: [Tags.frontend, Tags.fun],
-    images: ["/projects/docket/image.png"],
+    images: ["/projects/docket/image.webp"],
   },
   {
     title: "waveformer",
@@ -205,9 +208,9 @@ export const projects: ProjectProps[] = [
     technologies: [Technology.Rust],
     tags: [Tags.backend, Tags.fun],
     images: [
-      "/projects/waveformer/demo.png",
-      "/projects/waveformer/toronto.png",
-      "/projects/waveformer/graph.png",
+      "/projects/waveformer/demo.webp",
+      "/projects/waveformer/toronto.webp",
+      "/projects/waveformer/graph.webp",
     ],
   },
   {
@@ -216,7 +219,7 @@ export const projects: ProjectProps[] = [
     repoUrl: "https://github.com/kkoomen/pointless",
     technologies: [Technology.Rust, Technology.React, Technology.JavaScript],
     tags: [Tags.frontend, Tags.fun],
-    images: ["/projects/pointless/image.png"],
+    images: ["/projects/pointless/image.webp"],
   },
   {
     title: "wasm game of life",
@@ -231,7 +234,10 @@ export const projects: ProjectProps[] = [
       Technology.JavaScript,
     ],
     tags: [Tags.game, Tags.frontend, Tags.fun],
-    images: ["/projects/gameoflife/demo.gif", "/projects/gameoflife/image.png"],
+    images: [
+      "/projects/gameoflife/demo.gif",
+      "/projects/gameoflife/image.webp",
+    ],
   },
   {
     title: "scavenger hunt",
@@ -242,8 +248,8 @@ export const projects: ProjectProps[] = [
     technologies: [Technology.TypeScript, Technology.React, Technology.NextJS],
     tags: [Tags.frontend, Tags.database, Tags.fun],
     images: [
-      "/projects/scavenger/image.png",
-      "/projects/scavenger/submission.png",
+      "/projects/scavenger/image.webp",
+      "/projects/scavenger/submission.webp",
     ],
   },
   {
@@ -253,7 +259,7 @@ export const projects: ProjectProps[] = [
     repoUrl: "https://github.com/bluefin-chess/bluefin",
     technologies: [Technology.Rust],
     tags: [Tags.game, Tags.AI, Tags.fun],
-    images: ["/projects/bluefin/image.png"],
+    images: ["/projects/bluefin/image.webp"],
   },
   {
     title: "voyage",
@@ -264,7 +270,7 @@ export const projects: ProjectProps[] = [
       "https://www.codeproject.com/Articles/5313417/Worlds-Fastest-Bitboard-Chess-Movegenerator",
     technologies: [Technology.Rust],
     tags: [Tags.game, Tags.fun],
-    images: ["/projects/voyage/image.png"],
+    images: ["/projects/voyage/image.webp"],
   },
   {
     title: "F1 finishes predictor",
@@ -272,7 +278,7 @@ export const projects: ProjectProps[] = [
     repoUrl: "https://github.com/hunterchen7/f1-finishers-predictor",
     technologies: [Technology.Python],
     tags: [Tags.AI],
-    images: ["/projects/f1/image.png"],
+    images: ["/projects/f1/image.webp"],
   },
   {
     title: "dataquest 2023",
@@ -283,7 +289,10 @@ export const projects: ProjectProps[] = [
     repoUrl: "https://github.com/hunterchen7/DataQuest-2023",
     technologies: [Technology.Python],
     tags: [Tags.AI],
-    images: ["/projects/dataquest/image.png", "/projects/dataquest/slide.png"],
+    images: [
+      "/projects/dataquest/image.webp",
+      "/projects/dataquest/slide.webp",
+    ],
   },
   {
     title: "ballotbox",
@@ -294,9 +303,9 @@ export const projects: ProjectProps[] = [
     technologies: [Technology.TypeScript, Technology.React],
     tags: [Tags.web3, Tags.frontend, Tags.backend],
     images: [
-      "/projects/ballotbox/architecture.png",
-      "/projects/ballotbox/answerer.png",
-      "/projects/ballotbox/asker.png",
+      "/projects/ballotbox/architecture.webp",
+      "/projects/ballotbox/answerer.webp",
+      "/projects/ballotbox/asker.webp",
     ],
   },
   {
@@ -308,7 +317,7 @@ export const projects: ProjectProps[] = [
     otherUrl: "https://www.eventbrite.ch/e/daovoz-tickets-511821651337",
     technologies: [Technology.TypeScript, Technology.React, Technology.NextJS],
     tags: [Tags.web3, Tags.frontend],
-    images: ["/projects/daovoz/image.png"],
+    images: ["/projects/daovoz/image.webp"],
   },
   {
     title: "spacestagram",
@@ -319,8 +328,8 @@ export const projects: ProjectProps[] = [
     technologies: [Technology.JavaScript, Technology.React],
     tags: [Tags.frontend],
     images: [
-      "/projects/spacestagram/image.png",
-      "/projects/spacestagram/image2.png",
+      "/projects/spacestagram/image.webp",
+      "/projects/spacestagram/image2.webp",
     ],
   },
   {
@@ -333,9 +342,9 @@ export const projects: ProjectProps[] = [
     technologies: [Technology.JavaScript, Technology.React],
     tags: [Tags.web3, Tags.frontend, Tags.fun],
     images: [
-      "/projects/dechess/image.png",
-      "/projects/dechess/image2.png",
-      "/projects/dechess/image3.png",
+      "/projects/dechess/image.webp",
+      "/projects/dechess/image2.webp",
+      "/projects/dechess/image3.webp",
     ],
   },
   {
@@ -348,7 +357,7 @@ export const projects: ProjectProps[] = [
       "https://web.archive.org/web/20210519170520/https://www.covalenthq.com/blog/scaling-ethereum-winners/",
     technologies: [Technology.Python, Technology.JavaScript],
     tags: [Tags.web3, Tags.frontend, Tags.backend],
-    images: ["/projects/coinport/image.png", "/projects/coinport/image2.png"],
+    images: ["/projects/coinport/image.webp", "/projects/coinport/image2.webp"],
   },
   {
     title: "human benchmark bot",
@@ -357,7 +366,7 @@ export const projects: ProjectProps[] = [
     repoUrl: "https://github.com/hunterchen7/HumanBenchmarkBot",
     technologies: [Technology.Python],
     tags: [Tags.AI, Tags.backend, Tags.fun],
-    images: ["/projects/benchmark/image.png"],
+    images: ["/projects/benchmark/image.webp"],
   },
   {
     title: "seCrypt",
@@ -366,7 +375,7 @@ export const projects: ProjectProps[] = [
     repoUrl: "https://github.com/hunterchen7/SeCrypt",
     technologies: [Technology.Python],
     tags: [Tags.backend],
-    images: ["/projects/secrypt/image.png", "/projects/secrypt/image2.png"],
+    images: ["/projects/secrypt/image.webp", "/projects/secrypt/image2.webp"],
   },
   {
     title: "tank game",
@@ -377,9 +386,9 @@ export const projects: ProjectProps[] = [
     technologies: [],
     tags: [Tags.game],
     images: [
-      "/projects/tank/level1.png",
-      "/projects/tank/level2.png",
-      "/projects/tank/level3.png",
+      "/projects/tank/level1.webp",
+      "/projects/tank/level2.webp",
+      "/projects/tank/level3.webp",
     ],
   },
 ];
