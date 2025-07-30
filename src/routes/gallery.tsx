@@ -1,5 +1,5 @@
 import { Title } from "@solidjs/meta";
-import { manifest } from "~/constants/photos";
+import { manifest, type Photo as PhotoType } from "~/constants/photos";
 import { createSignal, Show } from "solid-js";
 
 const S3_PREFIX = "https://photos.hunterchen.ca/";
@@ -23,24 +23,19 @@ function shuffle<T>(array: readonly T[]): T[] {
   return arr;
 }
 
-function PhotoWithPlaceholder({
-  photo,
-}: {
-  photo: { url: string; date: string };
-}) {
+function Photo({ photo }: { photo: PhotoType }) {
   const [loaded, setLoaded] = createSignal(false);
   return (
     <div class="mb-2 break-inside-avoid rounded shadow-lg overflow-hidden flex flex-col items-center border border-violet-700/50 p-1 bg-violet-900/20">
       <div class="w-full h-auto min-h-[180px] flex items-center justify-center relative">
         <img
-          src={`${S3_PREFIX}${photo.url}`}
+          src={`${S3_PREFIX}${photo.thumbnail}`}
           alt="Gallery photo"
           class={`w-full h-auto object-contain hover:scale-[1.01] transition-transform cursor-pointer`}
           loading="lazy"
           draggable="true"
           onLoad={() => {
             setLoaded(true);
-            console.log(`Loaded: ${photo.url}`);
           }}
         />
         <Show
@@ -86,12 +81,15 @@ export default function Gallery() {
   return (
     <main class="text-center p-4 mx-auto font-mono text-violet-200 pb-20">
       <Title>Gallery</Title>
-      <h1 class="text-2xl sm:text-4xl font-thin leading-tight my-12 mx-auto max-w-[14rem] md:max-w-none">
+      <h1 class="text-2xl sm:text-4xl font-thin leading-tight mt-12 mb-8 mx-auto max-w-[14rem] md:max-w-none">
         gallery
       </h1>
+      <div class="text-violet-400 mb-4">
+        a collection of some photos I took that I like :)
+      </div>
       <div class="columns-2 md:columns-3 lg:columns-4 gap-2 max-w-7xl mx-auto">
         {shuffled.map((photo) => (
-          <PhotoWithPlaceholder photo={photo} />
+          <Photo photo={photo} />
         ))}
       </div>
     </main>
