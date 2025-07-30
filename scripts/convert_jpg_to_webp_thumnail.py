@@ -9,19 +9,29 @@ FAVOURITES_DIR = os.path.join(os.path.dirname(__file__), '../', '', 'favourites'
 # Set output folder for webp files
 OUTPUT_DIR = os.path.join(os.path.dirname(__file__), '../', '', 'favourites_webp')
 
+
 # Compression quality (0-100, lower = smaller file)
-WEBP_QUALITY = 90
+WEBP_QUALITY = 80
+# Resize settings
+MAX_WIDTH = 800
+MAX_HEIGHT = 800
 # Number of threads (adjust as needed)
 NUM_THREADS = min(8, os.cpu_count() or 4)
 
 def convert_single_jpg(jpg_path):
     # Get filename without extension
-    filename = os.path.splitext(os.path.basename(jpg_path))[0] + '.webp'
+    filename = os.path.splitext(os.path.basename(jpg_path))[0] + '-thumb.webp'
     webp_path = os.path.join(OUTPUT_DIR, filename)
     try:
         with Image.open(jpg_path) as img:
             exif = img.info.get('exif')
             icc_profile = img.info.get('icc_profile')
+            # Resize if needed
+            w, h = img.size
+            if w > MAX_WIDTH or h > MAX_HEIGHT:
+                scale = min(MAX_WIDTH / w, MAX_HEIGHT / h)
+                new_size = (int(w * scale), int(h * scale))
+                img = img.resize(new_size, Image.LANCZOS)
             save_kwargs = {'quality': WEBP_QUALITY}
             if exif:
                 save_kwargs['exif'] = exif

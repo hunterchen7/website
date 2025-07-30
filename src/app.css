@@ -9,6 +9,10 @@ body {
   color: #000000;
 }
 
+@theme {
+  --breakpoint-3xl: 150rem;
+}
+
 @keyframes wave {
   0% {
     transform: rotate(0deg);
