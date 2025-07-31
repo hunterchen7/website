@@ -188,6 +188,7 @@ export const projects: ProjectProps[] = [
     description:
       "led a group of 4 to build a Java/LibGDX typing game where you type words to destroy asteroids.",
     repoUrl: "https://github.com/hunterchen7/typing-game",
+    demoUrl: "https://www.youtube.com/watch?v=1PN8l_tNcNQ",
     technologies: [Technology.Java, Technology.SQLite, Technology.SQL],
     tags: [Tags.game, Tags.backend, Tags.database, Tags.school],
     images: ["/projects/typing/demo.gif"],
