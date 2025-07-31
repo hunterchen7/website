@@ -372,6 +372,7 @@ export const projects: ProjectProps[] = [
     technologies: [Technology.Python],
     tags: [Tags.AI, Tags.backend, Tags.fun],
     images: ["/projects/benchmark/image.webp"],
+    favourite: true,
   },
   {
     title: "seCrypt",

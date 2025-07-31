@@ -32,13 +32,18 @@ export default function ProjectFilters(props: ProjectFiltersProps) {
           class="px-4 py-2 rounded bg-black/60 text-white border border-violet-600 focus:outline-none focus:ring focus:ring-violet-400 w-full text-xs md:text-sm"
         />
         {/* favourites filter */}
-        <Star
-          size={24}
-          fill={props.showFavouritesOnly ? "currentColor" : "none"}
-          stroke="currentColor"
-          class={`cursor-pointer transition-all hover:scale-105 text-yellow-500 hover:text-yellow-400 my-auto ml-4 hover:rotate-72`}
-          onClick={props.handleFavouritesToggle}
-        />
+        <div class="relative group">
+          <Star
+            size={24}
+            fill={props.showFavouritesOnly ? "currentColor" : "none"}
+            stroke="currentColor"
+            class={`cursor-pointer transition-all hover:scale-105 text-yellow-500 hover:text-yellow-400 my-auto ml-4 hover:rotate-72`}
+            onClick={props.handleFavouritesToggle}
+          />
+          <span class="opacity-0 group-hover:opacity-100 absolute left-1/2 bottom-full -translate-x-1/2 mb-2 bg-black text-white text-xs px-2 py-1 rounded z-10 whitespace-nowrap pointer-events-none">
+            my favourite projects!
+          </span>
+        </div>
       </div>
       {/* tag filters */}
       <div class="flex flex-wrap gap-2 items-center grid grid-cols-4 md:grid-cols-3 lg:grid-cols-4 select-none">
