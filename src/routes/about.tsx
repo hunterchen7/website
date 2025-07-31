@@ -10,14 +10,15 @@ export default function About() {
         about me..
       </h1>
       <p class="mx-auto">
-        I was born in Taiwan 🇹🇼, and grew up in Calgary, Canada 🇨🇦. I&apos;m a
-        computer science student @{" "}
+        I was born in Taiwan 🇹🇼, and grew up in Calgary, Canada 🇨🇦. I&apos;m
+        currently studying computer science @{" "}
         <Link href="https://www.uwo.ca" external>
           western university
         </Link>
-        , building web & mobile @ <Geneial />. also leading the web team @{" "}
+        , and building on web & mobile @ <Geneial />. also currently leading the
+        web team @{" "}
         <Link href="https://hackwestern.com" external>
-          hack western 🐎
+          hack western 💜
         </Link>{" "}
         for 2025.
       </p>
@@ -32,7 +33,7 @@ export default function About() {
           <img
             src="/aramid.png"
             alt="aramid finance"
-            class="inline w-18 rounded-lg hover:scale-105 transition-all -mr-2.5"
+            class="inline w-18 rounded-lg hover:scale-105 transition-all -mr-1.5"
           />
         </Link>
         , where I built the landing website, the frontend core web3 bridge

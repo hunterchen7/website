@@ -6,7 +6,7 @@ export default function Geneial() {
       <img
         src="/geneial_logo-color.png"
         alt="geneial"
-        class="inline w-16 bg-gray-200 rounded-lg px-1 mb-1.5 hover:scale-105 transition-all -mr-1"
+        class="inline w-16 bg-gray-200 rounded-lg px-1 mb-1.5 hover:scale-105 transition-all"
       />
     </Link>
   );

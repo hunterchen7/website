@@ -9,6 +9,7 @@ export default function Projects() {
   const [search, setSearch] = createSignal("");
   const [selectedTags, setSelectedTags] = createSignal<Tags[]>([]);
   const [selectedTech, setSelectedTech] = createSignal<string[]>([]);
+  const [showFavouritesOnly, setShowFavouritesOnly] = createSignal(false);
 
   const handleTagToggle = (tag: Tags) => {
     setSelectedTags((tags) =>
@@ -19,6 +20,10 @@ export default function Projects() {
     setSelectedTech((techs) =>
       techs.includes(tech) ? techs.filter((t) => t !== tech) : [...techs, tech]
     );
+  };
+
+  const handleFavouritesToggle = () => {
+    setShowFavouritesOnly(!showFavouritesOnly());
   };
 
   const filteredProjects = () =>
@@ -39,13 +44,14 @@ export default function Projects() {
           selectedTech().every((selected) =>
             project.technologies.includes(selected as Technology)
           ));
-      return matchesText && matchesTags && matchesTech;
+      const matchesFavourites = !showFavouritesOnly() || project.favourite === true;
+      return matchesText && matchesTags && matchesTech && matchesFavourites;
     });
 
   return (
     <main class="text-center p-4 mx-auto font-mono text-violet-200 pb-20 h-screen overflow-y-auto">
       <Title>Projects</Title>
-      <h1 class="text-2xl sm:text-4xl font-thin leading-tight mt-12 mb-6 mx-auto max-w-[14rem] md:max-w-none">
+      <h1 class="text-2xl sm:text-4xl font-thin leading-tight mt-2 md:mt-12 mb-6 mx-auto max-w-[14rem] md:max-w-none">
         projects
       </h1>
       <ProjectFilters
@@ -57,8 +63,10 @@ export default function Projects() {
         setSelectedTech={setSelectedTech}
         handleTagToggle={handleTagToggle}
         handleTechToggle={handleTechToggle}
+        showFavouritesOnly={showFavouritesOnly()}
+        handleFavouritesToggle={handleFavouritesToggle}
       />
-      <h3 class="mb-2">
+      <h3 class="mb-2 text-sm md:text-base">
         a compilation of most of my past & current projects.. roughly reverse
         chronological order.
       </h3>

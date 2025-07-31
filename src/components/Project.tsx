@@ -4,13 +4,28 @@ import {
   ProjectProps,
 } from "~/constants/projects";
 import { createSignal } from "solid-js";
-import { Globe, Link } from "lucide-solid";
+import { Globe, Link, Star } from "lucide-solid";
 
 export default function Project(props: ProjectProps) {
   return (
     <div class="project-card bg-gray-800 p-4 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
       <div class="flex justify-between">
-        <h2 class="text-xl font-semibold text-violet-200">{props.title}</h2>
+        <div class="flex items-center gap-2">
+          <h2 class="text-xl font-semibold text-violet-200">{props.title}</h2>
+          {props.favourite && (
+            <span class="relative group select-none hover:scale-105">
+              <Star
+                size={16}
+                fill="currentColor"
+                stroke="currentColor"
+                class="text-yellow-400 cursor-pointer transition-transform duration-300 hover:rotate-72"
+              />
+              <span class="opacity-0 group-hover:opacity-100 absolute left-1/2 bottom-full -translate-x-1/2 mb-2 bg-black text-white text-xs px-2 py-1 rounded z-10 whitespace-nowrap pointer-events-none">
+                a personal favourite!
+              </span>
+            </span>
+          )}
+        </div>
         <div class="flex gap-3 items-center">
           {props.repoUrl && (
             <a

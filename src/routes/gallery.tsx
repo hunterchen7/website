@@ -29,10 +29,10 @@ export default function Gallery() {
   return (
     <main class="text-center p-4 mx-auto font-mono text-violet-200 pb-20 h-screen overflow-y-auto">
       <Title>Gallery</Title>
-      <h1 class="text-2xl sm:text-4xl font-thin leading-tight mt-12 mb-8 mx-auto max-w-[14rem] md:max-w-none">
+      <h1 class="text-2xl sm:text-4xl font-thin leading-tight mt-2 md:mt-12 mb-8 mx-auto max-w-[14rem] md:max-w-none">
         gallery
       </h1>
-      <div class="text-violet-400 mb-4">
+      <div class="text-violet-200 mb-4 text-xs md:text-sm">
         a collection of some photos I took that I like :)
       </div>
       <div class="columns-2 md:columns-3 3xl:columns-4 gap-2 max-w-7xl 3xl:max-w-[100rem] mx-auto">

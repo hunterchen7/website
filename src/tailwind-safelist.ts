@@ -36,4 +36,5 @@ const safelist = [
   "hover:text-white",
   "text-white",
   "text-violet-200",
+  "hover:rotate-72",
 ];

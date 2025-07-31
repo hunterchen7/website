@@ -4,7 +4,13 @@ import { LoadingSpinner } from "./LoadingSpinner";
 
 const S3_PREFIX = "https://photos.hunterchen.ca/";
 
-export function Photo({ photo, onClick }: { photo: PhotoType; onClick: () => void }) {
+export function Photo({
+  photo,
+  onClick,
+}: {
+  photo: PhotoType;
+  onClick: () => void;
+}) {
   const [loaded, setLoaded] = createSignal(false);
   let imgRef: HTMLImageElement | null = null;
 
@@ -23,7 +29,7 @@ export function Photo({ photo, onClick }: { photo: PhotoType; onClick: () => voi
 
   return (
     <div class="mb-2 break-inside-avoid rounded shadow-lg overflow-hidden flex flex-col items-center border border-violet-700/50 p-1 bg-violet-900/20">
-      <div class="w-full h-auto min-h-[180px] flex items-center justify-center relative">
+      <div class="w-full h-auto md:min-h-[180px] flex items-center justify-center relative">
         <Show when={loaded()} fallback={<LoadingSpinner />}>
           <></>
         </Show>

@@ -80,6 +80,7 @@ export interface ProjectProps {
   technologies: Technology[];
   tags: Tags[];
   images?: string[];
+  favourite?: boolean;
 }
 
 export const projects: ProjectProps[] = [
@@ -98,6 +99,7 @@ export const projects: ProjectProps[] = [
     ],
     tags: [Tags.frontend, Tags.backend, Tags.database],
     images: ["/projects/hw12/image.webp"],
+    favourite: true,
   },
   {
     title: "chessbench LLM",
@@ -127,29 +129,14 @@ export const projects: ProjectProps[] = [
     images: ["/projects/hw-archive/image.webp"],
   },
   {
-    title: "hack western 11",
-    description:
-      "2024's iteration of Hack Western; built components for event website and application portal, and created internal review dashboard. implemented CI/CD pipelines for testing and checking code style. also integrated ShadCN and implemented email automation.",
-    repoUrl: "https://github.com/hackwestern/hackwestern/tree/hw11",
-    demoUrl: "https://2024.hackwestern.com",
-    technologies: [
-      Technology.TypeScript,
-      Technology.React,
-      Technology.NextJS,
-      Technology.PostgreSQL,
-      Technology.SQL,
-    ],
-    tags: [Tags.frontend, Tags.backend, Tags.database],
-    images: ["/projects/hw11/image.webp", "/projects/hw11/live.webp"],
-  },
-  {
     title: "marvin",
     description:
-      "AI discord chat bot that can also generate images from user prompts. uses llama-4-maverick for text gen and gemini flash 2.0 for image gen. built with TypeScript, also has TS cloudflare worker for image gen on other models.",
+      "AI discord chat bot that can also generate images from user prompts. uses llama-4-maverick for text gen and gemini flash 2.0 for image gen. built with TypeScript, also has TS cloudflare worker for image gen on other models. a modified version of marvin is used in a personal discord server, has currently sent 1,000+ messages!",
     repoUrl: "https://github.com/hunterchen7/marvin",
     technologies: [Technology.TypeScript],
     tags: [Tags.AI, Tags.backend, Tags.fun],
     images: ["/projects/marvin/image.webp"],
+    favourite: true,
   },
   {
     title: "viewr",
@@ -164,7 +151,6 @@ export const projects: ProjectProps[] = [
       "/projects/viewr/image3.webp",
     ],
   },
-
   {
     title: '"pawfect pitch"',
     description:
@@ -179,6 +165,23 @@ export const projects: ProjectProps[] = [
       "/projects/pawfect/3.webp",
       "/projects/pawfect/4.webp",
     ],
+  },
+  {
+    title: "hack western 11",
+    description:
+      "2024's iteration of Hack Western; built components for event website and application portal, and created internal review dashboard. implemented CI/CD pipelines for testing and checking code style. also integrated ShadCN and implemented email automation.",
+    repoUrl: "https://github.com/hackwestern/hackwestern/tree/hw11",
+    demoUrl: "https://2024.hackwestern.com",
+    technologies: [
+      Technology.TypeScript,
+      Technology.React,
+      Technology.NextJS,
+      Technology.PostgreSQL,
+      Technology.SQL,
+    ],
+    tags: [Tags.frontend, Tags.backend, Tags.database],
+    images: ["/projects/hw11/image.webp", "/projects/hw11/live.webp"],
+    favourite: true,
   },
   {
     title: "typing game",
@@ -212,6 +215,7 @@ export const projects: ProjectProps[] = [
       "/projects/waveformer/toronto.webp",
       "/projects/waveformer/graph.webp",
     ],
+    favourite: true,
   },
   {
     title: "pointless",
@@ -346,6 +350,7 @@ export const projects: ProjectProps[] = [
       "/projects/dechess/image2.webp",
       "/projects/dechess/image3.webp",
     ],
+    favourite: true,
   },
   {
     title: "coinport",
