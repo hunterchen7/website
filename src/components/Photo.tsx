@@ -29,20 +29,22 @@ export function Photo({
 
   return (
     <div class="mb-2 break-inside-avoid rounded shadow-lg overflow-hidden flex flex-col items-center border border-violet-700/50 p-1 bg-violet-900/20">
-      <div class="w-full h-auto md:min-h-[180px] flex items-center justify-center relative">
-        <Show when={loaded()} fallback={<LoadingSpinner />}>
-          <></>
-        </Show>
+      <div class="relative w-full h-auto md:min-h-[180px] flex items-center justify-center">
+        {!loaded() && (
+          <div class="absolute inset-0 flex items-center justify-center z-10">
+            <LoadingSpinner />
+          </div>
+        )}
         <img
           ref={handleImgRef}
           src={`${S3_PREFIX}${photo.thumbnail}`}
           alt="Gallery photo"
-          class={`w-full h-auto object-contain hover:scale-[1.01] transition-transform cursor-pointer`}
+          class={`w-full h-auto object-contain transition-opacity duration-300 ${
+            loaded() ? "opacity-100" : "opacity-0"
+          } hover:scale-[1.01] transition-transform cursor-pointer`}
           loading="lazy"
           draggable="true"
-          onLoad={() => {
-            setLoaded(true);
-          }}
+          onLoad={() => setLoaded(true)}
           onClick={onClick}
         />
       </div>

@@ -11,11 +11,6 @@ export const manifest: readonly Photo[] = [
     thumbnail: "HC_02245-thumb.webp",
   },
   {
-    url: "HC_01780.jpg",
-    date: "2025-07-12T12:40:40",
-    thumbnail: "HC_01780-thumb.webp",
-  },
-  {
     url: "HC_01420.jpg",
     date: "2025-07-12T11:02:30",
     thumbnail: "HC_01420-thumb.webp",
