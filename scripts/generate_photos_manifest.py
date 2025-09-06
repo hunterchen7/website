@@ -32,12 +32,13 @@ for filename in os.listdir(FAVOURITES_DIR):
     if filename.lower().endswith((".jpg", ".jpeg", ".png", ".webp")):
         img_path = os.path.join(FAVOURITES_DIR, filename)
         date = get_exif_date(img_path)
-        # Use .webp extension for all URLs
-        base_name = os.path.splitext(filename)[0]
+        base_name, ext = os.path.splitext(filename)
         url = f"{base_name}.webp"
+        thumbnail = f"{base_name}-thumb.webp"
         photos.append({
             "url": url,
-            "date": date or ""
+            "date": date or "",
+            "thumbnail": thumbnail
         })
 
 # Sort by date (newest first, fallback to filename if no date)

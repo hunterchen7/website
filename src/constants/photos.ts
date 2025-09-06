@@ -6,6 +6,136 @@ export interface Photo {
 
 export const manifest: readonly Photo[] = [
   {
+    url: "HC_08466-Enhanced-NR.jpg",
+    date: "2025-09-05T20:05:33",
+    thumbnail: "HC_08466-Enhanced-NR-thumb.webp",
+  },
+  {
+    url: "HC_08319-Enhanced-NR.jpg",
+    date: "2025-09-05T19:54:45",
+    thumbnail: "HC_08319-Enhanced-NR-thumb.webp",
+  },
+  {
+    url: "HC_08284.jpg",
+    date: "2025-09-05T19:52:21",
+    thumbnail: "HC_08284-thumb.webp",
+  },
+  {
+    url: "HC_08196.jpg",
+    date: "2025-09-05T19:43:53",
+    thumbnail: "HC_08196-thumb.webp",
+  },
+  {
+    url: "HC_07959.jpg",
+    date: "2025-09-05T19:25:10",
+    thumbnail: "HC_07959-thumb.webp",
+  },
+  {
+    url: "HC_07782.jpg",
+    date: "2025-09-05T18:42:23",
+    thumbnail: "HC_07782-thumb.webp",
+  },
+  {
+    url: "HC_07534.jpg",
+    date: "2025-09-05T18:30:04",
+    thumbnail: "HC_07534-thumb.webp",
+  },
+  {
+    url: "HC_07272-Enhanced-NR.jpg",
+    date: "2025-09-05T18:18:45",
+    thumbnail: "HC_07272-Enhanced-NR-thumb.webp",
+  },
+  {
+    url: "HC_07128.jpg",
+    date: "2025-09-05T18:04:54",
+    thumbnail: "HC_07128-thumb.webp",
+  },
+  {
+    url: "HC_06980-Enhanced-NR.jpg",
+    date: "2025-09-05T17:56:35",
+    thumbnail: "HC_06980-Enhanced-NR-thumb.webp",
+  },
+  {
+    url: "HC_06821.jpg",
+    date: "2025-09-05T17:53:47",
+    thumbnail: "HC_06821-thumb.webp",
+  },
+  {
+    url: "HC_06296-Enhanced-NR.jpg",
+    date: "2025-09-05T17:20:11",
+    thumbnail: "HC_06296-Enhanced-NR-thumb.webp",
+  },
+  {
+    url: "HC_06148.jpg",
+    date: "2025-09-05T17:15:25",
+    thumbnail: "HC_06148-thumb.webp",
+  },
+  {
+    url: "HC_05097.jpg",
+    date: "2025-08-23T22:38:06",
+    thumbnail: "HC_05097-thumb.webp",
+  },
+  {
+    url: "HC_05070-Edit.jpg",
+    date: "2025-08-23T19:31:28",
+    thumbnail: "HC_05070-Edit-thumb.webp",
+  },
+  {
+    url: "HC_04701.jpg",
+    date: "2025-08-23T16:17:27",
+    thumbnail: "HC_04701-thumb.webp",
+  },
+  {
+    url: "HC_04689-Enhanced-NR.jpg",
+    date: "2025-08-23T16:17:08",
+    thumbnail: "HC_04689-Enhanced-NR-thumb.webp",
+  },
+  {
+    url: "HC_04503.jpg",
+    date: "2025-08-23T14:43:04",
+    thumbnail: "HC_04503-thumb.webp",
+  },
+  {
+    url: "HC_04492.jpg",
+    date: "2025-08-23T14:41:48",
+    thumbnail: "HC_04492-thumb.webp",
+  },
+  {
+    url: "HC_04240.jpg",
+    date: "2025-08-22T19:33:34",
+    thumbnail: "HC_04240-thumb.webp",
+  },
+  {
+    url: "HC_04209.jpg",
+    date: "2025-08-22T19:26:06",
+    thumbnail: "HC_04209-thumb.webp",
+  },
+  {
+    url: "HC_03936.jpg",
+    date: "2025-08-21T23:09:20",
+    thumbnail: "HC_03936-thumb.webp",
+  },
+  {
+    url: "HC_03350.jpg",
+    date: "2025-08-20T17:24:42",
+    thumbnail: "HC_03350-thumb.webp",
+  },
+  {
+    url: "HC_02986.jpg",
+    date: "2025-08-19T14:59:29",
+    thumbnail: "HC_02986-thumb.webp",
+  },
+  {
+    url: "HC_02978.jpg",
+    date: "2025-08-19T14:58:43",
+    thumbnail: "HC_02978-thumb.webp",
+  },
+  {
+    url: "HC_02946.jpg",
+    date: "2025-08-19T10:28:03",
+    thumbnail: "HC_02946-thumb.webp",
+  },
+  {
     url: "HC_02245.jpg",
     date: "2025-07-12T14:15:47",
     thumbnail: "HC_02245-thumb.webp",

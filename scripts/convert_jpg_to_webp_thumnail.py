@@ -6,9 +6,6 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 
 # Set your favourites folder path
 FAVOURITES_DIR = os.path.join(os.path.dirname(__file__), '../', '', 'favourites')
-# Set output folder for webp files
-OUTPUT_DIR = os.path.join(os.path.dirname(__file__), '../', '', 'favourites_webp')
-
 
 # Compression quality (0-100, lower = smaller file)
 WEBP_QUALITY = 80
@@ -21,7 +18,7 @@ NUM_THREADS = min(8, os.cpu_count() or 4)
 def convert_single_jpg(jpg_path):
     # Get filename without extension
     filename = os.path.splitext(os.path.basename(jpg_path))[0] + '-thumb.webp'
-    webp_path = os.path.join(OUTPUT_DIR, filename)
+    webp_path = os.path.join(os.path.dirname(jpg_path), filename)
     try:
         with Image.open(jpg_path) as img:
             exif = img.info.get('exif')
@@ -43,8 +40,6 @@ def convert_single_jpg(jpg_path):
         print(f"Error converting {os.path.basename(jpg_path)}: {e}")
 
 def convert_jpgs_to_webp_multithread(folder):
-    if not os.path.exists(OUTPUT_DIR):
-        os.makedirs(OUTPUT_DIR)
     jpg_files = [os.path.join(folder, f) for f in os.listdir(folder) if f.lower().endswith('.jpg')]
     if not jpg_files:
         print("No JPG files found.")
