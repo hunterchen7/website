@@ -4,6 +4,8 @@ import ExifReader from "exifreader";
 import { LoadingSpinner } from "./LoadingSpinner";
 
 const S3_PREFIX = "https://photos.hunterchen.ca/";
+const magnifierSize = 300; // px
+const magnifierZoom = 0.75;
 
 export function Lightbox({
   photo,
@@ -19,6 +21,15 @@ export function Lightbox({
   });
   const [isFetching, setIsFetching] = createSignal(false);
   const [exif, setExif] = createSignal<any>({});
+
+  // Magnifier state
+  const [isZoomMode, setIsZoomMode] = createSignal(false);
+  const [magnifierPos, setMagnifierPos] = createSignal({ x: 0, y: 0 });
+
+  const [imgRef, setImgRef] = createSignal<HTMLImageElement | null>(null);
+  const [imgWidth, setImgWidth] = createSignal<number>(0);
+  const [imgHeight, setImgHeight] = createSignal<number>(0);
+  const [objectUrl, setObjectUrl] = createSignal<string | null>(null);
 
   // This effect will run whenever the `photo` prop changes.
   createEffect(() => {
@@ -102,6 +113,19 @@ export function Lightbox({
     });
   });
 
+  createEffect(() => {
+    if (imageBuffer()) {
+      const url = URL.createObjectURL(new Blob([imageBuffer()!]));
+      setObjectUrl(url);
+      onCleanup(() => {
+        URL.revokeObjectURL(url);
+        setObjectUrl(null);
+      });
+    } else {
+      setObjectUrl(null);
+    }
+  });
+
   return (
     <div
       class="fixed inset-0 z-50 bg-black/80 flex items-center justify-center w-full"
@@ -117,13 +141,31 @@ export function Lightbox({
       >
         <div class="relative">
           <img
-            src={
-              imageBuffer()
-                ? URL.createObjectURL(new Blob([imageBuffer()!]))
-                : `${S3_PREFIX}${photo.thumbnail}`
-            }
-            alt={photo.url ?? "Full photo"}
+            ref={setImgRef}
+            src={objectUrl() ?? `${S3_PREFIX}${photo.thumbnail}`}
+            alt="photo"
+            onLoad={(e) => {
+              setImgWidth(e.currentTarget.naturalWidth);
+              setImgHeight(e.currentTarget.naturalHeight);
+            }}
             class="max-h-[92vh] max-w-[95vw] rounded shadow-lg"
+            style={{
+              display: "block",
+              cursor: isZoomMode() ? "zoom-out" : "zoom-in",
+            }}
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsZoomMode(!isZoomMode());
+            }}
+            onMouseMove={(e) => {
+              if (!isZoomMode()) return;
+              const img = imgRef();
+              if (!img) return;
+              const rect = img.getBoundingClientRect();
+              const x = e.clientX - rect.left;
+              const y = e.clientY - rect.top;
+              setMagnifierPos({ x, y });
+            }}
             onContextMenu={(e) => {
               const img = e.currentTarget as HTMLImageElement;
               const originalSrc = img.src;
@@ -135,6 +177,48 @@ export function Lightbox({
               }, 100);
             }}
           />
+          {/* Magnifier lens */}
+          {isZoomMode() && (
+            <div
+              style={{
+                position: "absolute",
+                "pointer-events": "none",
+                left: `${magnifierPos().x - magnifierSize / 2}px`,
+                top: `${magnifierPos().y - magnifierSize / 2}px`,
+                width: `${magnifierSize}px`,
+                height: `${magnifierSize}px`,
+                "box-shadow": "0 0 8px 2px #0008",
+                border: "2px solid #eee",
+                overflow: "hidden",
+                "z-index": 10,
+                "background-image":
+                  imgWidth() > 0 && imgHeight() > 0
+                    ? `url(${objectUrl() ?? S3_PREFIX + photo.thumbnail})`
+                    : undefined,
+                "background-repeat": "no-repeat",
+                "background-size":
+                  imgWidth() > 0 && imgHeight() > 0
+                    ? `${imgWidth() * magnifierZoom}px ${
+                        imgHeight() * magnifierZoom
+                      }px`
+                    : undefined,
+                "background-position":
+                  imgWidth() > 0 && imgHeight() > 0
+                    ? `-${
+                        (magnifierPos().x / (imgRef()?.offsetWidth || 1)) *
+                          imgWidth() *
+                          magnifierZoom -
+                        magnifierSize / 2
+                      }px -${
+                        (magnifierPos().y / (imgRef()?.offsetHeight || 1)) *
+                          imgHeight() *
+                          magnifierZoom -
+                        magnifierSize / 2
+                      }px`
+                    : undefined,
+              }}
+            />
+          )}
           {isFetching() && (
             <span class="absolute inset-0 flex flex-col items-center justify-center">
               <div class="bg-gray-900/50 px-2 pb-2 rounded-lg flex items-center">
