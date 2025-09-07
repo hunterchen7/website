@@ -1,10 +1,29 @@
-import { Title } from "@solidjs/meta";
+import { Title, Meta } from "@solidjs/meta";
 import { Gallery } from "~/components/Gallery";
 
 export default function AirshowGallery() {
+  const previewImage = "https://photos.hunterchen.ca/HC_06821.jpg";
+
   return (
     <>
       <Title>London Airshow</Title>
+      <Meta property="og:title" content="London Airshow" />
+      <Meta
+        property="og:description"
+        content="Hunter's photos from 2025 london airshow 🛩️"
+      />
+      <Meta property="og:type" content="website" />
+      <Meta property="og:image" content={previewImage} />
+      <Meta property="og:image:alt" content="London Airshow photo" />
+
+      <Meta name="twitter:card" content="summary_large_image" />
+      <Meta name="twitter:title" content="London Airshow" />
+      <Meta
+        name="twitter:description"
+        content="Hunter's photos from 2025 london airshow 🛩️"
+      />
+      <Meta name="twitter:image" content={previewImage} />
+
       <Gallery
         manifest={manifest}
         caption="favourite photos from 2025 london airshow 🛩️"
