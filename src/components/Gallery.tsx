@@ -1,0 +1,51 @@
+import { createSignal, Show } from "solid-js";
+import { Photo } from "~/components/Photo";
+import { Lightbox } from "~/components/Lightbox";
+
+export interface GalleryProps {
+  manifest: readonly any[];
+  caption: string;
+  seed?: number;
+}
+
+function seededRandom(seed: number) {
+  let value = seed;
+  return () => {
+    value = (value * 314431) % 24377;
+    return value / 44333;
+  };
+}
+
+function shuffle<T>(array: readonly T[], seed?: number): T[] {
+  if (seed === undefined) return [...array];
+  let arr = [...array];
+  const rand = seededRandom(seed);
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(rand() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+export function Gallery(props: GalleryProps) {
+  const [expanded, setExpanded] = createSignal<any>(null);
+  const shuffled = shuffle(props.manifest, props.seed);
+  return (
+    <main class="text-center p-4 mx-auto font-mono text-violet-200 pb-20 h-screen overflow-y-auto">
+      <h1 class="text-2xl sm:text-4xl font-thin leading-tight mt-2 md:mt-12 mb-8 mx-auto max-w-[14rem] md:max-w-none">
+        gallery
+      </h1>
+      <div class="text-violet-200 mb-4 text-xs md:text-sm">
+        {props.caption}
+      </div>
+      <div class="columns-2 md:columns-3 3xl:columns-4 gap-2 max-w-7xl 3xl:max-w-[100rem] mx-auto">
+        {shuffled.map((photo) => (
+          <Photo photo={photo} onClick={() => setExpanded(photo)} />
+        ))}
+      </div>
+      <Show when={!!expanded()}>
+        <Lightbox photo={expanded()!} onClose={() => setExpanded(null)} />
+      </Show>
+    </main>
+  );
+}

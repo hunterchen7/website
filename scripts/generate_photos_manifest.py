@@ -33,7 +33,7 @@ for filename in os.listdir(FAVOURITES_DIR):
         img_path = os.path.join(FAVOURITES_DIR, filename)
         date = get_exif_date(img_path)
         base_name, ext = os.path.splitext(filename)
-        url = f"{base_name}.webp"
+        url = f"{base_name}.jpg"
         thumbnail = f"{base_name}-thumb.webp"
         photos.append({
             "url": url,
