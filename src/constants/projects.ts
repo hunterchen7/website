@@ -278,28 +278,6 @@ export const projects: ProjectProps[] = [
     images: ["/projects/voyage/image.webp"],
   },
   {
-    title: "F1 finishes predictor",
-    description: "python ML program to predict number of finishes in F1 races",
-    repoUrl: "https://github.com/hunterchen7/f1-finishers-predictor",
-    technologies: [Technology.Python],
-    tags: [Tags.AI],
-    images: ["/projects/f1/image.webp"],
-  },
-  {
-    title: "dataquest 2023",
-    description:
-      "used random forest to predict hotel cancellations with ~90% accuracy; built with Python and scikit-learn for the DataQuest 2023 Hackathon. top 5 finalist out of ~50 teams with only 2 team members.",
-    demoUrl:
-      "https://devpost.com/software/random-forest-to-predict-hotel-cancellations",
-    repoUrl: "https://github.com/hunterchen7/DataQuest-2023",
-    technologies: [Technology.Python],
-    tags: [Tags.AI],
-    images: [
-      "/projects/dataquest/image.webp",
-      "/projects/dataquest/slide.webp",
-    ],
-  },
-  {
     title: "ballotbox",
     description:
       "anonymous data marketplace using zero-knowledge proofs; built for the 2023 FVM spacewarp hackathon.",

@@ -1,12 +1,11 @@
 import { createSignal, onMount, onCleanup } from "solid-js";
-import { Eye, EyeOff } from "lucide-solid";
 
 export default function Bird() {
   const [position, setPosition] = createSignal({ x: 100, y: 100 });
   const [velocity, setVelocity] = createSignal({ x: 2, y: 0 });
   const [mousePosition, setMousePosition] = createSignal({ x: 0, y: 0 });
   // SSR-safe: initialize with default, update from localStorage in onMount
-  const [showBird, setShowBird] = createSignal(true);
+  const [showBird, setShowBird] = createSignal(false);
 
   let animationId: number;
   let time = 0;
@@ -160,7 +159,7 @@ export default function Bird() {
         onClick={toggleShowBird}
         aria-label={showBird() ? "Hide bird" : "Show bird"}
       >
-        {showBird() ? <Eye size={24} /> : <EyeOff size={24} />}
+        {showBird() ? <BirdIcon /> : <CrossedBirdIcon />}
       </button>
       {showBird() && (
         <div
@@ -181,5 +180,101 @@ export default function Bird() {
         </div>
       )}
     </>
+  );
+}
+
+const birdPaths = (
+  <>
+    <path
+      d="M16 7h.01"
+      stroke="currentColor"
+      {...{
+        "stroke-width": 2,
+        "stroke-linecap": "round",
+        "stroke-linejoin": "round",
+      }}
+    />
+    <path
+      d="M3.4 18H12a8 8 0 0 0 8-8V7a4 4 0 0 0-7.28-2.3L2 20"
+      stroke="currentColor"
+      {...{
+        "stroke-width": 2,
+        "stroke-linecap": "round",
+        "stroke-linejoin": "round",
+      }}
+    />
+    <path
+      d="m20 7 2 .5-2 .5"
+      stroke="currentColor"
+      {...{
+        "stroke-width": 2,
+        "stroke-linecap": "round",
+        "stroke-linejoin": "round",
+      }}
+    />
+    <path
+      d="M10 18v3"
+      stroke="currentColor"
+      {...{
+        "stroke-width": 2,
+        "stroke-linecap": "round",
+        "stroke-linejoin": "round",
+      }}
+    />
+    <path
+      d="M14 17.75V21"
+      stroke="currentColor"
+      {...{
+        "stroke-width": 2,
+        "stroke-linecap": "round",
+        "stroke-linejoin": "round",
+      }}
+    />
+    <path
+      d="M7 18a6 6 0 0 0 3.84-10.61"
+      stroke="currentColor"
+      {...{
+        "stroke-width": 2,
+        "stroke-linecap": "round",
+        "stroke-linejoin": "round",
+      }}
+    />
+  </>
+);
+
+function BirdIcon(props: { size?: number }) {
+  const s = props.size ?? 24;
+  return (
+    <svg
+      width={s}
+      height={s}
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden
+    >
+      {birdPaths}
+    </svg>
+  );
+}
+
+function CrossedBirdIcon(props: { size?: number }) {
+  const s = props.size ?? 24;
+  return (
+    <svg
+      width={s}
+      height={s}
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden
+    >
+      {birdPaths}
+      <path
+        d="M3 3l18 18"
+        stroke="currentColor"
+        {...{ "stroke-width": 2, "stroke-linecap": "round" }}
+      />
+    </svg>
   );
 }
