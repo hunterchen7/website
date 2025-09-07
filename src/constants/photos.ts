@@ -335,4 +335,24 @@ export const manifest: readonly Photo[] = [
     date: "2024-08-03T21:51:10",
     thumbnail: "DSC05587-Enhanced-NR-2-thumb.webp",
   },
+  {
+    url: "HC_05096.jpg",
+    date: "2025-08-23T22:35:20",
+    thumbnail: "HC_05096-thumb.webp",
+  },
+  {
+    url: "HC_04402~2.jpg",
+    date: "2025-08-23T13:02:48",
+    thumbnail: "HC_04402~2-thumb.webp",
+  },
+  {
+    url: "HC_03358.jpg",
+    date: "2025-08-20T17:27:07",
+    thumbnail: "HC_03358-thumb.webp",
+  },
+  {
+    url: "HC_00866.jpg",
+    date: "2025-07-01T17:16:06",
+    thumbnail: "HC_00866-thumb.webp",
+  },
 ] as const;
