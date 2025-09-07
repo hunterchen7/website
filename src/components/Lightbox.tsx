@@ -4,7 +4,7 @@ import ExifReader from "exifreader";
 import { LoadingSpinner } from "./LoadingSpinner";
 
 const S3_PREFIX = "https://photos.hunterchen.ca/";
-const magnifierSize = 300; // px
+const magnifierSize = 500; // px
 const magnifierZoom = 0.75;
 
 export function Lightbox({
