@@ -1,4 +1,4 @@
-import { createSignal, onCleanup, createEffect } from "solid-js";
+import { createSignal, onCleanup, createEffect, onMount, JSX } from "solid-js";
 import { type Photo as PhotoType } from "~/constants/photos";
 import ExifReader from "exifreader";
 import { LoadingSpinner } from "./LoadingSpinner";
@@ -30,6 +30,57 @@ export function Lightbox({
   const [imgWidth, setImgWidth] = createSignal<number>(0);
   const [imgHeight, setImgHeight] = createSignal<number>(0);
   const [objectUrl, setObjectUrl] = createSignal<string | null>(null);
+
+  const [isMobile, setIsMobile] = createSignal(false);
+  onMount(() => {
+    setIsMobile(window.matchMedia("(pointer: coarse)").matches);
+  });
+
+  const magnifierStyle = (): JSX.CSSProperties => {
+    if (!isZoomMode() || imgWidth() <= 0 || imgHeight() <= 0) {
+      return { display: "none" };
+    }
+
+    const img = imgRef();
+    if (!img) return { display: "none" };
+
+    // 1. Clamp the cursor position to stay within the image boundaries
+    const cursorX = Math.max(0, Math.min(magnifierPos().x, img.offsetWidth));
+    const cursorY = Math.max(0, Math.min(magnifierPos().y, img.offsetHeight));
+
+    // 2. Calculate the lens's top-left position based on the clamped cursor
+    const lensX = cursorX - magnifierSize / 2;
+    const lensY = cursorY - magnifierSize / 2;
+
+    // 3. Calculate background position based on the clamped cursor position
+    const bgX =
+      -(cursorX / img.offsetWidth) * (imgWidth() * magnifierZoom) +
+      magnifierSize / 2;
+    const bgY =
+      -(cursorY / img.offsetHeight) * (imgHeight() * magnifierZoom) +
+      magnifierSize / 2;
+
+    return {
+      position: "absolute",
+      "pointer-events": "none",
+      left: `${lensX}px`,
+      top: `${lensY}px`,
+      width: `${magnifierSize}px`,
+      height: `${magnifierSize}px`,
+      "box-shadow": "0 0 8px 2px #0008",
+      border: "2px solid #eee",
+      overflow: "hidden",
+      "z-index": 10,
+      "background-image": `url(${
+        objectUrl() ?? S3_PREFIX + photo.thumbnail
+      })`,
+      "background-repeat": "no-repeat",
+      "background-size": `${imgWidth() * magnifierZoom}px ${
+        imgHeight() * magnifierZoom
+      }px`,
+      "background-position": `${bgX}px ${bgY}px`,
+    };
+  };
 
   // This effect will run whenever the `photo` prop changes.
   createEffect(() => {
@@ -126,6 +177,25 @@ export function Lightbox({
     }
   });
 
+  createEffect(() => {
+    if (!isZoomMode()) return;
+
+    const handleMouseMove = (e: MouseEvent) => {
+      const img = imgRef();
+      if (!img) return;
+      const rect = img.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      setMagnifierPos({ x, y });
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+
+    onCleanup(() => {
+      window.removeEventListener("mousemove", handleMouseMove);
+    });
+  });
+
   return (
     <div
       class="fixed inset-0 z-50 bg-black/80 flex items-center justify-center w-full"
@@ -139,7 +209,15 @@ export function Lightbox({
         class="relative flex flex-col items-center"
         onClick={(e) => e.stopPropagation()}
       >
-        <div class="relative">
+        <div class="relative" onMouseMove={(e) => {
+              if (!isZoomMode()) return;
+              const img = imgRef();
+              if (!img) return;
+              const rect = img.getBoundingClientRect();
+              const x = e.clientX - rect.left;
+              const y = e.clientY - rect.top;
+              setMagnifierPos({ x, y });
+            }}>
           <img
             ref={setImgRef}
             src={objectUrl() ?? `${S3_PREFIX}${photo.thumbnail}`}
@@ -151,20 +229,21 @@ export function Lightbox({
             class="max-h-[92vh] max-w-[95vw] rounded shadow-lg"
             style={{
               display: "block",
-              cursor: isZoomMode() ? "zoom-out" : "zoom-in",
+              cursor: !isMobile() && isZoomMode() ? "zoom-out" : isMobile() ? "default" : "zoom-in",
             }}
             onClick={(e) => {
+              if (isMobile()) return;
               e.stopPropagation();
+              if (!isZoomMode()) {
+                const img = imgRef();
+                if (img) {
+                  const rect = img.getBoundingClientRect();
+                  const x = e.clientX - rect.left;
+                  const y = e.clientY - rect.top;
+                  setMagnifierPos({ x, y });
+                }
+              }
               setIsZoomMode(!isZoomMode());
-            }}
-            onMouseMove={(e) => {
-              if (!isZoomMode()) return;
-              const img = imgRef();
-              if (!img) return;
-              const rect = img.getBoundingClientRect();
-              const x = e.clientX - rect.left;
-              const y = e.clientY - rect.top;
-              setMagnifierPos({ x, y });
             }}
             onContextMenu={(e) => {
               const img = e.currentTarget as HTMLImageElement;
@@ -178,47 +257,7 @@ export function Lightbox({
             }}
           />
           {/* Magnifier lens */}
-          {isZoomMode() && (
-            <div
-              style={{
-                position: "absolute",
-                "pointer-events": "none",
-                left: `${magnifierPos().x - magnifierSize / 2}px`,
-                top: `${magnifierPos().y - magnifierSize / 2}px`,
-                width: `${magnifierSize}px`,
-                height: `${magnifierSize}px`,
-                "box-shadow": "0 0 8px 2px #0008",
-                border: "2px solid #eee",
-                overflow: "hidden",
-                "z-index": 10,
-                "background-image":
-                  imgWidth() > 0 && imgHeight() > 0
-                    ? `url(${objectUrl() ?? S3_PREFIX + photo.thumbnail})`
-                    : undefined,
-                "background-repeat": "no-repeat",
-                "background-size":
-                  imgWidth() > 0 && imgHeight() > 0
-                    ? `${imgWidth() * magnifierZoom}px ${
-                        imgHeight() * magnifierZoom
-                      }px`
-                    : undefined,
-                "background-position":
-                  imgWidth() > 0 && imgHeight() > 0
-                    ? `-${
-                        (magnifierPos().x / (imgRef()?.offsetWidth || 1)) *
-                          imgWidth() *
-                          magnifierZoom -
-                        magnifierSize / 2
-                      }px -${
-                        (magnifierPos().y / (imgRef()?.offsetHeight || 1)) *
-                          imgHeight() *
-                          magnifierZoom -
-                        magnifierSize / 2
-                      }px`
-                    : undefined,
-              }}
-            />
-          )}
+          {isZoomMode() && <div style={magnifierStyle()} />}
           {isFetching() && (
             <span class="absolute inset-0 flex flex-col items-center justify-center">
               <div class="bg-gray-900/50 px-2 pb-2 rounded-lg flex items-center">
