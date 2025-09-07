@@ -1,9 +1,10 @@
-import { createSignal, Show } from "solid-js";
+import { createSignal, Show, onCleanup, createEffect } from "solid-js";
+import { Photo as PhotoType } from "~/constants/photos";
 import { Photo } from "~/components/Photo";
 import { Lightbox } from "~/components/Lightbox";
 
 export interface GalleryProps {
-  manifest: readonly any[];
+  manifest: readonly PhotoType[];
   caption: string;
   seed?: number;
 }
@@ -28,8 +29,38 @@ function shuffle<T>(array: readonly T[], seed?: number): T[] {
 }
 
 export function Gallery(props: GalleryProps) {
-  const [expanded, setExpanded] = createSignal<any>(null);
+  const [expanded, setExpanded] = createSignal<PhotoType | null>(null);
   const shuffled = shuffle(props.manifest, props.seed);
+
+  const handleKeyDown = (e: KeyboardEvent) => {
+    if (!expanded()) return;
+
+    const currentIndex = shuffled.findIndex((p) => p.url === expanded()?.url);
+
+    if (e.key === "ArrowRight") {
+      if (currentIndex < shuffled.length - 1) {
+        setExpanded(null);
+        setTimeout(() => setExpanded(shuffled[currentIndex + 1]), 0);
+      }
+    } else if (e.key === "ArrowLeft") {
+      if (currentIndex > 0) {
+        setExpanded(null);
+        setTimeout(() => setExpanded(shuffled[currentIndex - 1]), 0);
+      }
+    } else if (e.key === "Escape") {
+      setExpanded(null);
+    }
+  };
+
+  createEffect(() => {
+    if (expanded()) {
+      document.addEventListener("keydown", handleKeyDown);
+    } else {
+      document.removeEventListener("keydown", handleKeyDown);
+    }
+    onCleanup(() => document.removeEventListener("keydown", handleKeyDown));
+  });
+
   return (
     <main class="text-center p-4 mx-auto font-mono text-violet-200 pb-20 h-screen overflow-y-auto">
       <h1 class="text-2xl sm:text-4xl font-thin leading-tight mt-2 md:mt-12 mb-8 mx-auto max-w-[14rem] md:max-w-none">
