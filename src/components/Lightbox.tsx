@@ -2,6 +2,7 @@ import { createSignal, onCleanup, createEffect, onMount, JSX } from "solid-js";
 import { type Photo as PhotoType } from "~/constants/photos";
 import ExifReader from "exifreader";
 import { LoadingSpinner } from "./LoadingSpinner";
+import { Download, Info, ZoomIn, ZoomOut } from "lucide-solid";
 
 const S3_PREFIX = "https://photos.hunterchen.ca/";
 const magnifierSize = 500; // px
@@ -133,8 +134,13 @@ export function Lightbox({
           setImageBuffer(buffer.buffer);
           try {
             const tags = ExifReader.load(buffer.buffer);
+            console.log("EXIF tags:", tags);
+            const make = tags.Make?.description || "";
+            const model = tags.Model?.description || "";
+            const fullModel =
+              make && model ? `${make} ${model}` : make || model;
             setExif({
-              model: tags.Make?.description + " " + tags.Model?.description,
+              model: fullModel,
               iso: tags.ISOSpeedRatings?.description,
               shutter: tags.ExposureTime?.description,
               aperture: tags.FNumber?.description,
@@ -204,7 +210,7 @@ export function Lightbox({
       }}
     >
       <div
-        class="relative flex flex-col items-center"
+        class="relative flex flex-col items-center bg-violet-900/30 rounded-lg border border-slate-300/20"
         onClick={(e) => e.stopPropagation()}
       >
         <div
@@ -227,7 +233,7 @@ export function Lightbox({
               setImgWidth(e.currentTarget.naturalWidth);
               setImgHeight(e.currentTarget.naturalHeight);
             }}
-            class="max-h-[92vh] max-w-[95vw] rounded shadow-lg"
+            class="max-h-[92vh] max-w-[95vw] rounded-lg shadow-lg"
             style={{
               display: "block",
               cursor:
@@ -278,14 +284,47 @@ export function Lightbox({
             </span>
           )}
         </div>
-        <span class="text-xs text-violet-300 mt-2 font-mono flex flex-col sm:flex-row justify-between w-full">
-          {photo.date ? new Date(photo.date).toLocaleString() : ""}
-          <div>
-            {exif().model && <span>{exif().model} |</span>}
-            {exif().iso && <span> ISO {exif().iso} |</span>}
-            {exif().shutter && <span> {exif().shutter}s |</span>}
-            {exif().aperture && <span> {exif().aperture} |</span>}
-            {exif().focalLength && <span> {exif().focalLength} </span>}
+        <span class="text-xs text-violet-200 font-mono flex flex-col sm:flex-row justify-between w-full p-1">
+          <div class="flex flex-col sm:flex-row sm:gap-2">
+            <div class="border-violet-300">
+              {photo.date ? new Date(photo.date).toLocaleString() : ""}
+              {exif().iso && <span> | ISO {exif().iso} |</span>}
+              {exif().shutter && <span> {exif().shutter}s |</span>}
+              {exif().aperture && <span> {exif().aperture} |</span>}
+              {exif().focalLength && <span> {exif().focalLength} </span>}
+            </div>
+          </div>
+          <div class="flex justify-center mt-1 sm:mt-0 gap-1">
+            {!isMobile() &&
+              (!isZoomMode() ? (
+                <ZoomIn
+                  class="inline h-4 w-4 cursor-pointer hover:text-purple-400"
+                  onClick={() => setIsZoomMode(true)}
+                />
+              ) : (
+                <ZoomOut
+                  class="inline h-4 w-4 cursor-pointer hover:text-purple-400"
+                  onClick={() => setIsZoomMode(false)}
+                />
+              ))}
+            <Info class="inline h-4 w-4 cursor-pointer hover:text-purple-400" />
+            <Download
+              class="inline h-4 w-4 cursor-pointer hover:text-purple-400"
+              onClick={() => {
+                fetch(`${S3_PREFIX}${photo.url}`)
+                  .then((response) => response.blob())
+                  .then((blob) => {
+                    const url = URL.createObjectURL(blob);
+                    const link = document.createElement("a");
+                    link.href = url;
+                    link.download = photo.url;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    URL.revokeObjectURL(url);
+                  });
+              }}
+            />
           </div>
         </span>
       </div>
