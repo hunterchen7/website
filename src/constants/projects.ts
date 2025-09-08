@@ -107,7 +107,9 @@ export const projects: ProjectProps[] = [
     repoUrl: "https://github.com/hunterchen7/stabl",
     technologies: [Technology.Python],
     tags: [Tags.AI, Tags.fun],
-    images: ["/projects/stabl/demo.gif"],
+    images: [
+      "https://raw.githubusercontent.com/hunterchen7/stabl/main/examples/f18_1_visualization.gif",
+    ],
     favourite: true,
   },
   {
