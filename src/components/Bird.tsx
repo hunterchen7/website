@@ -11,7 +11,7 @@ export default function Bird() {
   let time = 0;
 
   const birdSize = 10;
-  const flightSpeed = 1.5;
+  const flightSpeed = 2;
   const turnStrength = 0.05;
   const verticalVariation = 2;
   const mouseAvoidDistance = 400;

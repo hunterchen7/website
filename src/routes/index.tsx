@@ -13,7 +13,7 @@ export default function Home() {
         I&apos;m Hunter, and I like to build things.
       </p>
       <img
-        src="/image.png"
+        src="/image.webp"
         alt="Profile"
         class="rounded-full w-72 h-72 mx-auto mb-4"
         draggable="false"

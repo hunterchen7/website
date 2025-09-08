@@ -31,7 +31,7 @@ export default function About() {
         previously, I contracted as a frontend developer @{" "}
         <Link href="https://aramid.finance" external>
           <img
-            src="/aramid.png"
+            src="/aramid.webp"
             alt="aramid finance"
             class="inline w-18 rounded-lg hover:scale-105 transition-all -mr-1.5"
           />
@@ -52,7 +52,7 @@ export default function About() {
       <div class="mx-auto text-sm">
         <div class="relative h-64 max-w-md aspect-[3/2] mx-auto mb-1 rounded-xl overflow-hidden">
           <img
-            src="/climb.png"
+            src="/climb.webp"
             alt="Rock Climbing"
             class="absolute inset-0 w-full h-full object-cover"
           />
