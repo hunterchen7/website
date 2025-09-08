@@ -71,9 +71,7 @@ export function Lightbox({
       border: "2px solid #eee",
       overflow: "hidden",
       "z-index": 10,
-      "background-image": `url(${
-        objectUrl() ?? S3_PREFIX + photo.thumbnail
-      })`,
+      "background-image": `url(${objectUrl() ?? S3_PREFIX + photo.thumbnail})`,
       "background-repeat": "no-repeat",
       "background-size": `${imgWidth() * magnifierZoom}px ${
         imgHeight() * magnifierZoom
@@ -209,15 +207,18 @@ export function Lightbox({
         class="relative flex flex-col items-center"
         onClick={(e) => e.stopPropagation()}
       >
-        <div class="relative" onMouseMove={(e) => {
-              if (!isZoomMode()) return;
-              const img = imgRef();
-              if (!img) return;
-              const rect = img.getBoundingClientRect();
-              const x = e.clientX - rect.left;
-              const y = e.clientY - rect.top;
-              setMagnifierPos({ x, y });
-            }}>
+        <div
+          class="relative"
+          onMouseMove={(e) => {
+            if (!isZoomMode()) return;
+            const img = imgRef();
+            if (!img) return;
+            const rect = img.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            setMagnifierPos({ x, y });
+          }}
+        >
           <img
             ref={setImgRef}
             src={objectUrl() ?? `${S3_PREFIX}${photo.thumbnail}`}
@@ -229,7 +230,12 @@ export function Lightbox({
             class="max-h-[92vh] max-w-[95vw] rounded shadow-lg"
             style={{
               display: "block",
-              cursor: !isMobile() && isZoomMode() ? "zoom-out" : isMobile() ? "default" : "zoom-in",
+              cursor:
+                !isMobile() && isZoomMode()
+                  ? "zoom-out"
+                  : isMobile()
+                    ? "default"
+                    : "zoom-in",
             }}
             onClick={(e) => {
               if (isMobile()) return;
@@ -272,13 +278,6 @@ export function Lightbox({
             </span>
           )}
         </div>
-        <button
-          class="absolute top-2 right-2 bg-violet-900/80 text-violet-200 rounded-full h-8 w-8 text-lg font-bold shadow hover:bg-violet-700/80 cursor-pointer p-auto"
-          onClick={onClose}
-          aria-label="Close"
-        >
-          x
-        </button>
         <span class="text-xs text-violet-300 mt-2 font-mono flex flex-col sm:flex-row justify-between w-full">
           {photo.date ? new Date(photo.date).toLocaleString() : ""}
           <div>
