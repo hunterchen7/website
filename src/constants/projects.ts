@@ -102,9 +102,17 @@ export const projects: ProjectProps[] = [
     favourite: true,
   },
   {
+    title: "stabl",
+    description: `a python program that stabilizes video footage by tracking a subject & cropping to center on it. uses YOLOv8, OpenCV and FFMPEG. built to stabilize some footage I shot from <a class="text-violet-300 hover:text-violet-400" href='/airshow'>London Airshow 2025</a>.`,
+    repoUrl: "https://github.com/hunterchen7/stabl",
+    technologies: [Technology.Python],
+    tags: [Tags.AI, Tags.fun],
+    images: ["/projects/stabl/demo.gif"],
+    favourite: true,
+  },
+  {
     title: "chessbench LLM",
-    description:
-      "play chess against llama-4-scout; I pay for it, please be nice.. also contains benchmarks from different LLMs playing chess puzzles, with their Elo ratings, models also play games against each other. React frontend, TS cloudflare worker backend. Python to run the games and aggregate 1,000,000+ puzzles from Lichess's database.",
+    description: `play chess against llama-4-scout; I pay for it, please be nice.. also contains benchmarks from different LLMs playing chess puzzles, with their Elo ratings, models also play games against each other. React frontend, TS cloudflare worker backend. Python to run the games and aggregate 1,000,000+ puzzles from <a href="https://database.lichess.org/#puzzles" class="text-violet-300 hover:text-violet-400">Lichess's database</a>.`,
     repoUrl: "https://github.com/hunterchen7/chessbench-llm",
     demoUrl: "https://chessbench.pages.dev/",
     technologies: [Technology.TypeScript, Technology.React, Technology.Python],
@@ -269,7 +277,7 @@ export const projects: ProjectProps[] = [
   {
     title: "voyage",
     description:
-      "a WIP (abandoned) magic-bitboard chess move-generator intended for use in bluefin (my WIP chess engine). written in Rust. based on a C++ move generator called Gigantua.",
+      'a WIP (abandoned) magic-bitboard chess move-generator intended for use in bluefin (my WIP chess engine). written in Rust. based on a C++ move generator called <a href="https://github.com/Gigantua/Gigantua" class="text-violet-300 hover:text-violet-400">Gigantua</a>.',
     repoUrl: "https://github.com/bluefin-chess/voyage",
     otherUrl:
       "https://www.codeproject.com/Articles/5313417/Worlds-Fastest-Bitboard-Chess-Movegenerator",
@@ -305,7 +313,7 @@ export const projects: ProjectProps[] = [
   {
     title: "spacestagram",
     description:
-      '"image sharing from the final frontier" - see some images from NASA’s API, built for Shopify Frontend Developer Intern Challenge',
+      '"image sharing from the final frontier" - see some images from NASA’s API, built for Shopify\'s 2021 Frontend Developer Intern Challenge',
     repoUrl: "https://github.com/hunterchen7/spacestagram",
     demoUrl: "https://spacestagram.hunterchen.ca",
     technologies: [Technology.JavaScript, Technology.React],

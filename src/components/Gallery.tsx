@@ -1,3 +1,10 @@
+function CollectionLink({ href, children }: { href: string; children: any }) {
+  return (
+    <a href={href} class="underline hover:text-violet-300 text-violet-400">
+      {children}
+    </a>
+  );
+}
 import { createSignal, Show, onCleanup, createEffect } from "solid-js";
 import { Photo as PhotoType } from "~/constants/photos";
 import { Photo } from "~/components/Photo";
@@ -68,7 +75,12 @@ export function Gallery(props: GalleryProps) {
       </h1>
       <div class="text-violet-200 mb-4 text-xs md:text-sm">
         {props.caption}
+        <div class="mt-2 space-x-2">
+          collections: <CollectionLink href="/gallery">all</CollectionLink>
+          <CollectionLink href="/airshow">airshow ✈️</CollectionLink>
+        </div>
       </div>
+
       <div class="columns-2 md:columns-3 3xl:columns-4 gap-2 max-w-7xl 3xl:max-w-[100rem] mx-auto">
         {shuffled.map((photo) => (
           <Photo photo={photo} onClick={() => setExpanded(photo)} />

@@ -26,7 +26,7 @@ export default function AirshowGallery() {
 
       <Gallery
         manifest={manifest}
-        caption="favourite photos from 2025 london airshow 🛩️ (taken on Sony FE 200-600mm)"
+        caption="favourite photos from the 2025 London Airshow 🛩️ (borrowed a Sony FE 200-600mm G 💜)"
         seed={6}
       />
     </>
