@@ -2,6 +2,19 @@ import { createSignal, onCleanup, createEffect, onMount, JSX } from "solid-js";
 import { type Photo as PhotoType } from "~/constants/photos";
 import ExifReader from "exifreader";
 import { LoadingSpinner } from "./LoadingSpinner";
+import {
+  Download,
+  Info,
+  ZoomIn,
+  ZoomOut,
+  Camera,
+  Aperture,
+  Image,
+  Telescope,
+  Clock,
+  File,
+} from "lucide-solid";
+import { formatDate } from "~/utils/date";
 
 const S3_PREFIX = "https://photos.hunterchen.ca/";
 const magnifierSize = 500; // px
@@ -30,8 +43,9 @@ export function Lightbox({
   const [imgWidth, setImgWidth] = createSignal<number>(0);
   const [imgHeight, setImgHeight] = createSignal<number>(0);
   const [objectUrl, setObjectUrl] = createSignal<string | null>(null);
-
+  const [drawerOpen, setDrawerOpen] = createSignal(false);
   const [isMobile, setIsMobile] = createSignal(false);
+
   onMount(() => {
     setIsMobile(window.matchMedia("(pointer: coarse)").matches);
   });
@@ -71,9 +85,7 @@ export function Lightbox({
       border: "2px solid #eee",
       overflow: "hidden",
       "z-index": 10,
-      "background-image": `url(${
-        objectUrl() ?? S3_PREFIX + photo.thumbnail
-      })`,
+      "background-image": `url(${objectUrl() ?? S3_PREFIX + photo.thumbnail})`,
       "background-repeat": "no-repeat",
       "background-size": `${imgWidth() * magnifierZoom}px ${
         imgHeight() * magnifierZoom
@@ -135,12 +147,25 @@ export function Lightbox({
           setImageBuffer(buffer.buffer);
           try {
             const tags = ExifReader.load(buffer.buffer);
+            const make = tags.Make?.description || "";
+            const model = tags.Model?.description || "";
+            const camera = make && model ? `${make} ${model}` : make || model;
+            const width = tags["Image Width"]?.value;
+            const height = tags["Image Height"]?.value;
+            const megapixels =
+              width && height
+                ? ((width * height) / 1_000_000).toFixed(1)
+                : null;
             setExif({
-              model: tags.Make?.description + " " + tags.Model?.description,
+              camera,
               iso: tags.ISOSpeedRatings?.description,
               shutter: tags.ExposureTime?.description,
               aperture: tags.FNumber?.description,
               focalLength: tags.FocalLength35efl?.description,
+              lensModel: tags.LensModel?.description,
+              width,
+              height,
+              megapixels,
             });
           } catch (err) {
             setExif({});
@@ -198,7 +223,7 @@ export function Lightbox({
 
   return (
     <div
-      class="fixed inset-0 z-50 bg-black/80 flex items-center justify-center w-full"
+      class="fixed inset-0 z-50 bg-black/90 flex items-center justify-center w-full"
       onClick={onClose}
       tabIndex={0}
       onKeyDown={(e) => {
@@ -206,18 +231,21 @@ export function Lightbox({
       }}
     >
       <div
-        class="relative flex flex-col items-center"
+        class="relative flex flex-col items-center bg-violet-900/30 rounded-lg border border-slate-300/20"
         onClick={(e) => e.stopPropagation()}
       >
-        <div class="relative" onMouseMove={(e) => {
-              if (!isZoomMode()) return;
-              const img = imgRef();
-              if (!img) return;
-              const rect = img.getBoundingClientRect();
-              const x = e.clientX - rect.left;
-              const y = e.clientY - rect.top;
-              setMagnifierPos({ x, y });
-            }}>
+        <div
+          class="relative"
+          onMouseMove={(e) => {
+            if (!isZoomMode()) return;
+            const img = imgRef();
+            if (!img) return;
+            const rect = img.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            setMagnifierPos({ x, y });
+          }}
+        >
           <img
             ref={setImgRef}
             src={objectUrl() ?? `${S3_PREFIX}${photo.thumbnail}`}
@@ -226,10 +254,15 @@ export function Lightbox({
               setImgWidth(e.currentTarget.naturalWidth);
               setImgHeight(e.currentTarget.naturalHeight);
             }}
-            class="max-h-[92vh] max-w-[95vw] rounded shadow-lg"
+            class="max-h-[92vh] max-w-[95vw] rounded-lg shadow-lg"
             style={{
               display: "block",
-              cursor: !isMobile() && isZoomMode() ? "zoom-out" : isMobile() ? "default" : "zoom-in",
+              cursor:
+                !isMobile() && isZoomMode()
+                  ? "zoom-out"
+                  : isMobile()
+                    ? "default"
+                    : "zoom-in",
             }}
             onClick={(e) => {
               if (isMobile()) return;
@@ -272,23 +305,135 @@ export function Lightbox({
             </span>
           )}
         </div>
-        <button
-          class="absolute top-2 right-2 bg-violet-900/80 text-violet-200 rounded-full h-8 w-8 text-lg font-bold shadow hover:bg-violet-700/80 cursor-pointer p-auto"
-          onClick={onClose}
-          aria-label="Close"
-        >
-          x
-        </button>
-        <span class="text-xs text-violet-300 mt-2 font-mono flex flex-col sm:flex-row justify-between w-full">
-          {photo.date ? new Date(photo.date).toLocaleString() : ""}
-          <div>
-            {exif().model && <span>{exif().model} |</span>}
-            {exif().iso && <span> ISO {exif().iso} |</span>}
-            {exif().shutter && <span> {exif().shutter}s |</span>}
-            {exif().aperture && <span> {exif().aperture} |</span>}
-            {exif().focalLength && <span> {exif().focalLength} </span>}
+        <span class="text-xs text-violet-200 font-mono flex flex-col sm:flex-row justify-between w-full p-1">
+          <div class="flex flex-col sm:flex-row sm:gap-2">
+            <div class="border-violet-300">
+              {photo.date ? formatDate(photo.date) : ""}
+              {exif().iso && <span> | ISO {exif().iso} |</span>}
+              {exif().shutter && <span> {exif().shutter}s |</span>}
+              {exif().aperture && <span> {exif().aperture} |</span>}
+              {exif().focalLength && <span> {exif().focalLength} </span>}
+            </div>
           </div>
+          {downloadProgress().loaded === downloadProgress().total && (
+            <div class="flex justify-center mt-1 sm:mt-0 gap-1">
+              {!isMobile() &&
+                (!isZoomMode() ? (
+                  <ZoomIn
+                    class="inline h-4 w-4 cursor-pointer hover:text-purple-400"
+                    onClick={() => setIsZoomMode(true)}
+                  />
+                ) : (
+                  <ZoomOut
+                    class="inline h-4 w-4 cursor-pointer hover:text-purple-400"
+                    onClick={() => setIsZoomMode(false)}
+                  />
+                ))}
+              <Info
+                class="inline h-4 w-4 cursor-pointer hover:text-purple-400"
+                onClick={() => setDrawerOpen(true)}
+              />
+              <Download
+                class="inline h-4 w-4 cursor-pointer hover:text-purple-400"
+                onClick={() => {
+                  fetch(`${S3_PREFIX}${photo.url}`)
+                    .then((response) => response.blob())
+                    .then((blob) => {
+                      const url = URL.createObjectURL(blob);
+                      const link = document.createElement("a");
+                      link.href = url;
+                      link.download = photo.url;
+                      document.body.appendChild(link);
+                      link.click();
+                      document.body.removeChild(link);
+                      URL.revokeObjectURL(url);
+                    });
+                }}
+              />
+            </div>
+          )}
         </span>
+        {/* Info Drawer Overlay and Drawer (kept mounted so transitions animate) */}
+        <div
+          class={`fixed inset-0 z-[99] transition-opacity duration-300 ease-in-out overflow-y-none ${
+            drawerOpen() ? "opacity-100" : "opacity-0 pointer-events-none"
+          }`}
+          onClick={() => setDrawerOpen(false)}
+          aria-hidden={!drawerOpen()}
+        >
+          <div class="absolute inset-0 bg-black/80" />
+        </div>
+
+        <aside
+          class={`overflow-y-none fixed right-0 top-0 h-full w-96 bg-gray-900/95 shadow-lg z-[100] flex flex-col p-6 transition-transform duration-300 ease-in-out ${
+            drawerOpen() ? "translate-x-0" : "translate-x-full"
+          }`}
+          aria-hidden={!drawerOpen()}
+        >
+          <h2 class="text-lg text-violet-200 mb-4">Photo Info</h2>
+
+          <div class="text-sm text-violet-200 space-y-2 text-left">
+            {photo.url ? (
+              <div class="flex gap-2">
+                <File class="w-4 h-4 mt-[2px]" />
+                <a
+                  href={`${S3_PREFIX}${photo.url}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="hover:text-purple-400 break-all"
+                >
+                  {photo.url}
+                </a>
+                <div>
+                  ({(downloadProgress().total / 1024 / 1024).toFixed(2)} MB)
+                </div>
+              </div>
+            ) : (
+              ""
+            )}
+            {photo.date ? (
+              <div class="flex gap-2">
+                <Clock class="w-4 h-4 mt-[2px]" />
+                {formatDate(photo.date)}
+              </div>
+            ) : (
+              ""
+            )}
+            {exif().camera && (
+              <div class="flex gap-2">
+                <Camera class="w-4 h-4 mt-0.5" />
+                {exif().camera}
+              </div>
+            )}
+            {exif().lensModel && (
+              <div class="flex gap-2">
+                <Telescope class="w-4 h-4 mt-0.5" />
+                {exif().lensModel}
+              </div>
+            )}
+            {(exif().shutter ||
+              exif().aperture ||
+              exif().iso ||
+              exif().focalLength) && (
+              <div class="flex space-x-2 justify-left">
+                <Aperture class="w-4 h-4 mt-0.5" />
+                {exif().shutter && <div>{exif().shutter}s</div>}
+                {exif().aperture && <div>{exif().aperture}</div>}
+                {exif().iso && <div>ISO{exif().iso}</div>}
+                {exif().focalLength && <div>{exif().focalLength}</div>}
+              </div>
+            )}
+            {exif().width && exif().height && (
+              <div class="flex gap-2">
+                <Image class="w-4 h-4" />
+                {exif().width} x {exif().height} ({exif().megapixels} MP)
+              </div>
+            )}
+          </div>
+          <div class="mt-auto text-sm text-gray-500 mb-4">
+            2025 - Hunter Chen
+          </div>
+        </aside>
       </div>
     </div>
   );

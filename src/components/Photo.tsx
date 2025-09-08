@@ -1,6 +1,7 @@
 import { createSignal, Show } from "solid-js";
 import { type Photo as PhotoType } from "~/constants/photos";
 import { LoadingSpinner } from "./LoadingSpinner";
+import { formatDate } from "~/utils/date";
 
 const S3_PREFIX = "https://photos.hunterchen.ca/";
 
@@ -49,7 +50,7 @@ export function Photo({
         />
       </div>
       <span class="text-xs text-violet-300 mt-1 font-mono">
-        {photo.date ? new Date(photo.date).toLocaleString() : ""}
+        {photo.date ? formatDate(photo.date) : ""}
       </span>
     </div>
   );
