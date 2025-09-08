@@ -9,7 +9,7 @@ function seededRandom(seed: number) {
   };
 }
 
-const target = "HC_06980-Enhanced-NR.jpg";
+const target = "HC_07534.jpg";
 const seeds: number[] = [];
 let seed = 1;
 while (seeds.length < 10 && seed < 100000) {

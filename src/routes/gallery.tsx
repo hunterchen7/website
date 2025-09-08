@@ -9,7 +9,7 @@ export default function Gallery() {
       <GalleryComponent
         manifest={manifest}
         caption="a collection of some photos I took that I like :)"
-        seed={587}
+        seed={325}
       />
     </>
   );
