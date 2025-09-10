@@ -46,21 +46,32 @@ export function Gallery(props: GalleryProps) {
   const [expanded, setExpanded] = createSignal<PhotoType | null>(null);
   const shuffled = shuffle(props.manifest, props.seed);
 
+  const handleLeft = () => {
+    const currentIndex = shuffled.findIndex((p) => p.url === expanded()?.url);
+
+    if (!expanded()) return;
+    if (currentIndex > 0) {
+      setExpanded(null);
+      setExpanded(shuffled[currentIndex - 1]);
+    }
+  };
+
+  const handleRight = () => {
+    if (!expanded()) return;
+    const currentIndex = shuffled.findIndex((p) => p.url === expanded()?.url);
+    if (currentIndex < shuffled.length - 1) {
+      setExpanded(null);
+      setExpanded(shuffled[currentIndex + 1]);
+    }
+  };
+
   const handleKeyDown = (e: KeyboardEvent) => {
     if (!expanded()) return;
 
-    const currentIndex = shuffled.findIndex((p) => p.url === expanded()?.url);
-
-    if (e.key === "ArrowRight") {
-      if (currentIndex < shuffled.length - 1) {
-        setExpanded(null);
-        setExpanded(shuffled[currentIndex + 1]);
-      }
-    } else if (e.key === "ArrowLeft") {
-      if (currentIndex > 0) {
-        setExpanded(null);
-        setExpanded(shuffled[currentIndex - 1]);
-      }
+    if (e.key === "ArrowLeft") {
+      handleLeft();
+    } else if (e.key === "ArrowRight") {
+      handleRight();
     } else if (e.key === "Escape") {
       setExpanded(null);
     }
@@ -96,7 +107,12 @@ export function Gallery(props: GalleryProps) {
         </div>
       </div>
       <Show when={!!expanded()}>
-        <Lightbox photo={expanded()!} onClose={() => setExpanded(null)} />
+        <Lightbox
+          photo={expanded()!}
+          onClose={() => setExpanded(null)}
+          onPrev={handleLeft}
+          onNext={handleRight}
+        />
       </Show>
     </main>
   );
