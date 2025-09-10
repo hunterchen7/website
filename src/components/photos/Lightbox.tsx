@@ -12,9 +12,16 @@ const magnifierZoom = 0.75;
 export function Lightbox({
   photo,
   onClose,
+  expandOrigin,
 }: {
   photo: PhotoType;
   onClose: () => void;
+  expandOrigin: {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  } | null;
 }) {
   const [downloadProgress, setDownloadProgress] = createSignal({
     loaded: 0,
@@ -34,10 +41,35 @@ export function Lightbox({
   const [imgHeight, setImgHeight] = createSignal<number>(0);
   const [drawerOpen, setDrawerOpen] = createSignal(false);
   const [isMobile, setIsMobile] = createSignal(false);
+  const [isAnimating, setIsAnimating] = createSignal(true);
+  const [isClosing, setIsClosing] = createSignal(false);
 
   onMount(() => {
     setIsMobile(window.matchMedia("(pointer: coarse)").matches);
+
+    // Start the expand animation
+    if (expandOrigin) {
+      // Small delay to ensure the lightbox is rendered
+      setTimeout(() => {
+        setIsAnimating(false);
+      }, 50);
+    } else {
+      setIsAnimating(false);
+    }
   });
+
+  const handleClose = () => {
+    if (expandOrigin) {
+      setIsClosing(true);
+      setIsAnimating(true);
+      // Wait for animation to complete before calling onClose
+      setTimeout(() => {
+        onClose();
+      }, 400);
+    } else {
+      onClose();
+    }
+  };
 
   const magnifierStyle = (): JSX.CSSProperties => {
     if (!isZoomMode() || imgWidth() <= 0 || imgHeight() <= 0) {
@@ -80,6 +112,39 @@ export function Lightbox({
         imgHeight() * magnifierZoom
       }px`,
       "background-position": `${bgX}px ${bgY}px`,
+    };
+  };
+
+  const lightboxContainerStyle = (): JSX.CSSProperties => {
+    if (!expandOrigin) {
+      return {
+        transform: 'scale(1) translate(0, 0)',
+        transition: 'transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+      };
+    }
+
+    if (!isAnimating() && !isClosing()) {
+      return {
+        transform: 'scale(1) translate(0, 0)',
+        transition: 'transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+      };
+    }
+
+    // Calculate the scale and translation needed to animate from/to the origin
+    const screenCenterX = window.innerWidth / 2;
+    const screenCenterY = window.innerHeight / 2;
+
+    // Calculate initial scale based on thumbnail size - start smaller for better effect
+    const initialScale = Math.min(expandOrigin.width / 500, expandOrigin.height / 500, 0.2);
+
+    // Calculate translation from current position to origin position
+    // We need to account for the scale when calculating translation
+    const translateX = (expandOrigin.x - screenCenterX) / initialScale;
+    const translateY = (expandOrigin.y - screenCenterY) / initialScale;
+
+    return {
+      transform: `translate(${translateX}px, ${translateY}px) scale(${initialScale})`,
+      transition: 'transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
     };
   };
 
@@ -174,16 +239,19 @@ export function Lightbox({
 
   return (
     <div
-      class="fixed inset-0 z-50 bg-black/90 flex items-center justify-center w-full"
-      onClick={onClose}
+      class={`fixed inset-0 z-50 bg-black/90 flex items-center justify-center w-full transition-opacity duration-400 ease-out ${
+        isAnimating() ? 'opacity-0' : 'opacity-100'
+      }`}
+      onClick={handleClose}
       tabIndex={0}
       onKeyDown={(e) => {
-        if (e.key === "Escape") onClose();
+        if (e.key === "Escape") handleClose();
       }}
     >
       <div
         class="relative flex flex-col items-center bg-violet-900/30 rounded-lg border border-slate-300/20"
         onClick={(e) => e.stopPropagation()}
+        style={lightboxContainerStyle()}
       >
         <div
           class="relative min-w-96 min-h-96"
@@ -254,29 +322,32 @@ export function Lightbox({
           setIsZoomMode={setIsZoomMode}
           setDrawerOpen={setDrawerOpen}
         />
-        {/* Info Drawer Overlay and Drawer (kept mounted so transitions animate) */}
-        <div
-          class={`fixed inset-0 z-[99] transition-opacity duration-300 ease-in-out overflow-y-none ${
-            drawerOpen() ? "opacity-100" : "opacity-0 pointer-events-none"
-          }`}
-          onClick={() => setDrawerOpen(false)}
-          aria-hidden={!drawerOpen()}
-        >
-          <div class="absolute inset-0 bg-black/80" />
-        </div>
-        <aside
-          class={`overflow-y-none fixed right-0 top-0 h-full w-72 md:w-96 bg-gray-900/95 shadow-lg z-[100] flex flex-col p-6 transition-transform duration-300 ease-in-out ${
-            drawerOpen() ? "translate-x-0" : "translate-x-full"
-          }`}
-          aria-hidden={!drawerOpen()}
-        >
-          <DrawerContent
-            photo={photo}
-            exif={exif}
-            downloadProgress={downloadProgress}
-          />
-        </aside>
       </div>
+      {/* Info Drawer Overlay and Drawer (kept mounted so transitions animate) */}
+      <div
+        class={`fixed inset-0 z-[99] transition-opacity duration-300 ease-in-out overflow-y-none ${
+          drawerOpen() ? "opacity-100" : "opacity-0 pointer-events-none"
+        }`}
+        onClick={(e) => {
+          e.stopPropagation();
+          setDrawerOpen(false);
+        }}
+        aria-hidden={!drawerOpen()}
+      >
+        <div class="absolute inset-0 bg-black/80" />
+      </div>
+      <aside
+        class={`overflow-y-none fixed right-0 top-0 h-full w-72 md:w-96 bg-gray-900/95 shadow-lg z-[100] flex flex-col p-6 transition-transform duration-300 ease-in-out ${
+          drawerOpen() ? "translate-x-0" : "translate-x-full"
+        }`}
+        aria-hidden={!drawerOpen()}
+      >
+        <DrawerContent
+          photo={photo}
+          exif={exif}
+          downloadProgress={downloadProgress}
+        />
+      </aside>
     </div>
   );
 }

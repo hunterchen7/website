@@ -30,6 +30,12 @@ export function Gallery(props: GalleryProps) {
   const [expanded, setExpanded] = createSignal<PhotoType | null>(null);
   const [showLeft, setShowLeft] = createSignal(false);
   const [showRight, setShowRight] = createSignal(false);
+  const [expandOrigin, setExpandOrigin] = createSignal<{
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  } | null>(null);
   const [searchParams, setSearchParams] = useSearchParams();
   const shuffled = shuffle(props.manifest, props.seed);
 
@@ -39,7 +45,9 @@ export function Gallery(props: GalleryProps) {
     if (imageParam) {
       const photo = shuffled.find((p) => p.url === imageParam);
       if (photo) {
+        // When opening from URL, skip animation
         setExpanded(photo);
+        setExpandOrigin(null);
       }
     }
   });
@@ -54,7 +62,20 @@ export function Gallery(props: GalleryProps) {
   };
 
   // Enhanced setExpanded that also updates URL
-  const setExpandedWithUrl = (photo: PhotoType | null) => {
+  const setExpandedWithUrl = (photo: PhotoType | null, clickEvent?: MouseEvent) => {
+    if (photo && clickEvent) {
+      // Calculate the position and size of the clicked element
+      const target = clickEvent.currentTarget as HTMLElement;
+      const rect = target.getBoundingClientRect();
+      setExpandOrigin({
+        x: rect.left + rect.width / 2,
+        y: rect.top + rect.height / 2,
+        width: rect.width,
+        height: rect.height,
+      });
+    } else {
+      setExpandOrigin(null);
+    }
     setExpanded(photo);
     updateUrlWithImage(photo);
   };
@@ -143,12 +164,19 @@ export function Gallery(props: GalleryProps) {
       <div class="w-fill p-1 sm:p-2 md:p-4">
         <div class="flex flex-wrap gap-1 sm:gap-2">
           {shuffled.map((photo) => (
-            <Photo photo={photo} onClick={() => setExpandedWithUrl(photo)} />
+            <Photo
+              photo={photo}
+              onClick={(e) => setExpandedWithUrl(photo, e)}
+            />
           ))}
         </div>
       </div>
       <Show when={!!expanded()}>
-        <Lightbox photo={expanded()!} onClose={() => setExpandedWithUrl(null)} />
+        <Lightbox
+          photo={expanded()!}
+          onClose={() => setExpandedWithUrl(null)}
+          expandOrigin={expandOrigin()}
+        />
         <NavArrow side="left" visible={showLeft()} onClick={handleLeft} />
         <NavArrow side="right" visible={showRight()} onClick={handleRight} />
       </Show>

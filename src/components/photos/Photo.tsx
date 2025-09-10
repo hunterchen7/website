@@ -10,7 +10,7 @@ export function Photo({
   onClick,
 }: {
   photo: PhotoType;
-  onClick: () => void;
+  onClick: (e: MouseEvent) => void;
 }) {
   const [loaded, setLoaded] = createSignal(false);
   const [aspectRatio, setAspectRatio] = createSignal(1); // Default aspect ratio
