@@ -2,29 +2,21 @@ import { createSignal, onCleanup, createEffect, onMount, JSX } from "solid-js";
 import { S3_PREFIX, type Photo as PhotoType } from "~/constants/photos";
 import { type ExifData } from "~/types/exif";
 import { InfoBar } from "./lightbox/InfoBar";
-import { DrawerContent } from "./lightbox/DrawerContent";
-import { Loader } from "./lightbox/Loader";
-import { extractExif } from "~/utils/exif";
 
 const magnifierSize = 500; // px
 const magnifierZoom = 0.75;
 
 export function Lightbox({
   photo,
-  onClose,
-  isCarouselMode = false,
+  exif,
+  downloadProgress,
+  setDrawerOpen,
 }: {
   photo: PhotoType;
-  onClose: () => void;
-  isCarouselMode?: boolean;
+  exif: () => ExifData;
+  downloadProgress: () => { loaded: number; total: number };
+  setDrawerOpen: (open: boolean) => void;
 }) {
-  const [downloadProgress, setDownloadProgress] = createSignal({
-    loaded: 0,
-    total: 0,
-  });
-  const [isFetching, setIsFetching] = createSignal(false);
-  const [exif, setExif] = createSignal<ExifData>({});
-
   // Magnifier state
   const [isZoomMode, setIsZoomMode] = createSignal(false);
   const [magnifierPos, setMagnifierPos] = createSignal({ x: 0, y: 0 });
@@ -34,7 +26,6 @@ export function Lightbox({
   // used by magnifier
   const [imgWidth, setImgWidth] = createSignal<number>(0);
   const [imgHeight, setImgHeight] = createSignal<number>(0);
-  const [drawerOpen, setDrawerOpen] = createSignal(false);
   const [isMobile, setIsMobile] = createSignal(false);
 
   onMount(() => {
@@ -85,76 +76,6 @@ export function Lightbox({
     };
   };
 
-  // This effect will run whenever the `photo` prop changes.
-  createEffect(() => {
-    const controller = new AbortController();
-    const signal = controller.signal;
-
-    // Reset state for the new photo
-    setDownloadProgress({ loaded: 0, total: 0 });
-    setIsFetching(true);
-    setExif({});
-
-    // this was previously used to display the image, but now it only gets used to extract EXIF data as well as track download progress
-    const fetchFullImage = async () => {
-      try {
-        const response = await fetch(`${S3_PREFIX}${photo.url}`, { signal });
-
-        if (!response.body) {
-          throw new Error("ReadableStream not supported");
-        }
-
-        const contentLength = response.headers.get("content-length");
-        const total = contentLength ? parseInt(contentLength, 10) : 0;
-
-        let loaded = 0;
-        const reader = response.body.getReader();
-        const chunks: Uint8Array[] = [];
-
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
-
-          // Check if the fetch was aborted
-          if (signal.aborted) {
-            return;
-          }
-
-          chunks.push(value);
-          loaded += value.length;
-          if (total > 0) {
-            setDownloadProgress({ loaded, total });
-          }
-        }
-
-        const buffer = new Uint8Array(loaded);
-        let offset = 0;
-        for (const chunk of chunks) {
-          buffer.set(chunk, offset);
-          offset += chunk.length;
-        }
-
-        if (!signal.aborted) {
-          setExif(extractExif(buffer.buffer));
-        }
-      } catch (err) {
-        setExif({});
-      } finally {
-        if (!signal.aborted) {
-          setIsFetching(false);
-        }
-      }
-    };
-
-    fetchFullImage();
-
-    // Cleanup function to abort the fetch if the component unmounts or the effect re-runs
-    onCleanup(() => {
-      controller.abort();
-      setIsFetching(false);
-    });
-  });
-
   createEffect(() => {
     if (!isZoomMode()) return;
 
@@ -175,14 +96,7 @@ export function Lightbox({
   });
 
   return (
-    <div
-      class={`${isCarouselMode ? '' : 'fixed inset-0 z-50 bg-black/90'} flex items-center justify-center w-full h-full`}
-      onClick={isCarouselMode ? undefined : onClose}
-      tabIndex={isCarouselMode ? -1 : 0}
-      onKeyDown={isCarouselMode ? undefined : (e) => {
-        if (e.key === "Escape") onClose();
-      }}
-    >
+    <div class="flex items-center justify-center w-full h-full">
       <div
         class="relative flex flex-col items-center bg-violet-900/30 rounded-lg border border-slate-300/20"
         onClick={(e) => e.stopPropagation()}
@@ -245,7 +159,6 @@ export function Lightbox({
 
           {/* Magnifier lens */}
           {isZoomMode() && <div style={magnifierStyle()} />}
-          {isFetching() && <Loader downloadProgress={downloadProgress} />}
         </div>
         <InfoBar
           photo={photo}
@@ -256,28 +169,6 @@ export function Lightbox({
           setIsZoomMode={setIsZoomMode}
           setDrawerOpen={setDrawerOpen}
         />
-        {/* Info Drawer Overlay and Drawer (kept mounted so transitions animate) */}
-        <div
-          class={`fixed inset-0 z-[99] transition-opacity duration-300 ease-in-out overflow-y-none ${
-            drawerOpen() ? "opacity-100" : "opacity-0 pointer-events-none"
-          }`}
-          onClick={() => setDrawerOpen(false)}
-          aria-hidden={!drawerOpen()}
-        >
-          <div class="absolute inset-0 bg-black/80" />
-        </div>
-        <aside
-          class={`overflow-y-none fixed right-0 top-0 h-full w-72 md:w-96 bg-gray-900/95 shadow-lg z-[100] flex flex-col p-6 transition-transform duration-300 ease-in-out ${
-            drawerOpen() ? "translate-x-0" : "translate-x-full"
-          }`}
-          aria-hidden={!drawerOpen()}
-        >
-          <DrawerContent
-            photo={photo}
-            exif={exif}
-            downloadProgress={downloadProgress}
-          />
-        </aside>
       </div>
     </div>
   );

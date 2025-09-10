@@ -1,7 +1,10 @@
 import { createSignal, createEffect, onCleanup, JSX, For } from "solid-js";
-import { type Photo as PhotoType } from "~/constants/photos";
+import { type Photo as PhotoType, S3_PREFIX } from "~/constants/photos";
+import { type ExifData } from "~/types/exif";
+import { extractExif } from "~/utils/exif";
 import { Lightbox } from "./Lightbox";
 import { NavArrow } from "./lightbox/NavArrow";
+import { DrawerContent } from "./lightbox/DrawerContent";
 
 export interface CarouselProps {
   photos: readonly PhotoType[];
@@ -15,6 +18,80 @@ export function Carousel(props: CarouselProps) {
   const [touchStartX, setTouchStartX] = createSignal(0);
   const [touchStartY, setTouchStartY] = createSignal(0);
   const [isTransitioning, setIsTransitioning] = createSignal(false);
+
+  // Shared drawer state
+  const [drawerOpen, setDrawerOpen] = createSignal(false);
+
+  // Shared EXIF and download progress data for the current photo
+  const [currentPhotoExif, setCurrentPhotoExif] = createSignal<ExifData>({});
+  const [currentDownloadProgress, setCurrentDownloadProgress] = createSignal({
+    loaded: 0,
+    total: 0,
+  });
+
+  // Fetch EXIF data for the current photo
+  createEffect(() => {
+    const currentPhoto = props.photos[currentIndex()];
+    if (!currentPhoto) return;
+
+    const controller = new AbortController();
+    const signal = controller.signal;
+
+    // Reset state for the new photo
+    setCurrentDownloadProgress({ loaded: 0, total: 0 });
+    setCurrentPhotoExif({});
+
+    const fetchPhotoData = async () => {
+      try {
+        const response = await fetch(`${S3_PREFIX}${currentPhoto.url}`, { signal });
+
+        if (!response.body) {
+          throw new Error("ReadableStream not supported");
+        }
+
+        const contentLength = response.headers.get("content-length");
+        const total = contentLength ? parseInt(contentLength, 10) : 0;
+
+        let loaded = 0;
+        const reader = response.body.getReader();
+        const chunks: Uint8Array[] = [];
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          if (signal.aborted) {
+            return;
+          }
+
+          chunks.push(value);
+          loaded += value.length;
+          if (total > 0) {
+            setCurrentDownloadProgress({ loaded, total });
+          }
+        }
+
+        const buffer = new Uint8Array(loaded);
+        let offset = 0;
+        for (const chunk of chunks) {
+          buffer.set(chunk, offset);
+          offset += chunk.length;
+        }
+
+        if (!signal.aborted) {
+          setCurrentPhotoExif(extractExif(buffer.buffer));
+        }
+      } catch (err) {
+        setCurrentPhotoExif({});
+      }
+    };
+
+    fetchPhotoData();
+
+    onCleanup(() => {
+      controller.abort();
+    });
+  });
 
   const goToPrevious = () => {
     if (isTransitioning() || currentIndex() === 0) return;
@@ -120,8 +197,9 @@ export function Carousel(props: CarouselProps) {
             <div style={getCarouselItemStyle(index())}>
               <Lightbox
                 photo={photo}
-                onClose={props.onClose}
-                isCarouselMode={true}
+                exif={index() === currentIndex() ? currentPhotoExif : () => ({})}
+                downloadProgress={index() === currentIndex() ? currentDownloadProgress : () => ({ loaded: 0, total: 0 })}
+                setDrawerOpen={setDrawerOpen}
               />
             </div>
           )}
@@ -145,6 +223,29 @@ export function Carousel(props: CarouselProps) {
       <div class="fixed bottom-2 left-1/2 -translate-x-1/2 z-[70] px-4 py-2 bg-black/70 rounded-full text-sm select-none">
         {currentIndex() + 1} / {props.photos.length}
       </div>
+
+      {/* Shared Info Drawer Overlay and Drawer */}
+      <div
+        class={`fixed inset-0 z-[99] transition-opacity duration-300 ease-in-out overflow-y-none ${
+          drawerOpen() ? "opacity-100" : "opacity-0 pointer-events-none"
+        }`}
+        onClick={() => setDrawerOpen(false)}
+        aria-hidden={!drawerOpen()}
+      >
+        <div class="absolute inset-0 bg-black/80" />
+      </div>
+      <aside
+        class={`overflow-y-none fixed right-0 top-0 h-full w-72 md:w-96 bg-gray-900/95 shadow-lg z-[100] flex flex-col p-6 transition-transform duration-300 ease-in-out ${
+          drawerOpen() ? "translate-x-0" : "translate-x-full"
+        }`}
+        aria-hidden={!drawerOpen()}
+      >
+        <DrawerContent
+          photo={props.photos[currentIndex()]}
+          exif={currentPhotoExif}
+          downloadProgress={currentDownloadProgress}
+        />
+      </aside>
     </div>
   );
 }
