@@ -1,15 +1,9 @@
 // @ts-ignore
-import { manifest } from "../src/constants/photos.ts";
+import { seededRandom } from "../src/utils/shuffle.ts";
+// @ts-ignore
+import { manifest } from "../src/constants/airshow.ts";
 
-function seededRandom(seed: number) {
-  let value = seed;
-  return () => {
-    value = (value * 314431) % 24377;
-    return value / 44333;
-  };
-}
-
-const target = "HC_07534.jpg";
+const target = "HC_06821.jpg";
 const seeds: number[] = [];
 let seed = 1;
 while (seeds.length < 10 && seed < 100000) {

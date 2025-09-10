@@ -2,30 +2,12 @@ import { createSignal, Show, onCleanup, createEffect, JSX } from "solid-js";
 import { Photo as PhotoType } from "~/constants/photos";
 import { Photo } from "~/components/photos/Photo";
 import { Lightbox } from "~/components/photos/Lightbox";
+import { shuffle } from "~/utils/shuffle";
 
 export interface GalleryProps {
   manifest: readonly PhotoType[];
-  caption: string;
+  caption: JSX.Element;
   seed?: number;
-}
-
-function seededRandom(seed: number) {
-  let value = seed;
-  return () => {
-    value = (value * 314431) % 24377;
-    return value / 44333;
-  };
-}
-
-function shuffle<T>(array: readonly T[], seed?: number): T[] {
-  if (seed === undefined) return [...array];
-  let arr = [...array];
-  const rand = seededRandom(seed);
-  for (let i = arr.length - 1; i > 0; i--) {
-    const j = Math.floor(rand() * (i + 1));
-    [arr[i], arr[j]] = [arr[j], arr[i]];
-  }
-  return arr;
 }
 
 function CollectionLink({

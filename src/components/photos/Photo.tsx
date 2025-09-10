@@ -79,7 +79,7 @@ export function Photo({
 
   return (
     <div
-      class={`flex-grow rounded shadow-lg overflow-hidden border border-violet-700/50 bg-violet-900/20 flex flex-col min-w-[135px]`}
+      class={`flex-grow rounded shadow-lg overflow-hidden border border-violet-700/50 bg-violet-900/20 flex flex-col min-w-[135px] max-w-[700px]`}
       style={`
         flex-basis: ${baseWidth() * aspectRatio()}px;
       `}
