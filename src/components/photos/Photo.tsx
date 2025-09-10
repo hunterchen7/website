@@ -1,6 +1,6 @@
 import { createSignal, Show, onMount, onCleanup } from "solid-js";
 import { type Photo as PhotoType } from "~/constants/photos";
-import { LoadingSpinner } from "./LoadingSpinner";
+import { LoadingSpinner } from "../LoadingSpinner";
 import { formatDate } from "~/utils/date";
 
 const S3_PREFIX = "https://photos.hunterchen.ca/";
@@ -36,12 +36,16 @@ export function Photo({
   };
 
   onMount(() => {
-    updateBaseWidth();
-    window.addEventListener("resize", updateBaseWidth);
+    if (typeof window !== "undefined") {
+      updateBaseWidth();
+      window.addEventListener("resize", updateBaseWidth);
+    }
   });
 
   onCleanup(() => {
-    window.removeEventListener("resize", updateBaseWidth);
+    if (typeof window !== "undefined") {
+      window.removeEventListener("resize", updateBaseWidth);
+    }
   });
 
   // Robustly check if image is already loaded (cached)

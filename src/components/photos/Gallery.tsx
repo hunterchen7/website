@@ -7,8 +7,8 @@ function CollectionLink({ href, children }: { href: string; children: any }) {
 }
 import { createSignal, Show, onCleanup, createEffect } from "solid-js";
 import { Photo as PhotoType } from "~/constants/photos";
-import { Photo } from "~/components/Photo";
-import { Lightbox } from "~/components/Lightbox";
+import { Photo } from "~/components/photos/Photo";
+import { Lightbox } from "~/components/photos/Lightbox";
 
 export interface GalleryProps {
   manifest: readonly PhotoType[];

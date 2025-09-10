@@ -1,5 +1,5 @@
 import { Title, Meta } from "@solidjs/meta";
-import { Gallery } from "~/components/Gallery";
+import { Gallery } from "~/components/photos/Gallery";
 
 export default function AirshowGallery() {
   const previewImage = "https://photos.hunterchen.ca/HC_06821.jpg";
