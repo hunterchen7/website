@@ -5,6 +5,7 @@ import { InfoBar } from "./lightbox/InfoBar";
 import { DrawerContent } from "./lightbox/DrawerContent";
 import { Loader } from "./lightbox/Loader";
 import { extractExif } from "~/utils/exif";
+import { SlideDirection } from "./PhotoCarousel";
 
 const magnifierSize = 500; // px
 const magnifierZoom = 0.75;
@@ -13,6 +14,10 @@ export function Lightbox({
   photo,
   onClose,
   expandOrigin,
+  slideDirection,
+  isLeaving,
+  isCarouselSlide,
+  useRelativePositioning,
 }: {
   photo: PhotoType;
   onClose: () => void;
@@ -22,6 +27,10 @@ export function Lightbox({
     width: number;
     height: number;
   } | null;
+  slideDirection: SlideDirection;
+  isLeaving?: boolean;
+  isCarouselSlide?: boolean;
+  useRelativePositioning?: boolean;
 }) {
   const [downloadProgress, setDownloadProgress] = createSignal({
     loaded: 0,
@@ -43,6 +52,7 @@ export function Lightbox({
   const [isMobile, setIsMobile] = createSignal(false);
   const [isAnimating, setIsAnimating] = createSignal(true);
   const [isClosing, setIsClosing] = createSignal(false);
+  const [animationClass, setAnimationClass] = createSignal("");
 
   onMount(() => {
     setIsMobile(window.matchMedia("(pointer: coarse)").matches);
@@ -56,6 +66,32 @@ export function Lightbox({
     } else {
       setIsAnimating(false);
     }
+  });
+
+  createEffect(() => {
+    // Completely disable slide animations when in carousel mode
+    if (isCarouselSlide) {
+      setAnimationClass("");
+      return;
+    }
+
+    // Only apply slide animations if not in carousel mode
+    if (slideDirection === "none") {
+      setAnimationClass("");
+      return;
+    }
+
+    let newClass = "";
+    if (isLeaving) {
+      newClass =
+        slideDirection === "left" ? "slide-out-to-right" : "slide-out-to-left";
+    } else {
+      newClass =
+        slideDirection === "left"
+          ? "slide-in-from-left"
+          : "slide-in-from-right";
+    }
+    setAnimationClass(newClass);
   });
 
   const magnifierStyle = (): JSX.CSSProperties => {
@@ -105,7 +141,14 @@ export function Lightbox({
   const lightboxContainerStyle = (): JSX.CSSProperties => {
     const transition = "transform 0.1s cubic-bezier(0.25, 0.46, 0.45, 0.94)";
 
-    if (!expandOrigin || isClosing()) {
+    // Don't apply expand animation if we're sliding, leaving, or in carousel mode
+    if (
+      !expandOrigin ||
+      isClosing() ||
+      slideDirection !== "none" ||
+      isLeaving ||
+      isCarouselSlide
+    ) {
       return {
         transform: "scale(1) translate(0, 0)",
         transition,
@@ -231,7 +274,11 @@ export function Lightbox({
 
   return (
     <div
-      class={`fixed inset-0 z-50 bg-black/90 flex items-center justify-center w-full transition-opacity duration-400 ease-out ${
+      class={`${
+        useRelativePositioning
+          ? "relative h-full w-full"
+          : "fixed inset-0 z-50 bg-black/90"
+      } flex items-center justify-center w-full transition-opacity duration-200 ease-out ${
         isAnimating() ? "opacity-0" : "opacity-100"
       }`}
       onClick={onClose}
@@ -241,7 +288,9 @@ export function Lightbox({
       }}
     >
       <div
-        class="relative flex flex-col items-center bg-violet-900/30 rounded-lg border border-slate-300/20"
+        class={`relative flex flex-col items-center bg-violet-900/30 rounded-lg border border-slate-300/20 ${
+          isLeaving ? "" : "z-10"
+        }`}
         onClick={(e) => e.stopPropagation()}
         style={lightboxContainerStyle()}
       >
@@ -262,7 +311,7 @@ export function Lightbox({
           <img
             src={`${S3_PREFIX}${photo.thumbnail}`}
             alt="thumbnail"
-            class="absolute top-0 left-0 max-h-[95vh] max-w-[98vw] rounded-lg shadow-lg w-full h-full object-contain brightness-85"
+            class="absolute top-0 left-0 rounded-lg shadow-lg w-full h-full object-contain brightness-85 max-h-[95vh] max-w-[98vw]"
           />
           <img
             ref={setImgRef}
@@ -272,7 +321,7 @@ export function Lightbox({
               setImgWidth(e.currentTarget.naturalWidth);
               setImgHeight(e.currentTarget.naturalHeight);
             }}
-            class="max-h-[95vh] max-w-[95vw] rounded-lg shadow-lg relative z-1"
+            class={`max-h-[95vh] max-w-[98vw] rounded-lg shadow-lg relative z-1 ${animationClass()}`}
             style={{
               display: "block",
               cursor: (() => {

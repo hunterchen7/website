@@ -1,16 +1,8 @@
-import {
-  createSignal,
-  Show,
-  onCleanup,
-  createEffect,
-  JSX,
-  onMount,
-} from "solid-js";
+import { createSignal, JSX, onMount } from "solid-js";
 import { useSearchParams } from "@solidjs/router";
 import { Photo as PhotoType } from "~/constants/photos";
 import { Photo } from "~/components/photos/Photo";
-import { Lightbox } from "~/components/photos/Lightbox";
-import { NavArrow } from "~/components/photos/lightbox/NavArrow";
+import { PhotoCarousel } from "~/components/photos/PhotoCarousel";
 import { shuffle } from "~/utils/shuffle";
 
 export interface GalleryProps {
@@ -35,8 +27,6 @@ function CollectionLink({
 
 export function Gallery(props: GalleryProps) {
   const [expanded, setExpanded] = createSignal<PhotoType | null>(null);
-  const [showLeft, setShowLeft] = createSignal(false);
-  const [showRight, setShowRight] = createSignal(false);
   const [expandOrigin, setExpandOrigin] = createSignal<{
     x: number;
     y: number;
@@ -90,75 +80,9 @@ export function Gallery(props: GalleryProps) {
     updateUrlWithImage(photo);
   };
 
-  const handleLeft = () => {
-    const currentIndex = shuffled.findIndex((p) => p.url === expanded()?.url);
-
-    if (!expanded()) return;
-    if (currentIndex > 0) {
-      setExpandedWithUrl(null);
-      setExpandedWithUrl(shuffled[currentIndex - 1]);
-    }
+  const handleClose = () => {
+    setExpandedWithUrl(null);
   };
-
-  const handleRight = () => {
-    if (!expanded()) return;
-    const currentIndex = shuffled.findIndex((p) => p.url === expanded()?.url);
-    if (currentIndex < shuffled.length - 1) {
-      setExpandedWithUrl(null);
-      setExpandedWithUrl(shuffled[currentIndex + 1]);
-    }
-  };
-
-  const handleKeyDown = (e: KeyboardEvent) => {
-    if (!expanded()) return;
-
-    if (e.key === "ArrowLeft") {
-      handleLeft();
-    } else if (e.key === "ArrowRight") {
-      handleRight();
-    } else if (e.key === "Escape") {
-      setExpandedWithUrl(null);
-    }
-  };
-
-  const handleMouseMove = (e: MouseEvent) => {
-    if (!expanded()) {
-      setShowLeft(false);
-      setShowRight(false);
-      return;
-    }
-
-    const proximity = 100;
-
-    // Show arrows based on screen position (within proximity px of screen edges)
-    const x = e.clientX;
-    const screenWidth = window.innerWidth;
-
-    setShowLeft(x <= proximity);
-    setShowRight(x >= screenWidth - proximity);
-  };
-
-  const handleMouseLeave = () => {
-    setShowLeft(false);
-    setShowRight(false);
-  };
-
-  createEffect(() => {
-    if (expanded()) {
-      document.addEventListener("keydown", handleKeyDown);
-      document.addEventListener("mousemove", handleMouseMove);
-      document.addEventListener("mouseleave", handleMouseLeave);
-    } else {
-      document.removeEventListener("keydown", handleKeyDown);
-      document.removeEventListener("mousemove", handleMouseMove);
-      document.removeEventListener("mouseleave", handleMouseLeave);
-    }
-    onCleanup(() => {
-      document.removeEventListener("keydown", handleKeyDown);
-      document.removeEventListener("mousemove", handleMouseMove);
-      document.removeEventListener("mouseleave", handleMouseLeave);
-    });
-  });
 
   return (
     <main class="text-center mx-auto font-mono text-violet-200 pb-20 h-screen overflow-y-auto">
@@ -183,15 +107,12 @@ export function Gallery(props: GalleryProps) {
           ))}
         </div>
       </div>
-      <Show when={!!expanded()}>
-        <Lightbox
-          photo={expanded()!}
-          onClose={() => setExpandedWithUrl(null)}
-          expandOrigin={expandOrigin()}
-        />
-        <NavArrow side="left" visible={showLeft()} onClick={handleLeft} />
-        <NavArrow side="right" visible={showRight()} onClick={handleRight} />
-      </Show>
+      <PhotoCarousel
+        photos={shuffled}
+        currentPhoto={expanded()}
+        expandOrigin={expandOrigin()}
+        onClose={handleClose}
+      />
     </main>
   );
 }

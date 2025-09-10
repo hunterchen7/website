@@ -93,6 +93,7 @@ export function Photo({
         <img
           ref={handleImgRef}
           src={`${S3_PREFIX}${photo.thumbnail}`}
+          title={photo.url}
           alt="Gallery photo"
           class={`w-full h-full object-cover transition-opacity duration-300 max-h-96 max-w-[600px] ${
             loaded() ? "opacity-100" : "opacity-0"
