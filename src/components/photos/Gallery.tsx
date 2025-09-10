@@ -1,4 +1,5 @@
-import { createSignal, Show, onCleanup, createEffect, JSX } from "solid-js";
+import { createSignal, Show, onCleanup, createEffect, JSX, onMount } from "solid-js";
+import { useSearchParams } from "@solidjs/router";
 import { Photo as PhotoType } from "~/constants/photos";
 import { Photo } from "~/components/photos/Photo";
 import { Lightbox } from "~/components/photos/Lightbox";
@@ -29,15 +30,41 @@ export function Gallery(props: GalleryProps) {
   const [expanded, setExpanded] = createSignal<PhotoType | null>(null);
   const [showLeft, setShowLeft] = createSignal(false);
   const [showRight, setShowRight] = createSignal(false);
+  const [searchParams, setSearchParams] = useSearchParams();
   const shuffled = shuffle(props.manifest, props.seed);
+
+  // Check for image parameter on mount and set expanded photo accordingly
+  onMount(() => {
+    const imageParam = searchParams.image;
+    if (imageParam) {
+      const photo = shuffled.find((p) => p.url === imageParam);
+      if (photo) {
+        setExpanded(photo);
+      }
+    }
+  });
+
+  // Function to update URL with image parameter
+  const updateUrlWithImage = (photo: PhotoType | null) => {
+    if (photo) {
+      setSearchParams({ image: photo.url });
+    } else {
+      setSearchParams({ image: undefined });
+    }
+  };
+
+  // Enhanced setExpanded that also updates URL
+  const setExpandedWithUrl = (photo: PhotoType | null) => {
+    setExpanded(photo);
+    updateUrlWithImage(photo);
+  };
 
   const handleLeft = () => {
     const currentIndex = shuffled.findIndex((p) => p.url === expanded()?.url);
 
     if (!expanded()) return;
     if (currentIndex > 0) {
-      setExpanded(null);
-      setExpanded(shuffled[currentIndex - 1]);
+      setExpandedWithUrl(shuffled[currentIndex - 1]);
     }
   };
 
@@ -45,8 +72,7 @@ export function Gallery(props: GalleryProps) {
     if (!expanded()) return;
     const currentIndex = shuffled.findIndex((p) => p.url === expanded()?.url);
     if (currentIndex < shuffled.length - 1) {
-      setExpanded(null);
-      setExpanded(shuffled[currentIndex + 1]);
+      setExpandedWithUrl(shuffled[currentIndex + 1]);
     }
   };
 
@@ -58,7 +84,7 @@ export function Gallery(props: GalleryProps) {
     } else if (e.key === "ArrowRight") {
       handleRight();
     } else if (e.key === "Escape") {
-      setExpanded(null);
+      setExpandedWithUrl(null);
     }
   };
 
@@ -117,12 +143,12 @@ export function Gallery(props: GalleryProps) {
       <div class="w-fill p-1 sm:p-2 md:p-4">
         <div class="flex flex-wrap gap-1 sm:gap-2">
           {shuffled.map((photo) => (
-            <Photo photo={photo} onClick={() => setExpanded(photo)} />
+            <Photo photo={photo} onClick={() => setExpandedWithUrl(photo)} />
           ))}
         </div>
       </div>
       <Show when={!!expanded()}>
-        <Lightbox photo={expanded()!} onClose={() => setExpanded(null)} />
+        <Lightbox photo={expanded()!} onClose={() => setExpandedWithUrl(null)} />
         <NavArrow side="left" visible={showLeft()} onClick={handleLeft} />
         <NavArrow side="right" visible={showRight()} onClick={handleRight} />
       </Show>
