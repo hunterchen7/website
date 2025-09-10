@@ -2,6 +2,7 @@ import { createSignal, Show, onCleanup, createEffect, JSX } from "solid-js";
 import { Photo as PhotoType } from "~/constants/photos";
 import { Photo } from "~/components/photos/Photo";
 import { Lightbox } from "~/components/photos/Lightbox";
+import { NavArrow } from "~/components/photos/lightbox/NavArrow";
 import { shuffle } from "~/utils/shuffle";
 
 export interface GalleryProps {
@@ -26,6 +27,8 @@ function CollectionLink({
 
 export function Gallery(props: GalleryProps) {
   const [expanded, setExpanded] = createSignal<PhotoType | null>(null);
+  const [showLeft, setShowLeft] = createSignal(false);
+  const [showRight, setShowRight] = createSignal(false);
   const shuffled = shuffle(props.manifest, props.seed);
 
   const handleLeft = () => {
@@ -59,13 +62,43 @@ export function Gallery(props: GalleryProps) {
     }
   };
 
+  const handleMouseMove = (e: MouseEvent) => {
+    if (!expanded()) {
+      setShowLeft(false);
+      setShowRight(false);
+      return;
+    }
+
+    const proximity = 100;
+
+    // Show arrows based on screen position (within proximity px of screen edges)
+    const x = e.clientX;
+    const screenWidth = window.innerWidth;
+
+    setShowLeft(x <= proximity);
+    setShowRight(x >= screenWidth - proximity);
+  };
+
+  const handleMouseLeave = () => {
+    setShowLeft(false);
+    setShowRight(false);
+  };
+
   createEffect(() => {
     if (expanded()) {
       document.addEventListener("keydown", handleKeyDown);
+      document.addEventListener("mousemove", handleMouseMove);
+      document.addEventListener("mouseleave", handleMouseLeave);
     } else {
       document.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseleave", handleMouseLeave);
     }
-    onCleanup(() => document.removeEventListener("keydown", handleKeyDown));
+    onCleanup(() => {
+      document.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseleave", handleMouseLeave);
+    });
   });
 
   return (
@@ -89,12 +122,9 @@ export function Gallery(props: GalleryProps) {
         </div>
       </div>
       <Show when={!!expanded()}>
-        <Lightbox
-          photo={expanded()!}
-          onClose={() => setExpanded(null)}
-          onPrev={handleLeft}
-          onNext={handleRight}
-        />
+        <Lightbox photo={expanded()!} onClose={() => setExpanded(null)} />
+        <NavArrow side="left" visible={showLeft()} onClick={handleLeft} />
+        <NavArrow side="right" visible={showRight()} onClick={handleRight} />
       </Show>
     </main>
   );

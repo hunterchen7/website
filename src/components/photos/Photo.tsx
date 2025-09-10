@@ -13,7 +13,7 @@ export function Photo({
   onClick: () => void;
 }) {
   const [loaded, setLoaded] = createSignal(false);
-  const [aspectRatio, setAspectRatio] = createSignal(1.5); // Default aspect ratio
+  const [aspectRatio, setAspectRatio] = createSignal(1); // Default aspect ratio
   const [baseWidth, setBaseWidth] = createSignal(300); // Default base width
   let imgRef: HTMLImageElement | null = null;
 
@@ -22,16 +22,16 @@ export function Photo({
     const width = window.innerWidth;
     if (width < 640) {
       // sm
-      setBaseWidth(150);
+      setBaseWidth(125);
     } else if (width < 768) {
       // md
-      setBaseWidth(175);
+      setBaseWidth(150);
     } else if (width < 1024) {
       // lg
-      setBaseWidth(200);
+      setBaseWidth(175);
     } else if (width < 1536) {
       // xl
-      setBaseWidth(250);
+      setBaseWidth(200);
     }
   };
 
@@ -79,7 +79,7 @@ export function Photo({
 
   return (
     <div
-      class={`flex-grow rounded shadow-lg overflow-hidden border border-violet-700/50 bg-violet-900/20 flex flex-col min-w-[135px] max-w-[700px]`}
+      class={`flex-grow rounded shadow-lg overflow-hidden border border-violet-700/50 bg-violet-900/20 flex flex-col min-w-[135px] max-w-[600px] min-h-[135px]`}
       style={`
         flex-basis: ${baseWidth() * aspectRatio()}px;
       `}
@@ -94,9 +94,10 @@ export function Photo({
           ref={handleImgRef}
           src={`${S3_PREFIX}${photo.thumbnail}`}
           alt="Gallery photo"
-          class={`w-full h-full object-cover transition-opacity duration-300 ${
+          class={`w-full h-full object-cover transition-opacity duration-300 max-h-96 max-w-[600px] ${
             loaded() ? "opacity-100" : "opacity-0"
-          } hover:scale-[1.01] transition-transform cursor-pointer`}
+          } hover:scale-[1.03] transition-transform cursor-pointer`}
+          loading="lazy"
           draggable="true"
           onLoad={handleImageLoad}
           onClick={onClick}

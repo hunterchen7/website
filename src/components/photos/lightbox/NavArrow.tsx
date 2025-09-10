@@ -10,7 +10,7 @@ export const NavArrow = (props: {
     <button
       type="button"
       aria-label={props.side === "left" ? "previous" : "next"}
-      class={`absolute ${posClass} top-1/2 -translate-y-1/2 z-30 transition-opacity duration-150 ease-in-out bg-black/50 hover:bg-black/60 rounded-full p-2 flex items-center justify-center cursor-pointer ${
+      class={`fixed ${posClass} top-1/2 -translate-y-1/2 z-[60] transition-opacity duration-150 ease-in-out hidden sm:flex items-center justify-center cursor-pointer ${
         props.visible ? "opacity-100" : "opacity-0 pointer-events-none"
       }`}
       onClick={(e) => {

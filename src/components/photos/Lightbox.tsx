@@ -5,7 +5,6 @@ import { InfoBar } from "./lightbox/InfoBar";
 import { DrawerContent } from "./lightbox/DrawerContent";
 import { Loader } from "./lightbox/Loader";
 import { extractExif } from "~/utils/exif";
-import { NavArrow } from "./lightbox/NavArrow";
 
 const magnifierSize = 500; // px
 const magnifierZoom = 0.75;
@@ -13,13 +12,9 @@ const magnifierZoom = 0.75;
 export function Lightbox({
   photo,
   onClose,
-  onPrev,
-  onNext,
 }: {
   photo: PhotoType;
   onClose: () => void;
-  onPrev: () => void;
-  onNext: () => void;
 }) {
   const [downloadProgress, setDownloadProgress] = createSignal({
     loaded: 0,
@@ -39,11 +34,6 @@ export function Lightbox({
   const [imgHeight, setImgHeight] = createSignal<number>(0);
   const [drawerOpen, setDrawerOpen] = createSignal(false);
   const [isMobile, setIsMobile] = createSignal(false);
-
-  // arrow visibility state
-  const [showLeft, setShowLeft] = createSignal(true);
-  const [showRight, setShowRight] = createSignal(true);
-  let containerRef: HTMLDivElement | null = null;
 
   onMount(() => {
     setIsMobile(window.matchMedia("(pointer: coarse)").matches);
@@ -196,22 +186,9 @@ export function Lightbox({
         onClick={(e) => e.stopPropagation()}
       >
         <div
-          class="relative"
-          ref={(el) => (containerRef = el as HTMLDivElement | null)}
+          class="relative min-w-96 min-h-96"
           onMouseMove={(e) => {
-            // Update arrow visibility relative to the container
-            if (containerRef) {
-              const rect = containerRef.getBoundingClientRect();
-              const x = e.clientX - rect.left;
-              const y = e.clientY - rect.top;
-              const withinLeft = x <= 200 && y >= 0 && y <= rect.height;
-              const withinRight =
-                x >= rect.width - 200 && y >= 0 && y <= rect.height;
-              setShowLeft(withinLeft);
-              setShowRight(withinRight);
-            }
-
-            // Magnifier behavior (when enabled) still tracks pointer over the image
+            // Magnifier behavior (when enabled) tracks pointer over the image
             if (!isZoomMode()) return;
             const img = imgRef();
             if (!img) return;
@@ -219,10 +196,6 @@ export function Lightbox({
             const x = e.clientX - rect.left;
             const y = e.clientY - rect.top;
             setMagnifierPos({ x, y });
-          }}
-          onMouseLeave={() => {
-            setShowLeft(false);
-            setShowRight(false);
           }}
         >
           {/* Thumbnail image underneath main image */}
@@ -267,9 +240,6 @@ export function Lightbox({
               img.src = `${S3_PREFIX}${photo.url}`;
             }}
           />
-          {/* Arrow navigators (appear when cursor is within 200px of edges) */}
-          <NavArrow side="left" visible={showLeft()} onClick={onPrev} />
-          <NavArrow side="right" visible={showRight()} onClick={onNext} />
 
           {/* Magnifier lens */}
           {isZoomMode() && <div style={magnifierStyle()} />}
