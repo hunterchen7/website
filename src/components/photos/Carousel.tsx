@@ -52,9 +52,10 @@ export function Carousel(props: CarouselProps) {
     setCurrentPhotoExif({});
 
     const fetchPhotoData = async () => {
-      try {
+      const attemptFetch = async (useCache: boolean = true) => {
         const response = await fetch(`${S3_PREFIX}${currentPhoto.url}`, {
           signal,
+          cache: useCache ? "default" : "no-cache",
         });
 
         if (!response.body) {
@@ -93,8 +94,19 @@ export function Carousel(props: CarouselProps) {
         if (!signal.aborted) {
           setCurrentPhotoExif(extractExif(buffer.buffer));
         }
+      };
+
+      try {
+        // First attempt with cache
+        await attemptFetch(true);
       } catch (err) {
-        setCurrentPhotoExif({});
+        try {
+          // Retry without cache if first attempt fails
+          await attemptFetch(false);
+        } catch (retryErr) {
+          // Both attempts failed, set empty EXIF
+          setCurrentPhotoExif({});
+        }
       }
     };
 
