@@ -1,6 +1,6 @@
 import { ZoomIn, ZoomOut, Info, Download } from "lucide-solid";
 import { formatDate } from "~/utils/date";
-import { type Photo as PhotoType } from "~/constants/photos";
+import { S3_PREFIX, type Photo as PhotoType } from "~/constants/photos";
 import { type ExifData } from "~/types/exif";
 
 interface InfoBarProps {
@@ -22,7 +22,6 @@ export function InfoBar({
   setIsZoomMode,
   setDrawerOpen,
 }: InfoBarProps) {
-  const S3_PREFIX = "https://photos.hunterchen.ca/";
   return (
     <span class="text-xs text-violet-200 font-mono flex flex-col sm:flex-row justify-between w-full p-1">
       <div class="flex flex-col sm:flex-row sm:gap-2">

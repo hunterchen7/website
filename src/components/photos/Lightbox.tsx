@@ -1,13 +1,11 @@
 import { createSignal, onCleanup, createEffect, onMount, JSX } from "solid-js";
-import { type Photo as PhotoType } from "~/constants/photos";
-import ExifReader from "exifreader";
+import { S3_PREFIX, type Photo as PhotoType } from "~/constants/photos";
 import { type ExifData } from "~/types/exif";
 import { InfoBar } from "./lightbox/InfoBar";
 import { DrawerContent } from "./lightbox/DrawerContent";
 import { Loader } from "./lightbox/Loader";
 import { extractExif } from "~/utils/exif";
 
-const S3_PREFIX = "https://photos.hunterchen.ca/";
 const magnifierSize = 500; // px
 const magnifierZoom = 0.75;
 
@@ -18,7 +16,6 @@ export function Lightbox({
   photo: PhotoType;
   onClose: () => void;
 }) {
-  const [imageBuffer, setImageBuffer] = createSignal<ArrayBuffer | null>(null);
   const [downloadProgress, setDownloadProgress] = createSignal({
     loaded: 0,
     total: 0,
@@ -31,9 +28,10 @@ export function Lightbox({
   const [magnifierPos, setMagnifierPos] = createSignal({ x: 0, y: 0 });
 
   const [imgRef, setImgRef] = createSignal<HTMLImageElement | null>(null);
+
+  // used by magnifier
   const [imgWidth, setImgWidth] = createSignal<number>(0);
   const [imgHeight, setImgHeight] = createSignal<number>(0);
-  const [objectUrl, setObjectUrl] = createSignal<string | null>(null);
   const [drawerOpen, setDrawerOpen] = createSignal(false);
   const [isMobile, setIsMobile] = createSignal(false);
 
@@ -76,7 +74,7 @@ export function Lightbox({
       border: "2px solid #eee",
       overflow: "hidden",
       "z-index": 10,
-      "background-image": `url(${objectUrl() ?? S3_PREFIX + photo.thumbnail})`,
+      "background-image": `url(${S3_PREFIX + photo.url})`,
       "background-repeat": "no-repeat",
       "background-size": `${imgWidth() * magnifierZoom}px ${
         imgHeight() * magnifierZoom
@@ -91,11 +89,11 @@ export function Lightbox({
     const signal = controller.signal;
 
     // Reset state for the new photo
-    setImageBuffer(null);
     setDownloadProgress({ loaded: 0, total: 0 });
     setIsFetching(true);
     setExif({});
 
+    // this was previously used to display the image, but now it only gets used to extract EXIF data as well as track download progress
     const fetchFullImage = async () => {
       try {
         const response = await fetch(`${S3_PREFIX}${photo.url}`, { signal });
@@ -135,7 +133,6 @@ export function Lightbox({
         }
 
         if (!signal.aborted) {
-          setImageBuffer(buffer.buffer);
           setExif(extractExif(buffer.buffer));
         }
       } catch (err) {
@@ -154,19 +151,6 @@ export function Lightbox({
       controller.abort();
       setIsFetching(false);
     });
-  });
-
-  createEffect(() => {
-    if (imageBuffer()) {
-      const url = URL.createObjectURL(new Blob([imageBuffer()!]));
-      setObjectUrl(url);
-      onCleanup(() => {
-        URL.revokeObjectURL(url);
-        setObjectUrl(null);
-      });
-    } else {
-      setObjectUrl(null);
-    }
   });
 
   createEffect(() => {
@@ -213,23 +197,28 @@ export function Lightbox({
             setMagnifierPos({ x, y });
           }}
         >
+          {/* Thumbnail image underneath main image */}
+          <img
+            src={`${S3_PREFIX}${photo.thumbnail}`}
+            alt="thumbnail"
+            class="absolute top-0 left-0 max-h-[95vh] max-w-[98vw] rounded-lg shadow-lg w-full h-full object-contain brightness-85"
+          />
           <img
             ref={setImgRef}
-            src={objectUrl() ?? `${S3_PREFIX}${photo.thumbnail}`}
+            src={`${S3_PREFIX}${photo.url}`}
             alt="photo"
             onLoad={(e) => {
               setImgWidth(e.currentTarget.naturalWidth);
               setImgHeight(e.currentTarget.naturalHeight);
             }}
-            class="max-h-[95vh] max-w-[98vw] rounded-lg shadow-lg"
+            class="max-h-[95vh] max-w-[98vw] rounded-lg shadow-lg relative z-1"
             style={{
               display: "block",
-              cursor:
-                !isMobile() && isZoomMode()
-                  ? "zoom-out"
-                  : isMobile()
-                    ? "default"
-                    : "zoom-in",
+              cursor: (() => {
+                if (isMobile()) return "default";
+                if (isZoomMode()) return "zoom-out";
+                return "zoom-in";
+              })(),
             }}
             onClick={(e) => {
               if (isMobile()) return;
@@ -247,13 +236,7 @@ export function Lightbox({
             }}
             onContextMenu={(e) => {
               const img = e.currentTarget as HTMLImageElement;
-              const originalSrc = img.src;
               img.src = `${S3_PREFIX}${photo.url}`;
-              setTimeout(() => {
-                if (imageBuffer()) {
-                  img.src = originalSrc;
-                }
-              }, 100);
             }}
           />
           {/* Magnifier lens */}
