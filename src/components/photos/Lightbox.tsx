@@ -295,7 +295,7 @@ export function Lightbox({
         style={lightboxContainerStyle()}
       >
         <div
-          class="relative min-w-96 min-h-96"
+          class="relative min-w-32 min-h-32 md:min-w-96 md:min-h-96"
           onMouseMove={(e) => {
             // Magnifier behavior (when enabled) tracks pointer over the image
             if (!isZoomMode()) return;
