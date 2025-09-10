@@ -1,4 +1,11 @@
-import { createSignal, Show, onCleanup, createEffect, JSX, onMount } from "solid-js";
+import {
+  createSignal,
+  Show,
+  onCleanup,
+  createEffect,
+  JSX,
+  onMount,
+} from "solid-js";
 import { useSearchParams } from "@solidjs/router";
 import { Photo as PhotoType } from "~/constants/photos";
 import { Photo } from "~/components/photos/Photo";
@@ -62,7 +69,10 @@ export function Gallery(props: GalleryProps) {
   };
 
   // Enhanced setExpanded that also updates URL
-  const setExpandedWithUrl = (photo: PhotoType | null, clickEvent?: MouseEvent) => {
+  const setExpandedWithUrl = (
+    photo: PhotoType | null,
+    clickEvent?: MouseEvent
+  ) => {
     if (photo && clickEvent) {
       // Calculate the position and size of the clicked element
       const target = clickEvent.currentTarget as HTMLElement;
@@ -85,6 +95,7 @@ export function Gallery(props: GalleryProps) {
 
     if (!expanded()) return;
     if (currentIndex > 0) {
+      setExpandedWithUrl(null);
       setExpandedWithUrl(shuffled[currentIndex - 1]);
     }
   };
@@ -93,6 +104,7 @@ export function Gallery(props: GalleryProps) {
     if (!expanded()) return;
     const currentIndex = shuffled.findIndex((p) => p.url === expanded()?.url);
     if (currentIndex < shuffled.length - 1) {
+      setExpandedWithUrl(null);
       setExpandedWithUrl(shuffled[currentIndex + 1]);
     }
   };

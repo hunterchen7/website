@@ -116,17 +116,19 @@ export function Lightbox({
   };
 
   const lightboxContainerStyle = (): JSX.CSSProperties => {
+    const transition = "transform 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)";
+
     if (!expandOrigin) {
       return {
-        transform: 'scale(1) translate(0, 0)',
-        transition: 'transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+        transform: "scale(1) translate(0, 0)",
+        transition,
       };
     }
 
     if (!isAnimating() && !isClosing()) {
       return {
-        transform: 'scale(1) translate(0, 0)',
-        transition: 'transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+        transform: "scale(1) translate(0, 0)",
+        transition,
       };
     }
 
@@ -135,16 +137,19 @@ export function Lightbox({
     const screenCenterY = window.innerHeight / 2;
 
     // Calculate initial scale based on thumbnail size - start smaller for better effect
-    const initialScale = Math.min(expandOrigin.width / 500, expandOrigin.height / 500, 0.2);
+    const initialScale = Math.min(
+      expandOrigin.width / 500,
+      expandOrigin.height / 500,
+      0.2
+    );
 
-    // Calculate translation from current position to origin position
-    // We need to account for the scale when calculating translation
-    const translateX = (expandOrigin.x - screenCenterX) / initialScale;
-    const translateY = (expandOrigin.y - screenCenterY) / initialScale;
+    // Calculate translation from screen center to origin position
+    const translateX = expandOrigin.x - screenCenterX;
+    const translateY = expandOrigin.y - screenCenterY;
 
     return {
       transform: `translate(${translateX}px, ${translateY}px) scale(${initialScale})`,
-      transition: 'transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+      transition,
     };
   };
 
@@ -240,7 +245,7 @@ export function Lightbox({
   return (
     <div
       class={`fixed inset-0 z-50 bg-black/90 flex items-center justify-center w-full transition-opacity duration-400 ease-out ${
-        isAnimating() ? 'opacity-0' : 'opacity-100'
+        isAnimating() ? "opacity-0" : "opacity-100"
       }`}
       onClick={handleClose}
       tabIndex={0}
