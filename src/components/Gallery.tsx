@@ -81,10 +81,12 @@ export function Gallery(props: GalleryProps) {
         </div>
       </div>
 
-      <div class="columns-2 md:columns-3 3xl:columns-4 gap-2 max-w-7xl 3xl:max-w-[100rem] mx-auto">
-        {shuffled.map((photo) => (
-          <Photo photo={photo} onClick={() => setExpanded(photo)} />
-        ))}
+      <div class="w-fill px-4">
+        <div class="flex flex-wrap gap-1" style="justify-content: stretch;">
+          {shuffled.map((photo) => (
+            <Photo photo={photo} onClick={() => setExpanded(photo)} />
+          ))}
+        </div>
       </div>
       <Show when={!!expanded()}>
         <Lightbox photo={expanded()!} onClose={() => setExpanded(null)} />
