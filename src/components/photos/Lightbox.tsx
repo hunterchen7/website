@@ -5,6 +5,7 @@ import { type ExifData } from "~/types/exif";
 import { InfoBar } from "./lightbox/InfoBar";
 import { DrawerContent } from "./lightbox/DrawerContent";
 import { Loader } from "./lightbox/Loader";
+import { extractExif } from "~/utils/exif";
 
 const S3_PREFIX = "https://photos.hunterchen.ca/";
 const magnifierSize = 500; // px
@@ -135,31 +136,7 @@ export function Lightbox({
 
         if (!signal.aborted) {
           setImageBuffer(buffer.buffer);
-          try {
-            const tags = ExifReader.load(buffer.buffer);
-            const make = tags.Make?.description || "";
-            const model = tags.Model?.description || "";
-            const camera = make && model ? `${make} ${model}` : make || model;
-            const width = tags["Image Width"]?.value;
-            const height = tags["Image Height"]?.value;
-            const megapixels =
-              width && height
-                ? ((width * height) / 1_000_000).toFixed(1)
-                : null;
-            setExif({
-              camera,
-              iso: tags.ISOSpeedRatings?.description,
-              shutter: tags.ExposureTime?.description,
-              aperture: tags.FNumber?.description,
-              focalLength: tags.FocalLength35efl?.description,
-              lensModel: tags.LensModel?.description,
-              width,
-              height,
-              megapixels,
-            });
-          } catch (err) {
-            setExif({});
-          }
+          setExif(extractExif(buffer.buffer));
         }
       } catch (err) {
         setExif({});
@@ -244,7 +221,7 @@ export function Lightbox({
               setImgWidth(e.currentTarget.naturalWidth);
               setImgHeight(e.currentTarget.naturalHeight);
             }}
-            class="max-h-[92vh] max-w-[95vw] rounded-lg shadow-lg"
+            class="max-h-[95vh] max-w-[98vw] rounded-lg shadow-lg"
             style={{
               display: "block",
               cursor:
