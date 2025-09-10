@@ -30,19 +30,9 @@ export function Lightbox({
   const [imgWidth, setImgWidth] = createSignal<number>(0);
   const [imgHeight, setImgHeight] = createSignal<number>(0);
   const [isMobile, setIsMobile] = createSignal(false);
-  const [imageLoaded, setImageLoaded] = createSignal(false);
 
   onMount(() => {
     setIsMobile(window.matchMedia("(pointer: coarse)").matches);
-  });
-
-  // Reset image loaded state when shouldLoadHighRes or photo changes
-  createEffect(() => {
-    if (shouldLoadHighRes()) {
-      setImageLoaded(false);
-    }
-    // Track photo changes to reset state
-    photo();
   });
 
   const magnifierStyle = (): JSX.CSSProperties => {
@@ -146,7 +136,6 @@ export function Lightbox({
               onLoad={(e) => {
                 setImgWidth(e.currentTarget.naturalWidth);
                 setImgHeight(e.currentTarget.naturalHeight);
-                setImageLoaded(true);
               }}
               class="max-h-[95vh] max-w-[95vw] rounded-lg shadow-lg relative z-1 select-none"
               style={{
