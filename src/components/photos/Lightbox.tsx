@@ -204,7 +204,7 @@ export function Lightbox({
           <img
             src={`${S3_PREFIX}${photo.thumbnail}`}
             alt="thumbnail"
-            class="absolute top-0 left-0 max-h-[95vh] max-w-[98vw] rounded-lg shadow-lg w-full h-full object-contain brightness-85"
+            class="absolute top-0 left-0 max-h-[95vh] max-w-[98vw] rounded-lg shadow-lg w-full h-full object-contain brightness-85 select-none"
           />
           <img
             ref={setImgRef}
@@ -214,7 +214,7 @@ export function Lightbox({
               setImgWidth(e.currentTarget.naturalWidth);
               setImgHeight(e.currentTarget.naturalHeight);
             }}
-            class="max-h-[95vh] max-w-[95vw] rounded-lg shadow-lg relative z-1"
+            class="max-h-[95vh] max-w-[95vw] rounded-lg shadow-lg relative z-1 select-none"
             style={{
               display: "block",
               cursor: (() => {

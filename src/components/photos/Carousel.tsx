@@ -108,6 +108,7 @@ export function Carousel(props: CarouselProps) {
   return (
     <div
       class="fixed inset-0 z-50 bg-black/95 overflow-hidden"
+      onClick={props.onClose}
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
       onMouseLeave={() => setShowNavigation(false)}
