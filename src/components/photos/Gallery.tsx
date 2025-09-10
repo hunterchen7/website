@@ -64,6 +64,7 @@ export function Gallery(props: GalleryProps) {
 
     if (!expanded()) return;
     if (currentIndex > 0) {
+      setExpandedWithUrl(null);
       setExpandedWithUrl(shuffled[currentIndex - 1]);
     }
   };
@@ -72,6 +73,7 @@ export function Gallery(props: GalleryProps) {
     if (!expanded()) return;
     const currentIndex = shuffled.findIndex((p) => p.url === expanded()?.url);
     if (currentIndex < shuffled.length - 1) {
+      setExpandedWithUrl(null);
       setExpandedWithUrl(shuffled[currentIndex + 1]);
     }
   };
