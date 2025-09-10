@@ -76,7 +76,7 @@ export function Gallery(props: GalleryProps) {
   });
 
   return (
-    <main class="text-center p-4 mx-auto font-mono text-violet-200 pb-20 h-screen overflow-y-auto">
+    <main class="text-center mx-auto font-mono text-violet-200 pb-20 h-screen overflow-y-auto">
       <h1 class="text-2xl sm:text-4xl font-thin leading-tight mt-2 md:mt-12 mb-8 mx-auto max-w-[14rem] md:max-w-none">
         gallery
       </h1>
@@ -88,8 +88,8 @@ export function Gallery(props: GalleryProps) {
         </div>
       </div>
 
-      <div class="w-fill px-4">
-        <div class="flex flex-wrap gap-1" style="justify-content: stretch;">
+      <div class="w-fill p-1 sm:p-2 md:p-4">
+        <div class="flex flex-wrap gap-1 sm:gap-2">
           {shuffled.map((photo) => (
             <Photo photo={photo} onClick={() => setExpanded(photo)} />
           ))}

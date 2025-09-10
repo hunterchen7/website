@@ -211,7 +211,7 @@ export function Lightbox({
               setImgWidth(e.currentTarget.naturalWidth);
               setImgHeight(e.currentTarget.naturalHeight);
             }}
-            class="max-h-[95vh] max-w-[98vw] rounded-lg shadow-lg relative z-1"
+            class="max-h-[95vh] max-w-[95vw] rounded-lg shadow-lg relative z-1"
             style={{
               display: "block",
               cursor: (() => {
