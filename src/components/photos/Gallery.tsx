@@ -1,14 +1,7 @@
-function CollectionLink({ href, children }: { href: string; children: any }) {
-  return (
-    <a href={href} class="underline hover:text-violet-300 text-violet-400">
-      {children}
-    </a>
-  );
-}
-import { createSignal, Show, onCleanup, createEffect } from "solid-js";
+import { createSignal, Show, onCleanup, createEffect, JSX } from "solid-js";
 import { Photo as PhotoType } from "~/constants/photos";
-import { Photo } from "~/components/Photo";
-import { Lightbox } from "~/components/Lightbox";
+import { Photo } from "~/components/photos/Photo";
+import { Lightbox } from "~/components/photos/Lightbox";
 
 export interface GalleryProps {
   manifest: readonly PhotoType[];
@@ -35,6 +28,20 @@ function shuffle<T>(array: readonly T[], seed?: number): T[] {
   return arr;
 }
 
+function CollectionLink({
+  href,
+  children,
+}: {
+  href: string;
+  children: JSX.Element;
+}) {
+  return (
+    <a href={href} class="underline hover:text-violet-300 text-violet-400">
+      {children}
+    </a>
+  );
+}
+
 export function Gallery(props: GalleryProps) {
   const [expanded, setExpanded] = createSignal<PhotoType | null>(null);
   const shuffled = shuffle(props.manifest, props.seed);
@@ -47,12 +54,12 @@ export function Gallery(props: GalleryProps) {
     if (e.key === "ArrowRight") {
       if (currentIndex < shuffled.length - 1) {
         setExpanded(null);
-        setTimeout(() => setExpanded(shuffled[currentIndex + 1]), 0);
+        setExpanded(shuffled[currentIndex + 1]);
       }
     } else if (e.key === "ArrowLeft") {
       if (currentIndex > 0) {
         setExpanded(null);
-        setTimeout(() => setExpanded(shuffled[currentIndex - 1]), 0);
+        setExpanded(shuffled[currentIndex - 1]);
       }
     } else if (e.key === "Escape") {
       setExpanded(null);
@@ -81,10 +88,12 @@ export function Gallery(props: GalleryProps) {
         </div>
       </div>
 
-      <div class="columns-2 md:columns-3 3xl:columns-4 gap-2 max-w-7xl 3xl:max-w-[100rem] mx-auto">
-        {shuffled.map((photo) => (
-          <Photo photo={photo} onClick={() => setExpanded(photo)} />
-        ))}
+      <div class="w-fill px-4">
+        <div class="flex flex-wrap gap-1" style="justify-content: stretch;">
+          {shuffled.map((photo) => (
+            <Photo photo={photo} onClick={() => setExpanded(photo)} />
+          ))}
+        </div>
       </div>
       <Show when={!!expanded()}>
         <Lightbox photo={expanded()!} onClose={() => setExpanded(null)} />

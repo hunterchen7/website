@@ -4,6 +4,8 @@ export interface Photo {
   thumbnail: string;
 }
 
+export const S3_PREFIX = "https://photos.hunterchen.ca/";
+
 export const manifest: readonly Photo[] = [
   {
     url: "HC_08466-Enhanced-NR.jpg",

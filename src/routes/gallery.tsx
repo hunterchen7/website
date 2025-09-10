@@ -1,6 +1,6 @@
 import { Title } from "@solidjs/meta";
 import { manifest } from "~/constants/photos";
-import { Gallery as GalleryComponent } from "~/components/Gallery";
+import { Gallery as GalleryComponent } from "~/components/photos/Gallery";
 
 export default function Gallery() {
   return (
