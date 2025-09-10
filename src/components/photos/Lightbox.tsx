@@ -12,9 +12,11 @@ const magnifierZoom = 0.75;
 export function Lightbox({
   photo,
   onClose,
+  isCarouselMode = false,
 }: {
   photo: PhotoType;
   onClose: () => void;
+  isCarouselMode?: boolean;
 }) {
   const [downloadProgress, setDownloadProgress] = createSignal({
     loaded: 0,
@@ -174,10 +176,10 @@ export function Lightbox({
 
   return (
     <div
-      class="fixed inset-0 z-50 bg-black/90 flex items-center justify-center w-full"
-      onClick={onClose}
-      tabIndex={0}
-      onKeyDown={(e) => {
+      class={`${isCarouselMode ? '' : 'fixed inset-0 z-50 bg-black/90'} flex items-center justify-center w-full h-full`}
+      onClick={isCarouselMode ? undefined : onClose}
+      tabIndex={isCarouselMode ? -1 : 0}
+      onKeyDown={isCarouselMode ? undefined : (e) => {
         if (e.key === "Escape") onClose();
       }}
     >

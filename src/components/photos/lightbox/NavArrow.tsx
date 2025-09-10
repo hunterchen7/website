@@ -4,13 +4,16 @@ export const NavArrow = (props: {
   side: "left" | "right";
   visible: boolean;
   onClick?: (e: MouseEvent) => void;
+  zIndex?: number;
 }) => {
   const posClass = props.side === "left" ? "left-4" : "right-4";
+  const zIndexClass = props.zIndex ? `z-[${props.zIndex}]` : "z-[60]";
+
   return (
     <button
       type="button"
       aria-label={props.side === "left" ? "previous" : "next"}
-      class={`fixed ${posClass} top-1/2 -translate-y-1/2 z-[60] transition-opacity duration-150 ease-in-out hidden sm:flex items-center justify-center cursor-pointer ${
+      class={`fixed ${posClass} top-1/2 -translate-y-1/2 ${zIndexClass} p-3 rounded-full transition-all duration-200 hidden sm:flex items-center justify-center cursor-pointer ${
         props.visible ? "opacity-100" : "opacity-0 pointer-events-none"
       }`}
       onClick={(e) => {
