@@ -98,7 +98,7 @@ export function Carousel(props: CarouselProps) {
 
       try {
         // First attempt with cache
-        await attemptFetch(true);
+        await attemptFetch();
       } catch (err) {
         try {
           // Retry without cache if first attempt fails
