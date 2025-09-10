@@ -2,6 +2,7 @@ import { createSignal, onCleanup, createEffect, onMount, JSX } from "solid-js";
 import { S3_PREFIX, type Photo as PhotoType } from "~/constants/photos";
 import { type ExifData } from "~/types/exif";
 import { InfoBar } from "./lightbox/InfoBar";
+import { Loader } from "./lightbox/Loader";
 
 const magnifierSize = 500; // px
 const magnifierZoom = 0.75;
@@ -11,13 +12,13 @@ export function Lightbox({
   exif,
   downloadProgress,
   setDrawerOpen,
-  shouldLoadHighRes = true,
+  shouldLoadHighRes = () => true,
 }: {
-  photo: PhotoType;
+  photo: () => PhotoType;
   exif: () => ExifData;
   downloadProgress: () => { loaded: number; total: number };
   setDrawerOpen: (open: boolean) => void;
-  shouldLoadHighRes?: boolean;
+  shouldLoadHighRes?: () => boolean;
 }) {
   // Magnifier state
   const [isZoomMode, setIsZoomMode] = createSignal(false);
@@ -29,13 +30,28 @@ export function Lightbox({
   const [imgWidth, setImgWidth] = createSignal<number>(0);
   const [imgHeight, setImgHeight] = createSignal<number>(0);
   const [isMobile, setIsMobile] = createSignal(false);
+  const [imageLoaded, setImageLoaded] = createSignal(false);
 
   onMount(() => {
     setIsMobile(window.matchMedia("(pointer: coarse)").matches);
   });
 
+  // Reset image loaded state when shouldLoadHighRes or photo changes
+  createEffect(() => {
+    if (shouldLoadHighRes()) {
+      setImageLoaded(false);
+    }
+    // Track photo changes to reset state
+    photo();
+  });
+
   const magnifierStyle = (): JSX.CSSProperties => {
-    if (!isZoomMode() || !shouldLoadHighRes || imgWidth() <= 0 || imgHeight() <= 0) {
+    if (
+      !isZoomMode() ||
+      !shouldLoadHighRes() ||
+      imgWidth() <= 0 ||
+      imgHeight() <= 0
+    ) {
       return { display: "none" };
     }
 
@@ -69,7 +85,7 @@ export function Lightbox({
       border: "2px solid #eee",
       overflow: "hidden",
       "z-index": 10,
-      "background-image": `url(${S3_PREFIX + photo.url})`,
+      "background-image": `url(${S3_PREFIX + photo().url})`,
       "background-repeat": "no-repeat",
       "background-size": `${imgWidth() * magnifierZoom}px ${
         imgHeight() * magnifierZoom
@@ -118,18 +134,19 @@ export function Lightbox({
         >
           {/* Thumbnail image underneath main image */}
           <img
-            src={`${S3_PREFIX}${photo.thumbnail}`}
+            src={`${S3_PREFIX}${photo().thumbnail}`}
             alt="thumbnail"
             class="absolute top-0 left-0 max-h-[95vh] max-w-[98vw] rounded-lg shadow-lg w-full h-full object-contain brightness-85 select-none"
           />
-          {shouldLoadHighRes && (
+          {shouldLoadHighRes() && (
             <img
               ref={setImgRef}
-              src={`${S3_PREFIX}${photo.url}`}
+              src={`${S3_PREFIX}${photo().url}`}
               alt="photo"
               onLoad={(e) => {
                 setImgWidth(e.currentTarget.naturalWidth);
                 setImgHeight(e.currentTarget.naturalHeight);
+                setImageLoaded(true);
               }}
               class="max-h-[95vh] max-w-[95vw] rounded-lg shadow-lg relative z-1 select-none"
               style={{
@@ -156,13 +173,20 @@ export function Lightbox({
               }}
               onContextMenu={(e) => {
                 const img = e.currentTarget as HTMLImageElement;
-                img.src = `${S3_PREFIX}${photo.url}`;
+                img.src = `${S3_PREFIX}${photo().url}`;
               }}
             />
           )}
 
           {/* Magnifier lens */}
-          {isZoomMode() && shouldLoadHighRes && <div style={magnifierStyle()} />}
+          {isZoomMode() && shouldLoadHighRes() && (
+            <div style={magnifierStyle()} />
+          )}
+
+          {/* Loading indicator */}
+          {downloadProgress().loaded < downloadProgress().total && (
+            <Loader downloadProgress={downloadProgress} />
+          )}
         </div>
         <InfoBar
           photo={photo}

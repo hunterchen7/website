@@ -6,7 +6,7 @@ import { type ExifData } from "~/types/exif";
 const S3_PREFIX = "https://photos.hunterchen.ca/";
 
 interface DrawerContentProps {
-  photo: PhotoType;
+  photo: () => PhotoType;
   exif: () => ExifData;
   downloadProgress: () => { loaded: number; total: number };
 }
@@ -20,16 +20,16 @@ export function DrawerContent({
     <>
       <h2 class="text-lg text-violet-200 mb-4">Photo Info</h2>
       <div class="text-xs md:text-sm text-violet-200 space-y-2 text-left">
-        {photo.url ? (
+        {photo().url ? (
           <div class="flex gap-2">
             <File class="w-4 h-4 mt-[2px]" />
             <a
-              href={`${S3_PREFIX}${photo.url}`}
+              href={`${S3_PREFIX}${photo().url}`}
               target="_blank"
               rel="noopener noreferrer"
               class="hover:text-purple-400 break-all"
             >
-              {photo.url}
+              {photo().url}
             </a>
             <div>
               ({(downloadProgress().total / 1024 / 1024).toFixed(2)} MB)
@@ -38,10 +38,10 @@ export function DrawerContent({
         ) : (
           ""
         )}
-        {photo.date ? (
+        {photo().date ? (
           <div class="flex gap-2">
             <Clock class="w-4 h-4 mt-[2px]" />
-            {formatDate(photo.date)}
+            {formatDate(photo().date)}
           </div>
         ) : (
           ""

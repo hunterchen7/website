@@ -1,4 +1,5 @@
 import { createSignal, createEffect, onCleanup, JSX, For } from "solid-js";
+import { useSearchParams } from "@solidjs/router";
 import { type Photo as PhotoType, S3_PREFIX } from "~/constants/photos";
 import { type ExifData } from "~/types/exif";
 import { extractExif } from "~/utils/exif";
@@ -13,6 +14,7 @@ export interface CarouselProps {
 }
 
 export function Carousel(props: CarouselProps) {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [currentIndex, setCurrentIndex] = createSignal(props.initialIndex ?? 0);
   const [showNavigation, setShowNavigation] = createSignal(false);
   const [touchStartX, setTouchStartX] = createSignal(0);
@@ -29,6 +31,14 @@ export function Carousel(props: CarouselProps) {
     total: 0,
   });
 
+  // Update search params when current index changes
+  createEffect(() => {
+    const currentPhoto = props.photos[currentIndex()];
+    if (currentPhoto) {
+      setSearchParams({ image: currentPhoto.url });
+    }
+  });
+
   // Fetch EXIF data for the current photo
   createEffect(() => {
     const currentPhoto = props.photos[currentIndex()];
@@ -42,8 +52,6 @@ export function Carousel(props: CarouselProps) {
     setCurrentPhotoExif({});
 
     const fetchPhotoData = async () => {
-      console.log("fetching photo data for", currentPhoto.url);
-
       try {
         const response = await fetch(`${S3_PREFIX}${currentPhoto.url}`, {
           signal,
@@ -186,10 +194,17 @@ export function Carousel(props: CarouselProps) {
     };
   };
 
-  // Only load high-res image for the current photo to avoid unnecessary downloads
+  // change this render both the left and the right
   const shouldLoadHighRes = (index: number): boolean => {
-    return index === currentIndex();
+    return (
+      index === currentIndex() ||
+      index === currentIndex() - 1 ||
+      index === currentIndex() + 1
+    );
   };
+
+  // Get current photo reactively
+  const currentPhoto = () => props.photos[currentIndex()];
 
   return (
     <div
@@ -205,17 +220,11 @@ export function Carousel(props: CarouselProps) {
           {(photo, index) => (
             <div style={getCarouselItemStyle(index())}>
               <Lightbox
-                photo={photo}
-                exif={
-                  index() === currentIndex() ? currentPhotoExif : () => ({})
-                }
-                downloadProgress={
-                  index() === currentIndex()
-                    ? currentDownloadProgress
-                    : () => ({ loaded: 0, total: 0 })
-                }
+                photo={() => photo}
+                exif={currentPhotoExif}
+                downloadProgress={currentDownloadProgress}
                 setDrawerOpen={setDrawerOpen}
-                shouldLoadHighRes={shouldLoadHighRes(index())}
+                shouldLoadHighRes={() => shouldLoadHighRes(index())}
               />
             </div>
           )}
@@ -260,7 +269,7 @@ export function Carousel(props: CarouselProps) {
         aria-hidden={!drawerOpen()}
       >
         <DrawerContent
-          photo={props.photos[currentIndex()]}
+          photo={currentPhoto}
           exif={currentPhotoExif}
           downloadProgress={currentDownloadProgress}
         />
