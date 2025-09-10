@@ -58,19 +58,6 @@ export function Lightbox({
     }
   });
 
-  const handleClose = () => {
-    if (expandOrigin) {
-      setIsClosing(true);
-      setIsAnimating(true);
-      // Wait for animation to complete before calling onClose
-      setTimeout(() => {
-        onClose();
-      }, 400);
-    } else {
-      onClose();
-    }
-  };
-
   const magnifierStyle = (): JSX.CSSProperties => {
     if (!isZoomMode() || imgWidth() <= 0 || imgHeight() <= 0) {
       return { display: "none" };
@@ -116,16 +103,16 @@ export function Lightbox({
   };
 
   const lightboxContainerStyle = (): JSX.CSSProperties => {
-    const transition = "transform 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)";
+    const transition = "transform 0.1s cubic-bezier(0.25, 0.46, 0.45, 0.94)";
 
-    if (!expandOrigin) {
+    if (!expandOrigin || isClosing()) {
       return {
         transform: "scale(1) translate(0, 0)",
         transition,
       };
     }
 
-    if (!isAnimating() && !isClosing()) {
+    if (!isAnimating()) {
       return {
         transform: "scale(1) translate(0, 0)",
         transition,
@@ -247,10 +234,10 @@ export function Lightbox({
       class={`fixed inset-0 z-50 bg-black/90 flex items-center justify-center w-full transition-opacity duration-400 ease-out ${
         isAnimating() ? "opacity-0" : "opacity-100"
       }`}
-      onClick={handleClose}
+      onClick={onClose}
       tabIndex={0}
       onKeyDown={(e) => {
-        if (e.key === "Escape") handleClose();
+        if (e.key === "Escape") onClose();
       }}
     >
       <div
