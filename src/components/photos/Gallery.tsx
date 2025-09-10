@@ -1,9 +1,8 @@
-import { createSignal, Show, onCleanup, createEffect, JSX, onMount } from "solid-js";
+import { createSignal, Show, JSX, onMount } from "solid-js";
 import { useSearchParams } from "@solidjs/router";
 import { Photo as PhotoType } from "~/constants/photos";
 import { Photo } from "~/components/photos/Photo";
-import { Lightbox } from "~/components/photos/Lightbox";
-import { NavArrow } from "~/components/photos/lightbox/NavArrow";
+import { Carousel } from "~/components/photos/Carousel";
 import { shuffle } from "~/utils/shuffle";
 
 export interface GalleryProps {
@@ -27,9 +26,7 @@ function CollectionLink({
 }
 
 export function Gallery(props: GalleryProps) {
-  const [expanded, setExpanded] = createSignal<PhotoType | null>(null);
-  const [showLeft, setShowLeft] = createSignal(false);
-  const [showRight, setShowRight] = createSignal(false);
+  const [expandedIndex, setExpandedIndex] = createSignal<number | null>(null);
   const [searchParams, setSearchParams] = useSearchParams();
   const shuffled = shuffle(props.manifest, props.seed);
 
@@ -37,26 +34,26 @@ export function Gallery(props: GalleryProps) {
   onMount(() => {
     const imageParam = searchParams.image;
     if (imageParam) {
-      const photo = shuffled.find((p) => p.url === imageParam);
-      if (photo) {
-        setExpanded(photo);
+      const photoIndex = shuffled.findIndex((p) => p.url === imageParam);
+      if (photoIndex !== -1) {
+        setExpandedIndex(photoIndex);
       }
     }
   });
 
   // Function to update URL with image parameter
-  const updateUrlWithImage = (photo: PhotoType | null) => {
-    if (photo) {
-      setSearchParams({ image: photo.url });
+  const updateUrlWithImage = (index: number | null) => {
+    if (index !== null && shuffled[index]) {
+      setSearchParams({ image: shuffled[index].url });
     } else {
       setSearchParams({ image: undefined });
     }
   };
 
-  // Enhanced setExpanded that also updates URL
-  const setExpandedWithUrl = (photo: PhotoType | null) => {
-    setExpanded(photo);
-    updateUrlWithImage(photo);
+  // Enhanced setExpandedIndex that also updates URL
+  const setExpandedIndexWithUrl = (index: number | null) => {
+    setExpandedIndex(index);
+    updateUrlWithImage(index);
   };
 
   const handleLeft = () => {
@@ -144,15 +141,18 @@ export function Gallery(props: GalleryProps) {
 
       <div class="w-fill p-1 sm:p-2 md:p-4">
         <div class="flex flex-wrap gap-1 sm:gap-2">
-          {shuffled.map((photo) => (
-            <Photo photo={photo} onClick={() => setExpandedWithUrl(photo)} />
+          {shuffled.map((photo, index) => (
+            <Photo photo={photo} onClick={() => setExpandedIndexWithUrl(index)} />
           ))}
         </div>
       </div>
-      <Show when={!!expanded()}>
-        <Lightbox photo={expanded()!} onClose={() => setExpandedWithUrl(null)} />
-        <NavArrow side="left" visible={showLeft()} onClick={handleLeft} />
-        <NavArrow side="right" visible={showRight()} onClick={handleRight} />
+
+      <Show when={expandedIndex() !== null}>
+        <Carousel
+          photos={shuffled}
+          initialIndex={expandedIndex()!}
+          onClose={() => setExpandedIndexWithUrl(null)}
+        />
       </Show>
     </main>
   );

@@ -1,11 +1,11 @@
 import { ZoomIn, ZoomOut, Info, Download, Share } from "lucide-solid";
-import { createSignal, onCleanup } from "solid-js";
+import { createSignal } from "solid-js";
 import { formatDate } from "~/utils/date";
 import { S3_PREFIX, type Photo as PhotoType } from "~/constants/photos";
 import { type ExifData } from "~/types/exif";
 
 interface InfoBarProps {
-  photo: PhotoType;
+  photo: () => PhotoType;
   exif: () => ExifData;
   downloadProgress: () => { loaded: number; total: number };
   isMobile: () => boolean;
@@ -28,7 +28,7 @@ export function InfoBar({
 
   const copyImageLink = async () => {
     const currentUrl = new URL(window.location.href);
-    currentUrl.searchParams.set("image", photo.url);
+    currentUrl.searchParams.set("image", photo().url);
 
     try {
       await navigator.clipboard.writeText(currentUrl.toString());
@@ -44,13 +44,13 @@ export function InfoBar({
   };
 
   const downloadImage = () => {
-    fetch(`${S3_PREFIX}${photo.url}`)
+    fetch(`${S3_PREFIX}${photo().url}`)
       .then((response) => response.blob())
       .then((blob) => {
         const url = URL.createObjectURL(blob);
         const link = document.createElement("a");
         link.href = url;
-        link.download = photo.url;
+        link.download = photo().url;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
@@ -83,7 +83,7 @@ export function InfoBar({
     <span class="text-xs text-violet-200 font-mono flex flex-col sm:flex-row justify-between w-full p-1">
       <div class="flex flex-col sm:flex-row sm:gap-2">
         <div class="border-violet-300 max-w-xs sm:max-w-none mx-auto">
-          {photo.date ? formatDate(photo.date) : ""}
+          {photo().date ? formatDate(photo().date) : ""}
           {exif().iso && <span> | ISO {exif().iso} |</span>}
           {exif().shutter && <span> {exif().shutter}s |</span>}
           {exif().aperture && <span> {exif().aperture} |</span>}
