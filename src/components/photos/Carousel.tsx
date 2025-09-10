@@ -42,8 +42,12 @@ export function Carousel(props: CarouselProps) {
     setCurrentPhotoExif({});
 
     const fetchPhotoData = async () => {
+      console.log("fetching photo data for", currentPhoto.url);
+
       try {
-        const response = await fetch(`${S3_PREFIX}${currentPhoto.url}`, { signal });
+        const response = await fetch(`${S3_PREFIX}${currentPhoto.url}`, {
+          signal,
+        });
 
         if (!response.body) {
           throw new Error("ReadableStream not supported");
@@ -182,6 +186,11 @@ export function Carousel(props: CarouselProps) {
     };
   };
 
+  // Only load high-res image for the current photo to avoid unnecessary downloads
+  const shouldLoadHighRes = (index: number): boolean => {
+    return index === currentIndex();
+  };
+
   return (
     <div
       class="fixed inset-0 z-50 bg-black/95 overflow-hidden"
@@ -197,9 +206,16 @@ export function Carousel(props: CarouselProps) {
             <div style={getCarouselItemStyle(index())}>
               <Lightbox
                 photo={photo}
-                exif={index() === currentIndex() ? currentPhotoExif : () => ({})}
-                downloadProgress={index() === currentIndex() ? currentDownloadProgress : () => ({ loaded: 0, total: 0 })}
+                exif={
+                  index() === currentIndex() ? currentPhotoExif : () => ({})
+                }
+                downloadProgress={
+                  index() === currentIndex()
+                    ? currentDownloadProgress
+                    : () => ({ loaded: 0, total: 0 })
+                }
                 setDrawerOpen={setDrawerOpen}
+                shouldLoadHighRes={shouldLoadHighRes(index())}
               />
             </div>
           )}
@@ -229,7 +245,10 @@ export function Carousel(props: CarouselProps) {
         class={`fixed inset-0 z-[99] transition-opacity duration-300 ease-in-out overflow-y-none ${
           drawerOpen() ? "opacity-100" : "opacity-0 pointer-events-none"
         }`}
-        onClick={() => setDrawerOpen(false)}
+        onClick={(e) => {
+          setDrawerOpen(false);
+          e.stopPropagation();
+        }}
         aria-hidden={!drawerOpen()}
       >
         <div class="absolute inset-0 bg-black/80" />

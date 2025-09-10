@@ -11,11 +11,13 @@ export function Lightbox({
   exif,
   downloadProgress,
   setDrawerOpen,
+  shouldLoadHighRes = true,
 }: {
   photo: PhotoType;
   exif: () => ExifData;
   downloadProgress: () => { loaded: number; total: number };
   setDrawerOpen: (open: boolean) => void;
+  shouldLoadHighRes?: boolean;
 }) {
   // Magnifier state
   const [isZoomMode, setIsZoomMode] = createSignal(false);
@@ -33,7 +35,7 @@ export function Lightbox({
   });
 
   const magnifierStyle = (): JSX.CSSProperties => {
-    if (!isZoomMode() || imgWidth() <= 0 || imgHeight() <= 0) {
+    if (!isZoomMode() || !shouldLoadHighRes || imgWidth() <= 0 || imgHeight() <= 0) {
       return { display: "none" };
     }
 
@@ -120,45 +122,47 @@ export function Lightbox({
             alt="thumbnail"
             class="absolute top-0 left-0 max-h-[95vh] max-w-[98vw] rounded-lg shadow-lg w-full h-full object-contain brightness-85 select-none"
           />
-          <img
-            ref={setImgRef}
-            src={`${S3_PREFIX}${photo.url}`}
-            alt="photo"
-            onLoad={(e) => {
-              setImgWidth(e.currentTarget.naturalWidth);
-              setImgHeight(e.currentTarget.naturalHeight);
-            }}
-            class="max-h-[95vh] max-w-[95vw] rounded-lg shadow-lg relative z-1 select-none"
-            style={{
-              display: "block",
-              cursor: (() => {
-                if (isMobile()) return "default";
-                if (isZoomMode()) return "zoom-out";
-                return "zoom-in";
-              })(),
-            }}
-            onClick={(e) => {
-              if (isMobile()) return;
-              e.stopPropagation();
-              if (!isZoomMode()) {
-                const img = imgRef();
-                if (img) {
-                  const rect = img.getBoundingClientRect();
-                  const x = e.clientX - rect.left;
-                  const y = e.clientY - rect.top;
-                  setMagnifierPos({ x, y });
+          {shouldLoadHighRes && (
+            <img
+              ref={setImgRef}
+              src={`${S3_PREFIX}${photo.url}`}
+              alt="photo"
+              onLoad={(e) => {
+                setImgWidth(e.currentTarget.naturalWidth);
+                setImgHeight(e.currentTarget.naturalHeight);
+              }}
+              class="max-h-[95vh] max-w-[95vw] rounded-lg shadow-lg relative z-1 select-none"
+              style={{
+                display: "block",
+                cursor: (() => {
+                  if (isMobile()) return "default";
+                  if (isZoomMode()) return "zoom-out";
+                  return "zoom-in";
+                })(),
+              }}
+              onClick={(e) => {
+                if (isMobile()) return;
+                e.stopPropagation();
+                if (!isZoomMode()) {
+                  const img = imgRef();
+                  if (img) {
+                    const rect = img.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    setMagnifierPos({ x, y });
+                  }
                 }
-              }
-              setIsZoomMode(!isZoomMode());
-            }}
-            onContextMenu={(e) => {
-              const img = e.currentTarget as HTMLImageElement;
-              img.src = `${S3_PREFIX}${photo.url}`;
-            }}
-          />
+                setIsZoomMode(!isZoomMode());
+              }}
+              onContextMenu={(e) => {
+                const img = e.currentTarget as HTMLImageElement;
+                img.src = `${S3_PREFIX}${photo.url}`;
+              }}
+            />
+          )}
 
           {/* Magnifier lens */}
-          {isZoomMode() && <div style={magnifierStyle()} />}
+          {isZoomMode() && shouldLoadHighRes && <div style={magnifierStyle()} />}
         </div>
         <InfoBar
           photo={photo}
