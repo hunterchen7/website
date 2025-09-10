@@ -25,7 +25,7 @@ export function InfoBar({
   return (
     <span class="text-xs text-violet-200 font-mono flex flex-col sm:flex-row justify-between w-full p-1">
       <div class="flex flex-col sm:flex-row sm:gap-2">
-        <div class="border-violet-300">
+        <div class="border-violet-300 max-w-xs sm:max-w-none mx-auto">
           {photo.date ? formatDate(photo.date) : ""}
           {exif().iso && <span> | ISO {exif().iso} |</span>}
           {exif().shutter && <span> {exif().shutter}s |</span>}

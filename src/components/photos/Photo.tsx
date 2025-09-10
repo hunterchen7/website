@@ -79,7 +79,7 @@ export function Photo({
 
   return (
     <div
-      class={`flex-grow rounded shadow-lg overflow-hidden border border-violet-700/50 bg-violet-900/20 flex flex-col`}
+      class={`flex-grow rounded shadow-lg overflow-hidden border border-violet-700/50 bg-violet-900/20 flex flex-col min-w-[135px]`}
       style={`
         flex-basis: ${baseWidth() * aspectRatio()}px;
       `}
@@ -97,7 +97,6 @@ export function Photo({
           class={`w-full h-full object-cover transition-opacity duration-300 ${
             loaded() ? "opacity-100" : "opacity-0"
           } hover:scale-[1.01] transition-transform cursor-pointer`}
-          loading="lazy"
           draggable="true"
           onLoad={handleImageLoad}
           onClick={onClick}
