@@ -3,7 +3,7 @@ import { seededRandom } from "../src/utils/shuffle.ts";
 // @ts-ignore
 import { manifest } from "../src/constants/airshow.ts";
 
-const target = "HC_06821.jpg";
+const target = "HC_06296-Enhanced-NR.jpg";
 const seeds: number[] = [];
 let seed = 1;
 while (seeds.length < 10 && seed < 100000) {

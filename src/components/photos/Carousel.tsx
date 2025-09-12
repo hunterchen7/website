@@ -50,7 +50,6 @@ export function Carousel(props: CarouselProps) {
     const controller = new AbortController();
     const signal = controller.signal;
 
-
     setCurrentPhotoExif({});
 
     if (imageExifs()[currentPhoto.url]) {
@@ -178,18 +177,28 @@ export function Carousel(props: CarouselProps) {
   };
 
   const handleTouchStart = (e: TouchEvent) => {
-    const touch = e.touches[0];
-    setTouchStartX(touch.clientX);
-    setTouchStartY(touch.clientY);
+    // Only track single-finger touches to avoid interfering with pinch-zoom
+    if (e.touches.length === 1) {
+      const touch = e.touches[0];
+      setTouchStartX(touch.clientX);
+      setTouchStartY(touch.clientY);
+    } else {
+      // If more than one finger, reset start position to cancel swipe
+      setTouchStartX(0);
+      setTouchStartY(0);
+    }
   };
 
   const handleTouchEnd = (e: TouchEvent) => {
+    // If touchStartX is 0, it means the gesture was cancelled (e.g., multi-touch)
+    if (touchStartX() === 0) return;
+
     const touch = e.changedTouches[0];
     const deltaX = touch.clientX - touchStartX();
     const deltaY = touch.clientY - touchStartY();
 
-    // Only handle horizontal swipes that are more horizontal than vertical
-    if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 50) {
+    // Increased swipe threshold from 50 to 75 for less sensitivity
+    if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 75) {
       if (deltaX > 0 && currentIndex() > 0) {
         goToPrevious();
       } else if (deltaX < 0 && currentIndex() < props.photos.length - 1) {
@@ -272,7 +281,7 @@ export function Carousel(props: CarouselProps) {
       />
 
       {/* Counter */}
-      <div class="fixed bottom-2 left-1/2 -translate-x-1/2 z-[70] px-4 py-2 bg-black/70 rounded-full text-sm select-none">
+      <div class="fixed top-2 sm:top-auto sm:bottom-2 left-1/2 -translate-x-1/2 z-[70] px-4 py-2 bg-black/70 rounded-full text-sm select-none">
         {currentIndex() + 1} / {props.photos.length}
       </div>
 
@@ -296,10 +305,7 @@ export function Carousel(props: CarouselProps) {
         aria-hidden={!drawerOpen()}
         onClick={(e) => e.stopPropagation()}
       >
-        <DrawerContent
-          photo={currentPhoto}
-          exif={currentPhotoExif}
-        />
+        <DrawerContent photo={currentPhoto} exif={currentPhotoExif} />
       </aside>
     </div>
   );
