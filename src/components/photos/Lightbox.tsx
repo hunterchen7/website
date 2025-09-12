@@ -2,7 +2,6 @@ import { createSignal, onCleanup, createEffect, onMount, JSX } from "solid-js";
 import { S3_PREFIX, type Photo as PhotoType } from "~/constants/photos";
 import { type ExifData } from "~/types/exif";
 import { InfoBar } from "./lightbox/InfoBar";
-import { Loader } from "./lightbox/Loader";
 
 const magnifierSize = 500; // px
 const magnifierZoom = 0.75;
@@ -10,15 +9,13 @@ const magnifierZoom = 0.75;
 export function Lightbox({
   photo,
   exif,
-  downloadProgress,
   setDrawerOpen,
-  shouldLoadHighRes = () => true,
+  shouldLoad = () => true,
 }: {
   photo: () => PhotoType;
   exif: () => ExifData;
-  downloadProgress: () => { loaded: number; total: number };
   setDrawerOpen: (open: boolean) => void;
-  shouldLoadHighRes?: () => boolean;
+  shouldLoad?: () => boolean;
 }) {
   // Magnifier state
   const [isZoomMode, setIsZoomMode] = createSignal(false);
@@ -38,7 +35,7 @@ export function Lightbox({
   const magnifierStyle = (): JSX.CSSProperties => {
     if (
       !isZoomMode() ||
-      !shouldLoadHighRes() ||
+      !shouldLoad() ||
       imgWidth() <= 0 ||
       imgHeight() <= 0
     ) {
@@ -128,7 +125,7 @@ export function Lightbox({
             alt="thumbnail"
             class="absolute top-0 left-0 max-h-[95vh] max-w-[98vw] rounded-lg shadow-lg w-full h-full object-contain brightness-85 select-none"
           />
-          {shouldLoadHighRes() && (
+          {shouldLoad() && (
             <img
               ref={setImgRef}
               src={`${S3_PREFIX}${photo().url}`}
@@ -168,19 +165,13 @@ export function Lightbox({
           )}
 
           {/* Magnifier lens */}
-          {isZoomMode() && shouldLoadHighRes() && (
+          {isZoomMode() && shouldLoad() && (
             <div style={magnifierStyle()} />
-          )}
-
-          {/* Loading indicator */}
-          {downloadProgress().loaded < downloadProgress().total && (
-            <Loader downloadProgress={downloadProgress} />
           )}
         </div>
         <InfoBar
           photo={photo}
           exif={exif}
-          downloadProgress={downloadProgress}
           isMobile={isMobile}
           isZoomMode={isZoomMode}
           setIsZoomMode={setIsZoomMode}

@@ -7,7 +7,6 @@ import { type ExifData } from "~/types/exif";
 interface InfoBarProps {
   photo: () => PhotoType;
   exif: () => ExifData;
-  downloadProgress: () => { loaded: number; total: number };
   isMobile: () => boolean;
   isZoomMode: () => boolean;
   setIsZoomMode: (v: boolean) => void;
@@ -17,7 +16,6 @@ interface InfoBarProps {
 export function InfoBar({
   photo,
   exif,
-  downloadProgress,
   isMobile,
   isZoomMode,
   setIsZoomMode,
@@ -90,55 +88,53 @@ export function InfoBar({
           {exif().focalLength && <span> {exif().focalLength} </span>}
         </div>
       </div>
-      {downloadProgress().loaded === downloadProgress().total && (
-        <div class="flex justify-center mt-1 sm:mt-0 gap-1 relative select-none">
-          {!isMobile() &&
-            (!isZoomMode() ? (
-              <ButtonWithPopover
-                label="Zoom in"
-                buttonId="zoom-in"
-                onClick={() => setIsZoomMode(true)}
-              >
-                <ZoomIn class="inline h-4 w-4 cursor-pointer hover:text-purple-400" />
-              </ButtonWithPopover>
-            ) : (
-              <ButtonWithPopover
-                label="Zoom out"
-                buttonId="zoom-out"
-                onClick={() => setIsZoomMode(false)}
-              >
-                <ZoomOut class="inline h-4 w-4 cursor-pointer hover:text-purple-400" />
-              </ButtonWithPopover>
-            ))}
-          <ButtonWithPopover
-            label="View details"
-            buttonId="info"
-            onClick={() => setDrawerOpen(true)}
-          >
-            <Info class="inline h-4 w-4 cursor-pointer hover:text-purple-400" />
-          </ButtonWithPopover>
-          <ButtonWithPopover
-            label="Share image"
-            buttonId="share"
-            onClick={copyImageLink}
-          >
-            <Share class="inline h-4 w-4 cursor-pointer hover:text-purple-400" />
-            {showCopiedPopover() && (
-              <div class="absolute bottom-6 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded shadow-lg whitespace-nowrap z-20">
-                Link copied!
-                <div class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-l-transparent border-r-transparent border-t-gray-800"></div>
-              </div>
-            )}
-          </ButtonWithPopover>
-          <ButtonWithPopover
-            label="Download image"
-            buttonId="download"
-            onClick={downloadImage}
-          >
-            <Download class="inline h-4 w-4 cursor-pointer hover:text-purple-400" />
-          </ButtonWithPopover>
-        </div>
-      )}
+      <div class="flex justify-center mt-1 sm:mt-0 gap-1 relative select-none">
+        {!isMobile() &&
+          (!isZoomMode() ? (
+            <ButtonWithPopover
+              label="Zoom in"
+              buttonId="zoom-in"
+              onClick={() => setIsZoomMode(true)}
+            >
+              <ZoomIn class="inline h-4 w-4 cursor-pointer hover:text-purple-400" />
+            </ButtonWithPopover>
+          ) : (
+            <ButtonWithPopover
+              label="Zoom out"
+              buttonId="zoom-out"
+              onClick={() => setIsZoomMode(false)}
+            >
+              <ZoomOut class="inline h-4 w-4 cursor-pointer hover:text-purple-400" />
+            </ButtonWithPopover>
+          ))}
+        <ButtonWithPopover
+          label="View details"
+          buttonId="info"
+          onClick={() => setDrawerOpen(true)}
+        >
+          <Info class="inline h-4 w-4 cursor-pointer hover:text-purple-400" />
+        </ButtonWithPopover>
+        <ButtonWithPopover
+          label="Share image"
+          buttonId="share"
+          onClick={copyImageLink}
+        >
+          <Share class="inline h-4 w-4 cursor-pointer hover:text-purple-400" />
+          {showCopiedPopover() && (
+            <div class="absolute bottom-6 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded shadow-lg whitespace-nowrap z-20">
+              Link copied!
+              <div class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-l-transparent border-r-transparent border-t-gray-800"></div>
+            </div>
+          )}
+        </ButtonWithPopover>
+        <ButtonWithPopover
+          label="Download image"
+          buttonId="download"
+          onClick={downloadImage}
+        >
+          <Download class="inline h-4 w-4 cursor-pointer hover:text-purple-400" />
+        </ButtonWithPopover>
+      </div>
     </span>
   );
 }

@@ -30,13 +30,6 @@ export function Carousel(props: CarouselProps) {
   // Shared drawer state
   const [drawerOpen, setDrawerOpen] = createSignal(false);
 
-  // Shared EXIF and download progress data for the current photo
-  const [currentPhotoExif, setCurrentPhotoExif] = createSignal<ExifData>({});
-  const [currentDownloadProgress, setCurrentDownloadProgress] = createSignal({
-    loaded: 0,
-    total: 0,
-  });
-
   // Update search params when current index changes
   createEffect(() => {
     const currentPhoto = props.photos[currentIndex()];
@@ -53,16 +46,6 @@ export function Carousel(props: CarouselProps) {
     const controller = new AbortController();
     const signal = controller.signal;
 
-    setCurrentPhotoExif({});
-
-    if (imageExifs()[currentPhoto.url]) {
-      setCurrentPhotoExif(imageExifs()[currentPhoto.url]);
-      return;
-    }
-
-    // Reset state for the new photo
-    setCurrentDownloadProgress({ loaded: 0, total: 0 });
-
     const fetchPhotoData = async () => {
       const attemptFetch = async (useCache: boolean = true) => {
         const response = await fetch(`${S3_PREFIX}${currentPhoto.url}`, {
@@ -78,8 +61,10 @@ export function Carousel(props: CarouselProps) {
         const total = contentLength ? parseInt(contentLength, 10) : 0;
 
         let loaded = 0;
+        let exifExtracted = false;
         const reader = response.body.getReader();
         const chunks: Uint8Array[] = [];
+        const EXIF_CHECK_THRESHOLD = 65536; // 64KB - enough for most EXIF data
 
         while (true) {
           const { done, value } = await reader.read();
@@ -91,21 +76,42 @@ export function Carousel(props: CarouselProps) {
 
           chunks.push(value);
           loaded += value.length;
-          if (total > 0) {
-            setCurrentDownloadProgress({ loaded, total });
+
+          // Try to extract EXIF data once we have enough bytes
+          if (!exifExtracted && loaded >= EXIF_CHECK_THRESHOLD) {
+            try {
+              // Create a buffer from chunks received so far
+              const partialBuffer = new Uint8Array(loaded);
+              let offset = 0;
+              for (const chunk of chunks) {
+                partialBuffer.set(chunk, offset);
+                offset += chunk.length;
+              }
+
+              const exif = extractExif(partialBuffer.buffer, total);
+
+              // Only set if we got meaningful EXIF data
+              if (Object.keys(exif).length > 1 || exif.camera) {
+                setImageExifs((prev) => ({
+                  ...prev,
+                  [currentPhoto.url]: exif,
+                }));
+                exifExtracted = true;
+              }
+            } catch (err) {}
           }
         }
 
-        const buffer = new Uint8Array(loaded);
-        let offset = 0;
-        for (const chunk of chunks) {
-          buffer.set(chunk, offset);
-          offset += chunk.length;
-        }
+        // Final EXIF extraction if not already done or if we want to update with file size
+        if (!signal.aborted && (!exifExtracted || total > 0)) {
+          const buffer = new Uint8Array(loaded);
+          let offset = 0;
+          for (const chunk of chunks) {
+            buffer.set(chunk, offset);
+            offset += chunk.length;
+          }
 
-        if (!signal.aborted) {
           const exif = extractExif(buffer.buffer, total);
-          setCurrentPhotoExif(exif);
           setImageExifs((prev) => ({
             ...prev,
             [currentPhoto.url]: exif,
@@ -122,7 +128,10 @@ export function Carousel(props: CarouselProps) {
           await attemptFetch(false);
         } catch (retryErr) {
           // Both attempts failed, set empty EXIF
-          setCurrentPhotoExif({});
+          setImageExifs((prev) => ({
+            ...prev,
+            [currentPhoto.url]: {},
+          }));
         }
       }
     };
@@ -211,7 +220,10 @@ export function Carousel(props: CarouselProps) {
 
       // Clamp the drag offset to one screen width
       const screenWidth = window.innerWidth;
-      const clampedDeltaX = Math.max(-screenWidth, Math.min(deltaX, screenWidth));
+      const clampedDeltaX = Math.max(
+        -screenWidth,
+        Math.min(deltaX, screenWidth)
+      );
 
       setDragOffset(clampedDeltaX);
     }
@@ -298,10 +310,9 @@ export function Carousel(props: CarouselProps) {
             <div style={getCarouselItemStyle(index())}>
               <Lightbox
                 photo={() => photo}
-                exif={currentPhotoExif}
-                downloadProgress={currentDownloadProgress}
+                exif={() => imageExifs()[photo.url] || {}}
                 setDrawerOpen={setDrawerOpen}
-                shouldLoadHighRes={() => shouldLoadHighRes(index())}
+                shouldLoad={() => shouldLoadHighRes(index())}
               />
             </div>
           )}
@@ -346,7 +357,10 @@ export function Carousel(props: CarouselProps) {
         aria-hidden={!drawerOpen()}
         onClick={(e) => e.stopPropagation()}
       >
-        <DrawerContent photo={currentPhoto} exif={currentPhotoExif} />
+        <DrawerContent
+          photo={currentPhoto}
+          exif={() => imageExifs()[currentPhoto().url] || {}}
+        />
       </aside>
     </div>
   );
