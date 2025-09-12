@@ -8,4 +8,5 @@ export interface ExifData {
   width?: number;
   height?: number;
   megapixels?: string | null;
+  size?: number; // in bytes
 }

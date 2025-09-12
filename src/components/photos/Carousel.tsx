@@ -50,15 +50,16 @@ export function Carousel(props: CarouselProps) {
     const controller = new AbortController();
     const signal = controller.signal;
 
-    // Reset state for the new photo
-    setCurrentDownloadProgress({ loaded: 0, total: 0 });
+
     setCurrentPhotoExif({});
 
     if (imageExifs()[currentPhoto.url]) {
       setCurrentPhotoExif(imageExifs()[currentPhoto.url]);
-      console.log("Using cached EXIF for", currentPhoto.url);
       return;
     }
+
+    // Reset state for the new photo
+    setCurrentDownloadProgress({ loaded: 0, total: 0 });
 
     const fetchPhotoData = async () => {
       const attemptFetch = async (useCache: boolean = true) => {
@@ -101,10 +102,11 @@ export function Carousel(props: CarouselProps) {
         }
 
         if (!signal.aborted) {
-          setCurrentPhotoExif(extractExif(buffer.buffer));
+          const exif = extractExif(buffer.buffer, total);
+          setCurrentPhotoExif(exif);
           setImageExifs((prev) => ({
             ...prev,
-            [currentPhoto.url]: extractExif(buffer.buffer),
+            [currentPhoto.url]: exif,
           }));
         }
       };
@@ -114,7 +116,7 @@ export function Carousel(props: CarouselProps) {
         await attemptFetch();
       } catch (err) {
         try {
-          // Retry without cache if first attempt fails
+          // Retry without cache if first attempt fails, evades some CORS issues
           await attemptFetch(false);
         } catch (retryErr) {
           // Both attempts failed, set empty EXIF
@@ -292,11 +294,11 @@ export function Carousel(props: CarouselProps) {
           drawerOpen() ? "translate-x-0" : "translate-x-full"
         }`}
         aria-hidden={!drawerOpen()}
+        onClick={(e) => e.stopPropagation()}
       >
         <DrawerContent
           photo={currentPhoto}
           exif={currentPhotoExif}
-          downloadProgress={currentDownloadProgress}
         />
       </aside>
     </div>

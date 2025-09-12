@@ -1,6 +1,6 @@
 import ExifReader from "exifreader";
 
-export const extractExif = (buffer: ArrayBuffer) => {
+export const extractExif = (buffer: ArrayBuffer, size?: number) => {
   try {
     const tags = ExifReader.load(buffer);
     const make = tags.Make?.description || "";
@@ -20,6 +20,7 @@ export const extractExif = (buffer: ArrayBuffer) => {
       width,
       height,
       megapixels,
+      size,
     };
   } catch (err) {
     return {};
