@@ -12,13 +12,11 @@ export default function Drawer() {
   let animationFrameId: number;
 
   onMount(() => {
-    // Initialize position: bottom-right on mobile, top-right on desktop
     const isDesktop = window.innerWidth >= 640; // sm breakpoint
     if (isDesktop) {
-      setPosition({ x: window.innerWidth - 68, y: 16 });
-    } else {
-      setPosition({ x: window.innerWidth - 68, y: window.innerHeight - 68 });
+      setIsOpen(true);
     }
+    setPosition({ x: window.innerWidth - 60, y: window.innerHeight - 60 });
   });
 
   const toggleDrawer = () => {
@@ -27,10 +25,13 @@ export default function Drawer() {
     }
   };
 
-  const closeDrawer = () => setIsOpen(false);
+  const closeDrawer = () => {
+    if (window.innerWidth >= 640) return; // Don't close on desktop
+    setIsOpen(false);
+  }
 
   const handleStart = (clientX: number, clientY: number) => {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       cancelAnimationFrame(animationFrameId);
     }
     setIsDragging(false);
@@ -132,7 +133,7 @@ export default function Drawer() {
         Math.abs(velocity.x) > minVelocity ||
         Math.abs(velocity.y) > minVelocity
       ) {
-        if (typeof window !== 'undefined') {
+        if (typeof window !== "undefined") {
           animationFrameId = requestAnimationFrame(step);
         }
       } else {
@@ -148,7 +149,12 @@ export default function Drawer() {
         const distanceToBottom = screenHeight - (finalPos.y + buttonSize);
 
         // Find the minimum distance to determine which edge to snap to
-        const minDistance = Math.min(distanceToLeft, distanceToRight, distanceToTop, distanceToBottom);
+        const minDistance = Math.min(
+          distanceToLeft,
+          distanceToRight,
+          distanceToTop,
+          distanceToBottom
+        );
 
         let targetX = finalPos.x;
         let targetY = finalPos.y;
@@ -173,7 +179,7 @@ export default function Drawer() {
         }, 100);
       }
     };
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       animationFrameId = requestAnimationFrame(step);
     }
   };
@@ -209,14 +215,14 @@ export default function Drawer() {
         Math.abs(dx) > 0.1 ||
         Math.abs(dy) > 0.1
       ) {
-        if (typeof window !== 'undefined') {
+        if (typeof window !== "undefined") {
           animationFrameId = requestAnimationFrame(step);
         }
       } else {
         setPosition({ x: targetX, y: targetY });
       }
     };
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       animationFrameId = requestAnimationFrame(step);
     }
   };
@@ -232,7 +238,7 @@ export default function Drawer() {
   };
 
   onCleanup(() => {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       cancelAnimationFrame(animationFrameId);
     }
   });
@@ -268,14 +274,12 @@ export default function Drawer() {
       {/* Drawer - Mobile: slides up from bottom, Desktop: slides in from right */}
       <div
         class={`fixed z-40 bg-black/90 backdrop-blur-md border-violet-600/30 transform transition-transform duration-300 ease-in-out
-          bottom-0 left-0 right-0 border-t sm:top-0 sm:right-0 sm:left-auto sm:bottom-auto sm:h-full sm:w-64 sm:border-l sm:border-t-0 ${
-            isOpen()
-              ? "translate-y-0 sm:translate-y-0 sm:translate-x-0"
-              : "translate-y-full sm:translate-y-0 sm:translate-x-full"
+          bottom-0 left-0 right-0 border-t ${
+            isOpen() ? "translate-y-0" : "translate-y-full"
           }
         `}
       >
-        <nav class="flex flex-wrap justify-center items-center gap-6 font-mono text-lg py-6 px-6 sm:flex-col sm:items-start sm:pt-20">
+        <nav class="flex flex-wrap justify-center items-center gap-6 font-mono text-lg py-6 px-6">
           <div onClick={closeDrawer}>
             <Link href="/">home</Link>
           </div>
