@@ -61,7 +61,7 @@ export function Gallery(props: GalleryProps) {
       <h1 class="text-2xl sm:text-4xl font-thin leading-tight mt-2 md:mt-12 mb-8 mx-auto max-w-[14rem] md:max-w-none">
         gallery
       </h1>
-      <div class="text-violet-200 mb-4 text-xs md:text-sm">
+      <div class="text-violet-200 mb-4 text-xs md:text-sm mx-4">
         {props.caption}
         <div class="mt-2 space-x-2">
           collections: <CollectionLink href="/gallery">all</CollectionLink>
@@ -72,7 +72,10 @@ export function Gallery(props: GalleryProps) {
       <div class="w-fill p-1 sm:p-2 md:p-4">
         <div class="flex flex-wrap gap-1 sm:gap-2">
           {shuffled.map((photo, index) => (
-            <Photo photo={photo} onClick={() => setExpandedIndexWithUrl(index)} />
+            <Photo
+              photo={photo}
+              onClick={() => setExpandedIndexWithUrl(index)}
+            />
           ))}
         </div>
       </div>

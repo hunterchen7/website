@@ -1,6 +1,6 @@
 import { createSignal, onCleanup, onMount } from "solid-js";
-import { Menu, X } from "lucide-solid";
 import Link from "./Link";
+import AnimatedHamburger from "./AnimatedHamburger";
 
 export default function Drawer() {
   const [isOpen, setIsOpen] = createSignal(false);
@@ -12,8 +12,13 @@ export default function Drawer() {
   let animationFrameId: number;
 
   onMount(() => {
-    // Initialize position at bottom-right
-    setPosition({ x: window.innerWidth - 68, y: window.innerHeight - 68 });
+    // Initialize position: bottom-right on mobile, top-right on desktop
+    const isDesktop = window.innerWidth >= 640; // sm breakpoint
+    if (isDesktop) {
+      setPosition({ x: window.innerWidth - 68, y: 16 });
+    } else {
+      setPosition({ x: window.innerWidth - 68, y: window.innerHeight - 68 });
+    }
   });
 
   const toggleDrawer = () => {
@@ -25,7 +30,9 @@ export default function Drawer() {
   const closeDrawer = () => setIsOpen(false);
 
   const handleStart = (clientX: number, clientY: number) => {
-    cancelAnimationFrame(animationFrameId);
+    if (typeof window !== 'undefined') {
+      cancelAnimationFrame(animationFrameId);
+    }
     setIsDragging(false);
     dragStart = { x: clientX - position().x, y: clientY - position().y };
     velocity = { x: 0, y: 0 };
@@ -59,10 +66,10 @@ export default function Drawer() {
     };
 
     const handleEnd = () => {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleEnd);
-      document.removeEventListener('touchmove', handleTouchMove);
-      document.removeEventListener('touchend', handleEnd);
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleEnd);
+      document.removeEventListener("touchmove", handleTouchMove);
+      document.removeEventListener("touchend", handleEnd);
 
       setTimeout(() => setIsDragging(false), 0);
 
@@ -77,10 +84,10 @@ export default function Drawer() {
       handleMove(e.touches[0].clientX, e.touches[0].clientY);
     };
 
-    document.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('mouseup', handleEnd);
-    document.addEventListener('touchmove', handleTouchMove, { passive: false });
-    document.addEventListener('touchend', handleEnd);
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseup", handleEnd);
+    document.addEventListener("touchmove", handleTouchMove, { passive: false });
+    document.addEventListener("touchend", handleEnd);
   };
 
   const animateThrow = () => {
@@ -121,31 +128,59 @@ export default function Drawer() {
 
       setPosition(newPos);
 
-      if (Math.abs(velocity.x) > minVelocity || Math.abs(velocity.y) > minVelocity) {
-        animationFrameId = requestAnimationFrame(step);
+      if (
+        Math.abs(velocity.x) > minVelocity ||
+        Math.abs(velocity.y) > minVelocity
+      ) {
+        if (typeof window !== 'undefined') {
+          animationFrameId = requestAnimationFrame(step);
+        }
       } else {
-        // Snap to edge
+        // Snap to nearest edge (all four sides)
         const finalPos = position();
-        const targetX = finalPos.x + buttonSize / 2 < screenWidth / 2
-            ? padding
-            : screenWidth - buttonSize - padding;
+        const screenWidth = window.innerWidth;
+        const screenHeight = window.innerHeight;
 
-        // Clamp Y position
-        const targetY = Math.max(
-          padding,
-          Math.min(finalPos.y, window.innerHeight - buttonSize - padding)
-        );
+        // Calculate distances to each edge
+        const distanceToLeft = finalPos.x;
+        const distanceToRight = screenWidth - (finalPos.x + buttonSize);
+        const distanceToTop = finalPos.y;
+        const distanceToBottom = screenHeight - (finalPos.y + buttonSize);
 
-        // Simple spring animation to snap
-        animateSnap(targetX, targetY);
+        // Find the minimum distance to determine which edge to snap to
+        const minDistance = Math.min(distanceToLeft, distanceToRight, distanceToTop, distanceToBottom);
+
+        let targetX = finalPos.x;
+        let targetY = finalPos.y;
+
+        if (minDistance === distanceToLeft) {
+          // Snap to left edge
+          targetX = padding;
+        } else if (minDistance === distanceToRight) {
+          // Snap to right edge
+          targetX = screenWidth - buttonSize - padding;
+        } else if (minDistance === distanceToTop) {
+          // Snap to top edge
+          targetY = padding;
+        } else {
+          // Snap to bottom edge
+          targetY = screenHeight - buttonSize - padding;
+        }
+
+        // Wait 100ms before snapping to let the button settle
+        setTimeout(() => {
+          animateSnap(targetX, targetY);
+        }, 100);
       }
     };
-    animationFrameId = requestAnimationFrame(step);
+    if (typeof window !== 'undefined') {
+      animationFrameId = requestAnimationFrame(step);
+    }
   };
 
   const animateSnap = (targetX: number, targetY: number) => {
     const stiffness = 0.05; // Reduced for less aggression
-    const damping = 0.75;   // Increased for smoother stop
+    const damping = 0.75; // Increased for smoother stop
     let snapVelocity = { x: 0, y: 0 };
 
     const step = () => {
@@ -168,13 +203,22 @@ export default function Drawer() {
 
       setPosition(newPos);
 
-      if (Math.abs(snapVelocity.x) > 0.1 || Math.abs(snapVelocity.y) > 0.1 || Math.abs(dx) > 0.1 || Math.abs(dy) > 0.1) {
-        animationFrameId = requestAnimationFrame(step);
+      if (
+        Math.abs(snapVelocity.x) > 0.1 ||
+        Math.abs(snapVelocity.y) > 0.1 ||
+        Math.abs(dx) > 0.1 ||
+        Math.abs(dy) > 0.1
+      ) {
+        if (typeof window !== 'undefined') {
+          animationFrameId = requestAnimationFrame(step);
+        }
       } else {
         setPosition({ x: targetX, y: targetY });
       }
     };
-    animationFrameId = requestAnimationFrame(step);
+    if (typeof window !== 'undefined') {
+      animationFrameId = requestAnimationFrame(step);
+    }
   };
 
   const handleMouseDown = (e: MouseEvent) => {
@@ -188,9 +232,13 @@ export default function Drawer() {
   };
 
   onCleanup(() => {
-    cancelAnimationFrame(animationFrameId);
-  });  return (
-    <div class="sm:hidden">
+    if (typeof window !== 'undefined') {
+      cancelAnimationFrame(animationFrameId);
+    }
+  });
+
+  return (
+    <div>
       {/* Menu Button */}
       <button
         onMouseDown={handleMouseDown}
@@ -200,30 +248,34 @@ export default function Drawer() {
         style={{
           left: `${position().x}px`,
           top: `${position().y}px`,
-          transform: isDragging() ? 'scale(1.1)' : 'scale(1)',
-          transition: isDragging() ? 'none' : 'transform 0.2s ease',
-          "touch-action": "none"
+          transform: isDragging() ? "scale(1.1)" : "scale(1)",
+          transition: isDragging() ? "none" : "transform 0.2s ease",
+          "touch-action": "none",
         }}
         aria-label="Toggle menu"
       >
-        {isOpen() ? <X size={24} /> : <Menu size={24} />}
+        <AnimatedHamburger isOpen={isOpen()} />
       </button>
 
       {/* Backdrop */}
       {isOpen() && (
         <div
-          class="fixed inset-0 bg-black/50 backdrop-blur-sm z-40"
+          class="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 sm:hidden"
           onClick={closeDrawer}
         />
       )}
 
-      {/* Drawer */}
+      {/* Drawer - Mobile: slides up from bottom, Desktop: slides in from right */}
       <div
-        class={`fixed bottom-0 left-0 right-0 bg-black/90 backdrop-blur-md border-t border-violet-600/30 z-40 transform transition-transform duration-300 ease-in-out ${
-          isOpen() ? "translate-y-0" : "translate-y-full"
-        }`}
+        class={`fixed z-40 bg-black/90 backdrop-blur-md border-violet-600/30 transform transition-transform duration-300 ease-in-out
+          bottom-0 left-0 right-0 border-t sm:top-0 sm:right-0 sm:left-auto sm:bottom-auto sm:h-full sm:w-64 sm:border-l sm:border-t-0 ${
+            isOpen()
+              ? "translate-y-0 sm:translate-y-0 sm:translate-x-0"
+              : "translate-y-full sm:translate-y-0 sm:translate-x-full"
+          }
+        `}
       >
-        <nav class="flex flex-wrap justify-center items-center gap-6 font-mono text-lg py-6 px-6">
+        <nav class="flex flex-wrap justify-center items-center gap-6 font-mono text-lg py-6 px-6 sm:flex-col sm:items-start sm:pt-20">
           <div onClick={closeDrawer}>
             <Link href="/">home</Link>
           </div>
