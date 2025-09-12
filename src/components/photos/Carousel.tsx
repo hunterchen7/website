@@ -20,6 +20,9 @@ export function Carousel(props: CarouselProps) {
   const [touchStartX, setTouchStartX] = createSignal(0);
   const [touchStartY, setTouchStartY] = createSignal(0);
   const [isTransitioning, setIsTransitioning] = createSignal(false);
+  const [imageExifs, setImageExifs] = createSignal<Record<string, ExifData>>(
+    {}
+  );
 
   // Shared drawer state
   const [drawerOpen, setDrawerOpen] = createSignal(false);
@@ -50,6 +53,12 @@ export function Carousel(props: CarouselProps) {
     // Reset state for the new photo
     setCurrentDownloadProgress({ loaded: 0, total: 0 });
     setCurrentPhotoExif({});
+
+    if (imageExifs()[currentPhoto.url]) {
+      setCurrentPhotoExif(imageExifs()[currentPhoto.url]);
+      console.log("Using cached EXIF for", currentPhoto.url);
+      return;
+    }
 
     const fetchPhotoData = async () => {
       const attemptFetch = async (useCache: boolean = true) => {
@@ -93,6 +102,10 @@ export function Carousel(props: CarouselProps) {
 
         if (!signal.aborted) {
           setCurrentPhotoExif(extractExif(buffer.buffer));
+          setImageExifs((prev) => ({
+            ...prev,
+            [currentPhoto.url]: extractExif(buffer.buffer),
+          }));
         }
       };
 
