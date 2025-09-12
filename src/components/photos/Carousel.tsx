@@ -19,6 +19,9 @@ export function Carousel(props: CarouselProps) {
   const [showNavigation, setShowNavigation] = createSignal(false);
   const [touchStartX, setTouchStartX] = createSignal(0);
   const [touchStartY, setTouchStartY] = createSignal(0);
+  const [touchStartTime, setTouchStartTime] = createSignal(0);
+  const [dragOffset, setDragOffset] = createSignal(0);
+  const [isDragging, setIsDragging] = createSignal(false);
   const [isTransitioning, setIsTransitioning] = createSignal(false);
   const [imageExifs, setImageExifs] = createSignal<Record<string, ExifData>>(
     {}
@@ -182,29 +185,62 @@ export function Carousel(props: CarouselProps) {
       const touch = e.touches[0];
       setTouchStartX(touch.clientX);
       setTouchStartY(touch.clientY);
-    } else {
-      // If more than one finger, reset start position to cancel swipe
-      setTouchStartX(0);
-      setTouchStartY(0);
+      setTouchStartTime(Date.now());
+      setIsDragging(true); // Start dragging
+    }
+  };
+
+  const handleTouchMove = (e: TouchEvent) => {
+    if (!isDragging() || touchStartX() === 0) return;
+
+    const touch = e.touches[0];
+    let deltaX = touch.clientX - touchStartX();
+    const deltaY = touch.clientY - touchStartY();
+
+    // Only allow horizontal dragging
+    if (Math.abs(deltaX) > Math.abs(deltaY)) {
+      e.preventDefault(); // Prevent vertical scroll
+
+      // Add resistance when dragging past the boundaries
+      if (
+        (currentIndex() === 0 && deltaX > 0) ||
+        (currentIndex() === props.photos.length - 1 && deltaX < 0)
+      ) {
+        deltaX /= 2; // Dampen the drag
+      }
+
+      // Clamp the drag offset to one screen width
+      const screenWidth = window.innerWidth;
+      const clampedDeltaX = Math.max(-screenWidth, Math.min(deltaX, screenWidth));
+
+      setDragOffset(clampedDeltaX);
     }
   };
 
   const handleTouchEnd = (e: TouchEvent) => {
-    // If touchStartX is 0, it means the gesture was cancelled (e.g., multi-touch)
-    if (touchStartX() === 0) return;
+    if (!isDragging()) return;
+    setIsDragging(false);
 
-    const touch = e.changedTouches[0];
-    const deltaX = touch.clientX - touchStartX();
-    const deltaY = touch.clientY - touchStartY();
+    const touchDuration = Date.now() - touchStartTime();
+    const velocity = Math.abs(dragOffset()) / touchDuration;
 
-    // Increased swipe threshold from 50 to 75 for less sensitivity
-    if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 75) {
-      if (deltaX > 0 && currentIndex() > 0) {
+    const screenWidth = window.innerWidth;
+    // Dynamic threshold: faster swipes require less distance
+    const swipeThreshold = Math.max(
+      50, // Minimum threshold
+      screenWidth / 2 - velocity * 100 // Adjust sensitivity by velocity
+    );
+
+    if (Math.abs(dragOffset()) > swipeThreshold) {
+      if (dragOffset() > 0 && currentIndex() > 0) {
         goToPrevious();
-      } else if (deltaX < 0 && currentIndex() < props.photos.length - 1) {
+      } else if (dragOffset() < 0 && currentIndex() < props.photos.length - 1) {
         goToNext();
       }
     }
+
+    // Snap back to the nearest photo
+    setDragOffset(0);
   };
 
   createEffect(() => {
@@ -219,9 +255,13 @@ export function Carousel(props: CarouselProps) {
 
   const getCarouselItemStyle = (index: number): JSX.CSSProperties => {
     const offset = index - currentIndex();
+    const totalOffset = offset * 100 + (dragOffset() / window.innerWidth) * 100;
+
     return {
-      transform: `translateX(${offset * 100}%)`,
-      transition: "transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+      transform: `translateX(${totalOffset}%)`,
+      transition: isDragging()
+        ? "none"
+        : "transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
       position: "absolute",
       top: "0",
       left: "0",
@@ -247,6 +287,7 @@ export function Carousel(props: CarouselProps) {
       class="fixed inset-0 z-50 bg-black/95 overflow-hidden"
       onClick={props.onClose}
       onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
       onMouseLeave={() => setShowNavigation(false)}
     >
