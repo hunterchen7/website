@@ -44,37 +44,47 @@ export default function Projects() {
           selectedTech().every((selected) =>
             project.technologies.includes(selected as Technology)
           ));
-      const matchesFavourites = !showFavouritesOnly() || project.favourite === true;
+      const matchesFavourites =
+        !showFavouritesOnly() || project.favourite === true;
       return matchesText && matchesTags && matchesTech && matchesFavourites;
     });
 
   return (
-    <main class="text-center p-4 mx-auto font-mono text-violet-200 pb-24 h-screen overflow-y-auto max-w-screen overflow-x-hidden">
+    <main class="text-center p-4 mx-auto font-mono text-violet-200 pb-24 content-fade-in">
       <Title>Projects</Title>
-      <h1 class="text-2xl sm:text-4xl font-thin leading-tight mt-2 md:mt-12 mb-6 mx-auto max-w-[14rem] md:max-w-none">
+      <h1
+        class="text-2xl sm:text-4xl font-thin leading-tight mt-2 md:mt-12 mb-6 mx-auto max-w-[14rem] md:max-w-none content-fade-in"
+        style={{ "animation-delay": "0.1s" }}
+      >
         projects
       </h1>
-      <ProjectFilters
-        search={search()}
-        setSearch={setSearch}
-        selectedTags={selectedTags()}
-        setSelectedTags={setSelectedTags}
-        selectedTech={selectedTech()}
-        setSelectedTech={setSelectedTech}
-        handleTagToggle={handleTagToggle}
-        handleTechToggle={handleTechToggle}
-        showFavouritesOnly={showFavouritesOnly()}
-        handleFavouritesToggle={handleFavouritesToggle}
-      />
-      <h3 class="mb-2 text-sm md:text-base">
-        a compilation of most of my past & current projects.. roughly reverse
-        chronological order.
-      </h3>
-      <section class="grid grid-cols-1 md:grid-cols-2 gap-8 justify-center mx-auto md:max-w-6xl three-xl-grid-cols-3 three-xl-max-w">
+      <div class="content-fade-in" style={{ "animation-delay": "0.2s" }}>
+        <ProjectFilters
+          search={search()}
+          setSearch={setSearch}
+          selectedTags={selectedTags()}
+          setSelectedTags={setSelectedTags}
+          selectedTech={selectedTech()}
+          setSelectedTech={setSelectedTech}
+          handleTagToggle={handleTagToggle}
+          handleTechToggle={handleTechToggle}
+          showFavouritesOnly={showFavouritesOnly()}
+          handleFavouritesToggle={handleFavouritesToggle}
+        />
+        <h3 class="mb-2 text-sm md:text-base">
+          a compilation of most of my past & current projects.. roughly reverse
+          chronological order.
+        </h3>
+      </div>
+      <section
+        class="grid grid-cols-1 md:grid-cols-2 gap-8 justify-center mx-auto md:max-w-6xl three-xl-grid-cols-3 three-xl-max-w content-fade-in"
+        style={{ "animation-delay": "0.4s" }}
+      >
         <For each={filteredProjects()}>
           {(project) => <Project {...project} />}
         </For>
       </section>
+      <div class="text-sm text-black pb-20">{"text"}</div>
     </main>
   );
 }

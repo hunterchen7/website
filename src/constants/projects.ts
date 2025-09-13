@@ -81,6 +81,7 @@ export interface ProjectProps {
   tags: Tags[];
   images?: string[];
   favourite?: boolean;
+  index?: number;
 }
 
 export const projects: ProjectProps[] = [

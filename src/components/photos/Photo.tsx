@@ -8,9 +8,11 @@ const S3_PREFIX = "https://photos.hunterchen.ca/";
 export function Photo({
   photo,
   onClick,
+  index,
 }: {
   photo: PhotoType;
   onClick: () => void;
+  index: number;
 }) {
   const [loaded, setLoaded] = createSignal(false);
   const [aspectRatio, setAspectRatio] = createSignal(1); // Default aspect ratio
@@ -79,9 +81,10 @@ export function Photo({
 
   return (
     <div
-      class={`flex-grow rounded shadow-lg overflow-hidden border border-violet-700/50 bg-violet-900/20 flex flex-col min-w-[135px] max-w-[600px] min-h-[135px]`}
+      class={`flex-grow rounded shadow-lg overflow-hidden border border-violet-700/50 bg-violet-900/20 flex flex-col min-w-[135px] max-w-[600px] min-h-[135px] content-fade-in hover:scale-[1.01] transition-transform`}
       style={`
         flex-basis: ${baseWidth() * aspectRatio()}px;
+        animation-delay: ${Math.min(index * 0.05, 1)}s;
       `}
     >
       <div class="relative flex-1">
@@ -96,7 +99,7 @@ export function Photo({
           alt="Gallery photo"
           class={`w-full h-full object-cover transition-opacity duration-300 max-h-96 max-w-[600px] ${
             loaded() ? "opacity-100" : "opacity-0"
-          } hover:scale-[1.03] transition-transform cursor-pointer`}
+          } hover:scale-[1.02] transition-transform cursor-pointer`}
           loading="lazy"
           draggable="true"
           onLoad={handleImageLoad}
