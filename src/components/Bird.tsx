@@ -320,7 +320,7 @@ export default function Bird() {
   return (
     <>
       <button
-        class="fixed hidden md:block top-3 right-4 z-0 text-violet-600 p-2 rounded-full shadow hover:text-violet-300 transition-colors flex items-center justify-center cursor-pointer"
+        class="fixed hidden md:block top-3 right-4 z-50 text-violet-600 p-2 rounded-full shadow hover:text-violet-300 transition-colors flex items-center justify-center cursor-pointer"
         onClick={toggleShowBird}
         aria-label={showBird() ? "Hide birds" : "Show birds"}
       >

@@ -58,7 +58,7 @@ export function Gallery(props: GalleryProps) {
 
   return (
     <main class="text-center mx-auto font-mono text-violet-200 pb-20 h-screen overflow-y-auto">
-      <h1 class="text-2xl sm:text-4xl font-thin leading-tight mt-2 md:mt-12 mb-8 mx-auto max-w-[14rem] md:max-w-none">
+      <h1 class="text-2xl sm:text-4xl font-thin leading-tight mt-2 md:mt-12 mb-8 mx-auto max-w-[14rem] md:max-w-none content-fade-in">
         gallery
       </h1>
       <div class="text-violet-200 mb-4 text-xs md:text-sm mx-4">
@@ -74,6 +74,7 @@ export function Gallery(props: GalleryProps) {
           {shuffled.map((photo, index) => (
             <Photo
               photo={photo}
+              index={index}
               onClick={() => setExpandedIndexWithUrl(index)}
             />
           ))}

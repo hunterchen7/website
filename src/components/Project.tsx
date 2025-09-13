@@ -151,7 +151,10 @@ export default function Project(props: ProjectProps) {
         </div>
       )}
       {props.description && (
-        <p class="text-gray-400 mt-2 text-left text-sm" innerHTML={props.description} />
+        <p
+          class="text-gray-400 mt-2 text-left text-sm"
+          innerHTML={props.description}
+        />
       )}
     </div>
   );
