@@ -1,4 +1,4 @@
-import { createSignal, onMount, onCleanup } from "solid-js";
+import { createSignal, onMount, onCleanup, For } from "solid-js";
 
 interface Boid {
   id: number;
@@ -16,7 +16,7 @@ export default function Bird() {
   let animationId: number;
 
   // boid flock configuration
-  const boidCount = Math.floor(Math.random() * 6) + 10; // 10-15 boids - random flock size
+  const boidCount = Math.floor(Math.random() * 10) + 20; // 20-30 boids - random flock size
   const maxSpeed = 3; // how fast birds fly (pixels per frame)
   const maxForce = 0.05; // how quickly birds can turn (higher = more jittery)
   const separationRadius = 20; // personal space before avoiding each other
@@ -30,12 +30,14 @@ export default function Bird() {
     let steer = { x: 0, y: 0 };
     let count = 0;
 
-    neighbors.forEach(other => {
-      const distance = Math.sqrt((boid.x - other.x) ** 2 + (boid.y - other.y) ** 2);
+    neighbors.forEach((other) => {
+      const distance = Math.sqrt(
+        (boid.x - other.x) ** 2 + (boid.y - other.y) ** 2
+      );
       if (distance > 0 && distance < separationRadius) {
         const diff = {
           x: boid.x - other.x,
-          y: boid.y - other.y
+          y: boid.y - other.y,
         };
         const length = Math.sqrt(diff.x ** 2 + diff.y ** 2);
         if (length > 0) {
@@ -75,8 +77,10 @@ export default function Bird() {
     let sum = { x: 0, y: 0 };
     let count = 0;
 
-    neighbors.forEach(other => {
-      const distance = Math.sqrt((boid.x - other.x) ** 2 + (boid.y - other.y) ** 2);
+    neighbors.forEach((other) => {
+      const distance = Math.sqrt(
+        (boid.x - other.x) ** 2 + (boid.y - other.y) ** 2
+      );
       if (distance > 0 && distance < alignmentRadius) {
         sum.x += other.vx;
         sum.y += other.vy;
@@ -109,8 +113,10 @@ export default function Bird() {
     let sum = { x: 0, y: 0 };
     let count = 0;
 
-    neighbors.forEach(other => {
-      const distance = Math.sqrt((boid.x - other.x) ** 2 + (boid.y - other.y) ** 2);
+    neighbors.forEach((other) => {
+      const distance = Math.sqrt(
+        (boid.x - other.x) ** 2 + (boid.y - other.y) ** 2
+      );
       if (distance > 0 && distance < cohesionRadius) {
         sum.x += other.x;
         sum.y += other.y;
@@ -123,7 +129,7 @@ export default function Bird() {
       sum.y /= count;
       const steer = {
         x: sum.x - boid.x,
-        y: sum.y - boid.y
+        y: sum.y - boid.y,
       };
       const length = Math.sqrt(steer.x ** 2 + steer.y ** 2);
       if (length > 0) {
@@ -146,12 +152,14 @@ export default function Bird() {
 
   const avoidMouse = (boid: Boid) => {
     const mouse = mousePosition();
-    const distance = Math.sqrt((boid.x - mouse.x) ** 2 + (boid.y - mouse.y) ** 2);
+    const distance = Math.sqrt(
+      (boid.x - mouse.x) ** 2 + (boid.y - mouse.y) ** 2
+    );
 
     if (distance > 0 && distance < mouseAvoidRadius) {
       const steer = {
         x: boid.x - mouse.x,
-        y: boid.y - mouse.y
+        y: boid.y - mouse.y,
       };
       const length = Math.sqrt(steer.x ** 2 + steer.y ** 2);
       if (length > 0) {
@@ -187,9 +195,9 @@ export default function Bird() {
     const windowWidth = window.innerWidth;
     const windowHeight = window.innerHeight;
 
-    setBoids(currentBoids =>
-      currentBoids.map(boid => {
-        const neighbors = currentBoids.filter(other => other.id !== boid.id);
+    setBoids((currentBoids) =>
+      currentBoids.map((boid) => {
+        const neighbors = currentBoids.filter((other) => other.id !== boid.id);
 
         // Apply flocking rules
         const sep = separate(boid, neighbors);
@@ -232,7 +240,7 @@ export default function Bird() {
           x: newX,
           y: newY,
           vx: newVx,
-          vy: newVy
+          vy: newVy,
         };
       })
     );
@@ -262,7 +270,7 @@ export default function Bird() {
         x: Math.random() * window.innerWidth,
         y: Math.random() * window.innerHeight,
         vx: (Math.random() - 0.5) * 2,
-        vy: (Math.random() - 0.5) * 2
+        vy: (Math.random() - 0.5) * 2,
       });
     }
     setBoids(initialBoids);
@@ -298,26 +306,29 @@ export default function Bird() {
         onClick={toggleShowBird}
         aria-label={showBird() ? "Hide birds" : "Show birds"}
       >
-        {showBird() ? <BirdIcon /> : <CrossedBirdIcon />}
+        <BirdIcon showBird={showBird} />
       </button>
-      {showBird() && boids().map((boid) => (
-        <div
-          class="fixed pointer-events-none z-0 hidden md:block"
-          style={{
-            left: `${boid.x}px`,
-            top: `${boid.y}px`,
-            transform: `rotate(${getRotation(boid)}deg) translateZ(0)`,
-            "transform-origin": "center center",
-          }}
-        >
+      <For each={boids()}>
+        {(boid) => (
           <div
-            class="w-0 h-0 border-l-[8px] border-r-[8px] border-b-[24px] border-l-transparent border-r-transparent border-b-violet-800/60"
+            class="fixed pointer-events-none z-0 transition-opacity"
             style={{
-              transform: "translateX(-50%) translateY(-50%) rotate(90deg)",
+              left: `${boid.x}px`,
+              top: `${boid.y}px`,
+              transform: `rotate(${getRotation(boid)}deg) translateZ(0)`,
+              "transform-origin": "center center",
+              opacity: showBird() && window.innerWidth >= 768 ? 1 : 0,
             }}
-          />
-        </div>
-      ))}
+          >
+            <div
+              class="w-0 h-0 border-l-[8px] border-r-[8px] border-b-[24px] border-l-transparent border-r-transparent border-b-violet-800/60"
+              style={{
+                transform: "translateX(-50%) translateY(-50%) rotate(90deg)",
+              }}
+            />
+          </div>
+        )}
+      </For>
     </>
   );
 }
@@ -381,24 +392,16 @@ const birdPaths = (
   </>
 );
 
-function BirdIcon(props: { size?: number }) {
+function BirdIcon(props: { size?: number; showBird: () => boolean }) {
   const s = props.size ?? 24;
-  return (
-    <svg
-      width={s}
-      height={s}
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      aria-hidden
-    >
-      {birdPaths}
-    </svg>
-  );
-}
+  const [mounted, setMounted] = createSignal(false);
 
-function CrossedBirdIcon(props: { size?: number }) {
-  const s = props.size ?? 24;
+  // Load crossed state from localStorage on mount - inverted from showBird
+  if (typeof window !== "undefined") {
+    // Trigger fade-in after 1 second
+    setTimeout(() => setMounted(true), 1000);
+  }
+
   return (
     <svg
       width={s}
@@ -407,13 +410,44 @@ function CrossedBirdIcon(props: { size?: number }) {
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       aria-hidden
+      style={{
+        cursor: "pointer",
+        opacity: mounted() ? "1" : "0",
+        transition: "opacity 0.5s ease-in-out",
+      }}
     >
       {birdPaths}
       <path
         d="M3 3l18 18"
         stroke="currentColor"
-        {...{ "stroke-width": 2, "stroke-linecap": "round" }}
+        stroke-width="2"
+        stroke-linecap="round"
+        style={{
+          transform: "scale(0)",
+          "transform-origin": "center",
+          animation: !props.showBird()
+            ? "growCross 0.3s ease-out forwards"
+            : "shrinkCross 0.3s ease-out forwards",
+        }}
       />
+      <style>{`
+        @keyframes growCross {
+          from {
+            transform: scale(0);
+          }
+          to {
+            transform: scale(1);
+          }
+        }
+        @keyframes shrinkCross {
+          from {
+            transform: scale(1);
+          }
+          to {
+            transform: scale(0);
+          }
+        }
+      `}</style>
     </svg>
   );
 }
