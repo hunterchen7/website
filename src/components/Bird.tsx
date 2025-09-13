@@ -1,111 +1,242 @@
 import { createSignal, onMount, onCleanup } from "solid-js";
 
+interface Boid {
+  id: number;
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+}
+
 export default function Bird() {
-  const [position, setPosition] = createSignal({ x: 100, y: 100 });
-  const [velocity, setVelocity] = createSignal({ x: 2, y: 0 });
+  const [boids, setBoids] = createSignal<Boid[]>([]);
   const [mousePosition, setMousePosition] = createSignal({ x: 0, y: 0 });
-  // SSR-safe: initialize with default, update from localStorage in onMount
   const [showBird, setShowBird] = createSignal(false);
 
   let animationId: number;
-  let time = 0;
 
-  const birdSize = 10;
-  const flightSpeed = 2;
-  const turnStrength = 0.05;
-  const verticalVariation = 2;
-  const mouseAvoidDistance = 400;
-  const mouseAvoidStrength = 10;
+  // boid flock configuration
+  const boidCount = Math.floor(Math.random() * 6) + 10; // 10-15 boids - random flock size
+  const maxSpeed = 3; // how fast birds fly (pixels per frame)
+  const maxForce = 0.05; // how quickly birds can turn (higher = more jittery)
+  const separationRadius = 20; // personal space before avoiding each other
+  const alignmentRadius = 100; // how far birds look to match direction
+  const cohesionRadius = 150; // how far birds sense the flock center
+  const mouseAvoidRadius = 200; // distance birds start fleeing from cursor
+  const mouseAvoidForce = 0.2; // how strongly birds flee from cursor
+
+  // Boids flocking rules
+  const separate = (boid: Boid, neighbors: Boid[]) => {
+    let steer = { x: 0, y: 0 };
+    let count = 0;
+
+    neighbors.forEach(other => {
+      const distance = Math.sqrt((boid.x - other.x) ** 2 + (boid.y - other.y) ** 2);
+      if (distance > 0 && distance < separationRadius) {
+        const diff = {
+          x: boid.x - other.x,
+          y: boid.y - other.y
+        };
+        const length = Math.sqrt(diff.x ** 2 + diff.y ** 2);
+        if (length > 0) {
+          diff.x /= length;
+          diff.y /= length;
+          diff.x /= distance; // Weight by distance
+          diff.y /= distance;
+          steer.x += diff.x;
+          steer.y += diff.y;
+          count++;
+        }
+      }
+    });
+
+    if (count > 0) {
+      steer.x /= count;
+      steer.y /= count;
+      const length = Math.sqrt(steer.x ** 2 + steer.y ** 2);
+      if (length > 0) {
+        steer.x = (steer.x / length) * maxSpeed;
+        steer.y = (steer.y / length) * maxSpeed;
+        steer.x -= boid.vx;
+        steer.y -= boid.vy;
+        // Limit force
+        const forceLength = Math.sqrt(steer.x ** 2 + steer.y ** 2);
+        if (forceLength > maxForce) {
+          steer.x = (steer.x / forceLength) * maxForce;
+          steer.y = (steer.y / forceLength) * maxForce;
+        }
+      }
+    }
+
+    return steer;
+  };
+
+  const align = (boid: Boid, neighbors: Boid[]) => {
+    let sum = { x: 0, y: 0 };
+    let count = 0;
+
+    neighbors.forEach(other => {
+      const distance = Math.sqrt((boid.x - other.x) ** 2 + (boid.y - other.y) ** 2);
+      if (distance > 0 && distance < alignmentRadius) {
+        sum.x += other.vx;
+        sum.y += other.vy;
+        count++;
+      }
+    });
+
+    if (count > 0) {
+      sum.x /= count;
+      sum.y /= count;
+      const length = Math.sqrt(sum.x ** 2 + sum.y ** 2);
+      if (length > 0) {
+        sum.x = (sum.x / length) * maxSpeed;
+        sum.y = (sum.y / length) * maxSpeed;
+        sum.x -= boid.vx;
+        sum.y -= boid.vy;
+        // Limit force
+        const forceLength = Math.sqrt(sum.x ** 2 + sum.y ** 2);
+        if (forceLength > maxForce) {
+          sum.x = (sum.x / forceLength) * maxForce;
+          sum.y = (sum.y / forceLength) * maxForce;
+        }
+      }
+    }
+
+    return sum;
+  };
+
+  const cohesion = (boid: Boid, neighbors: Boid[]) => {
+    let sum = { x: 0, y: 0 };
+    let count = 0;
+
+    neighbors.forEach(other => {
+      const distance = Math.sqrt((boid.x - other.x) ** 2 + (boid.y - other.y) ** 2);
+      if (distance > 0 && distance < cohesionRadius) {
+        sum.x += other.x;
+        sum.y += other.y;
+        count++;
+      }
+    });
+
+    if (count > 0) {
+      sum.x /= count;
+      sum.y /= count;
+      const steer = {
+        x: sum.x - boid.x,
+        y: sum.y - boid.y
+      };
+      const length = Math.sqrt(steer.x ** 2 + steer.y ** 2);
+      if (length > 0) {
+        steer.x = (steer.x / length) * maxSpeed;
+        steer.y = (steer.y / length) * maxSpeed;
+        steer.x -= boid.vx;
+        steer.y -= boid.vy;
+        // Limit force
+        const forceLength = Math.sqrt(steer.x ** 2 + steer.y ** 2);
+        if (forceLength > maxForce) {
+          steer.x = (steer.x / forceLength) * maxForce;
+          steer.y = (steer.y / forceLength) * maxForce;
+        }
+      }
+      return steer;
+    }
+
+    return { x: 0, y: 0 };
+  };
+
+  const avoidMouse = (boid: Boid) => {
+    const mouse = mousePosition();
+    const distance = Math.sqrt((boid.x - mouse.x) ** 2 + (boid.y - mouse.y) ** 2);
+
+    if (distance > 0 && distance < mouseAvoidRadius) {
+      const steer = {
+        x: boid.x - mouse.x,
+        y: boid.y - mouse.y
+      };
+      const length = Math.sqrt(steer.x ** 2 + steer.y ** 2);
+      if (length > 0) {
+        steer.x = (steer.x / length) * maxSpeed;
+        steer.y = (steer.y / length) * maxSpeed;
+        steer.x -= boid.vx;
+        steer.y -= boid.vy;
+        // Stronger force for mouse avoidance
+        const forceLength = Math.sqrt(steer.x ** 2 + steer.y ** 2);
+        if (forceLength > mouseAvoidForce) {
+          steer.x = (steer.x / forceLength) * mouseAvoidForce;
+          steer.y = (steer.y / forceLength) * mouseAvoidForce;
+        }
+        // Increase force based on proximity
+        const intensity = (mouseAvoidRadius - distance) / mouseAvoidRadius;
+        steer.x *= intensity * 4; // Increased panic response
+        steer.y *= intensity * 4;
+      }
+      return steer;
+    }
+
+    return { x: 0, y: 0 };
+  };
+
+  // Slight upward bias (birds prefer to fly higher)
+  const upwardBias = () => {
+    return { x: 0, y: -0.02 };
+  };
 
   const animate = () => {
     if (typeof window === "undefined") return;
-    time += 0.008;
-    const pos = position();
-    const vel = velocity();
 
     const windowWidth = window.innerWidth;
     const windowHeight = window.innerHeight;
 
-    const meanderAngle =
-      Math.sin(time * 0.13) * Math.PI * 0.7 +
-      Math.sin(time * 0.07) * Math.PI * 0.3;
-    const meanderStrength = 1.2;
+    setBoids(currentBoids =>
+      currentBoids.map(boid => {
+        const neighbors = currentBoids.filter(other => other.id !== boid.id);
 
-    const forwardX = Math.cos(meanderAngle) * meanderStrength;
-    const forwardY = Math.sin(meanderAngle) * meanderStrength;
+        // Apply flocking rules
+        const sep = separate(boid, neighbors);
+        const ali = align(boid, neighbors);
+        const coh = cohesion(boid, neighbors);
+        const mouse = avoidMouse(boid);
+        const upward = upwardBias();
 
-    const flightNoise = Math.sin(time * 0.7) * 0.5 + Math.sin(time * 1.3) * 0.3;
-    const verticalNoise = Math.sin(time * 0.4) * verticalVariation;
+        // Weight the forces (bird-like behavior)
+        sep.x *= 2.5; // Strong separation - prevent birds from overlapping
+        sep.y *= 2.5;
+        ali.x *= 1.8; // Moderate alignment - birds fly in same direction
+        ali.y *= 1.8;
+        coh.x *= 1.0; // Moderate cohesion - stay together but not too tight
+        coh.y *= 1.0;
 
-    let targetVelX = flightSpeed * forwardX + flightNoise * 0.5;
-    let targetVelY = flightSpeed * forwardY + verticalNoise;
+        // Apply forces
+        let newVx = boid.vx + sep.x + ali.x + coh.x + mouse.x + upward.x;
+        let newVy = boid.vy + sep.y + ali.y + coh.y + mouse.y + upward.y;
 
-    const margin = 100;
+        // Limit speed
+        const speed = Math.sqrt(newVx ** 2 + newVy ** 2);
+        if (speed > maxSpeed) {
+          newVx = (newVx / speed) * maxSpeed;
+          newVy = (newVy / speed) * maxSpeed;
+        }
 
-    if (pos.x < margin) {
-      targetVelX += (margin - pos.x) * 0.01;
-      targetVelY += Math.sin(time * 2) * 0.5;
-    }
+        // Update position
+        let newX = boid.x + newVx;
+        let newY = boid.y + newVy;
 
-    if (pos.x > windowWidth - margin) {
-      targetVelX -= (pos.x - (windowWidth - margin)) * 0.01;
-      targetVelY += Math.sin(time * 2) * 0.5;
-    }
+        // Wrap around edges smoothly
+        if (newX > windowWidth + 50) newX = -50;
+        if (newX < -50) newX = windowWidth + 50;
+        if (newY > windowHeight + 50) newY = -50;
+        if (newY < -50) newY = windowHeight + 50;
 
-    if (pos.y < margin) {
-      targetVelY += (margin - pos.y) * 0.01;
-    }
-
-    if (pos.y > windowHeight - margin) {
-      targetVelY -= (pos.y - (windowHeight - margin)) * 0.01;
-    }
-
-    const mouse = mousePosition();
-    const distanceToMouse = Math.sqrt(
-      Math.pow(pos.x - mouse.x, 2) + Math.pow(pos.y - mouse.y, 2)
+        return {
+          ...boid,
+          x: newX,
+          y: newY,
+          vx: newVx,
+          vy: newVy
+        };
+      })
     );
 
-    let currentTurnStrength = turnStrength;
-    if (distanceToMouse < mouseAvoidDistance && distanceToMouse > 0) {
-      const avoidanceX = (pos.x - mouse.x) / distanceToMouse;
-      const avoidanceY = (pos.y - mouse.y) / distanceToMouse;
-      const rawIntensity =
-        (mouseAvoidDistance - distanceToMouse) / mouseAvoidDistance;
-      const avoidanceIntensity = Math.min(rawIntensity, 0.8);
-      targetVelX += avoidanceX * mouseAvoidStrength * avoidanceIntensity;
-      targetVelY += avoidanceY * mouseAvoidStrength * avoidanceIntensity;
-      currentTurnStrength = Math.min(turnStrength * 3, 0.1);
-    }
-
-    const newVel = {
-      x: vel.x + (targetVelX - vel.x) * currentTurnStrength,
-      y: vel.y + (targetVelY - vel.y) * currentTurnStrength,
-    };
-    const newPos = {
-      x: pos.x + newVel.x,
-      y: pos.y + newVel.y,
-    };
-
-    if (newPos.x > windowWidth + birdSize) {
-      newPos.x = -birdSize;
-      newPos.y = Math.random() * windowHeight * 0.6 + windowHeight * 0.2;
-    }
-
-    if (newPos.x < -birdSize) {
-      newPos.x = windowWidth + birdSize;
-      newPos.y = Math.random() * windowHeight * 0.6 + windowHeight * 0.2;
-    }
-
-    if (newPos.y > windowHeight + birdSize) {
-      newPos.y = -birdSize;
-    }
-
-    if (newPos.y < -birdSize) {
-      newPos.y = windowHeight + birdSize;
-    }
-
-    setPosition(newPos);
-    setVelocity(newVel);
     animationId = requestAnimationFrame(animate);
   };
 
@@ -115,18 +246,27 @@ export default function Bird() {
 
   onMount(() => {
     if (typeof window === "undefined") return;
+
     // Read showBird from localStorage on mount
     const stored = window.localStorage.getItem("showBird");
     if (stored !== null) setShowBird(stored === "true");
+
     window.addEventListener("mousemove", handleMouseMove);
-    setPosition({
-      x: Math.random() * window.innerWidth,
-      y: Math.random() * (window.innerHeight * 0.6) + window.innerHeight * 0.2,
-    });
-    setVelocity({
-      x: flightSpeed,
-      y: 0,
-    });
+
+    // Initialize boids in random locations across the screen
+    const initialBoids: Boid[] = [];
+
+    for (let i = 0; i < boidCount; i++) {
+      initialBoids.push({
+        id: i,
+        x: Math.random() * window.innerWidth,
+        y: Math.random() * window.innerHeight,
+        vx: (Math.random() - 0.5) * 2,
+        vy: (Math.random() - 0.5) * 2
+      });
+    }
+    setBoids(initialBoids);
+
     animate();
   });
 
@@ -147,38 +287,37 @@ export default function Bird() {
     }
   });
 
-  const rotation = () => {
-    const vel = velocity();
-    return Math.atan2(vel.y, vel.x) * (180 / Math.PI);
+  const getRotation = (boid: Boid) => {
+    return Math.atan2(boid.vy, boid.vx) * (180 / Math.PI);
   };
 
   return (
     <>
       <button
-        class="fixed hidden md:block top-3 right-4 z-10 text-violet-600 p-2 rounded-full shadow hover:text-violet-300 transition-colors flex items-center justify-center cursor-pointer"
+        class="fixed hidden md:block top-3 right-4 z-0 text-violet-600 p-2 rounded-full shadow hover:text-violet-300 transition-colors flex items-center justify-center cursor-pointer"
         onClick={toggleShowBird}
-        aria-label={showBird() ? "Hide bird" : "Show bird"}
+        aria-label={showBird() ? "Hide birds" : "Show birds"}
       >
         {showBird() ? <BirdIcon /> : <CrossedBirdIcon />}
       </button>
-      {showBird() && (
+      {showBird() && boids().map((boid) => (
         <div
-          class="fixed pointer-events-none z-10 hidden md:block"
+          class="fixed pointer-events-none z-0 hidden md:block"
           style={{
-            left: `${position().x}px`,
-            top: `${position().y}px`,
-            transform: `rotate(${rotation()}deg) translateZ(0)`,
+            left: `${boid.x}px`,
+            top: `${boid.y}px`,
+            transform: `rotate(${getRotation(boid)}deg) translateZ(0)`,
             "transform-origin": "center center",
           }}
         >
           <div
-            class="w-0 h-0 border-l-[8px] border-r-[8px] border-b-[24px] border-l-transparent border-r-transparent border-b-violet-700"
+            class="w-0 h-0 border-l-[8px] border-r-[8px] border-b-[24px] border-l-transparent border-r-transparent border-b-violet-800/60"
             style={{
               transform: "translateX(-50%) translateY(-50%) rotate(90deg)",
             }}
           />
         </div>
-      )}
+      ))}
     </>
   );
 }
