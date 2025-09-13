@@ -299,6 +299,24 @@ export default function Bird() {
     return Math.atan2(boid.vy, boid.vx) * (180 / Math.PI);
   };
 
+  const getBoidStyle = (boid: Boid) => {
+    const violetShades = [
+      [124, 58, 237], // violet-600
+      [109, 40, 217], // violet-700
+      [91, 33, 182], // violet-800
+      [76, 29, 149], // violet-900
+    ];
+
+    const colorIndex = (boid.id * 3) % 4;
+    const [r, g, b] = violetShades[colorIndex];
+    const opacity = (60 + ((boid.id * 7) % 31)) / 100;
+
+    return {
+      "border-bottom-color": `rgba(${r}, ${g}, ${b}, ${opacity})`,
+      transform: "translateX(-50%) translateY(-50%) rotate(90deg)",
+    };
+  };
+
   return (
     <>
       <button
@@ -308,27 +326,29 @@ export default function Bird() {
       >
         <BirdIcon showBird={showBird} />
       </button>
-      <For each={boids()}>
-        {(boid) => (
-          <div
-            class="fixed pointer-events-none z-0 transition-opacity"
-            style={{
-              left: `${boid.x}px`,
-              top: `${boid.y}px`,
-              transform: `rotate(${getRotation(boid)}deg) translateZ(0)`,
-              "transform-origin": "center center",
-              opacity: showBird() && window.innerWidth >= 768 ? 1 : 0,
-            }}
-          >
+      <div
+        class="fixed inset-0 pointer-events-none z-0 transition-opacity duration-300 ease-in-out"
+        classList={{ "opacity-0": !showBird(), "opacity-100": showBird() }}
+      >
+        <For each={boids()}>
+          {(boid) => (
             <div
-              class="w-0 h-0 border-l-[8px] border-r-[8px] border-b-[24px] border-l-transparent border-r-transparent border-b-violet-800/60"
+              class="fixed pointer-events-none z-0"
               style={{
-                transform: "translateX(-50%) translateY(-50%) rotate(90deg)",
+                left: `${boid.x}px`,
+                top: `${boid.y}px`,
+                transform: `rotate(${getRotation(boid)}deg) translateZ(0)`,
+                "transform-origin": "center center",
               }}
-            />
-          </div>
-        )}
-      </For>
+            >
+              <div
+                class="w-0 h-0 border-l-[8px] border-r-[8px] border-b-[24px] border-l-transparent border-r-transparent"
+                style={getBoidStyle(boid)}
+              />
+            </div>
+          )}
+        </For>
+      </div>
     </>
   );
 }
