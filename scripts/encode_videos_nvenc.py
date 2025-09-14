@@ -63,7 +63,7 @@ def encode_file(ffmpeg_cmd: str, src: Path, dst: Path, overwrite: bool = False):
         "-c:v",
         "hevc_nvenc",
         "-preset",
-        "p1",
+        "p7",
         "-rc",
         "vbr_hq",
         "-cq",
@@ -87,7 +87,7 @@ def encode_file(ffmpeg_cmd: str, src: Path, dst: Path, overwrite: bool = False):
 
 def main():
     p = argparse.ArgumentParser()
-    p.add_argument("--root", default="public/projects",
+    p.add_argument("--root", default="../public/projects",
                    help="root directory to search")
     p.add_argument("--dry-run", action="store_true",
                    help="list files but don't encode")
