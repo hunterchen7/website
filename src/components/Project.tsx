@@ -1,9 +1,5 @@
-import {
-  TagColorsHover,
-  TechnologyIcons,
-  ProjectProps,
-} from "~/constants/projects";
-import { createSignal, onMount, onCleanup } from "solid-js";
+import { ProjectProps } from "~/constants/projects";
+import { onMount, onCleanup } from "solid-js";
 import { Globe, Link, Star } from "lucide-solid";
 
 export default function Project(props: ProjectProps & { index: number }) {
@@ -35,21 +31,21 @@ export default function Project(props: ProjectProps & { index: number }) {
   });
   return (
     <div
-      class="project-card bg-violet-900/20 shadow-lg rounded border hover:shadow-xl transition-shadow duration-300 content-fade-in"
+      class="project-card group bg-violet-900/20 hover:bg-violet-900/80 shadow-lg rounded border border-gray-400/50 hover:shadow-xl transition-all duration-300 content-fade-in overflow-hidden cursor-pointer"
       style={{ "animation-delay": `${Math.min(0.2 + props.index * 0.25, 2)}s` }}
     >
       <div class="flex justify-between">
         <div class="flex items-center gap-2 px-2 pt-1 pb-0.5">
           <h2 class="text-base text-violet-200">{props.title}</h2>
           {props.favourite && (
-            <span class="relative group select-none">
+            <span class="relative select-none">
               <Star
                 size={16}
                 fill="currentColor"
                 stroke="currentColor"
-                class="text-yellow-400 cursor-pointer transition-transform duration-300 hover:rotate-72 hover:scale-105"
+                class="peer text-yellow-400 cursor-pointer transition-transform duration-300 hover:rotate-72 hover:scale-105"
               />
-              <span class="opacity-0 group-hover:opacity-100 absolute left-1/2 bottom-full -translate-x-1/2 mb-2 bg-black text-white text-xs px-2 py-1 rounded z-10 whitespace-nowrap pointer-events-none transition-opacity duration-300">
+              <span class="opacity-0 peer-hover:opacity-100 absolute left-1/2 bottom-full -translate-x-1/2 mb-2 bg-black text-white text-xs px-2 py-1 rounded z-10 whitespace-nowrap pointer-events-none transition-opacity duration-300">
                 a personal favourite!
               </span>
             </span>
@@ -62,7 +58,7 @@ export default function Project(props: ProjectProps & { index: number }) {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="GitHub Repository"
-              class="text-gray-400 hover:text-white transition-colors"
+              class="text-gray-400 hover:text-white transition-colors opacity-0 group-hover:opacity-100 transition-opacity duration-300"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -83,7 +79,7 @@ export default function Project(props: ProjectProps & { index: number }) {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Live Website"
-              class="text-gray-400 hover:text-white transition-colors"
+              class="text-gray-400 hover:text-white transition-colors opacity-0 group-hover:opacity-100 transition-opacity duration-300"
             >
               <Globe size={24} />
             </a>
@@ -94,7 +90,7 @@ export default function Project(props: ProjectProps & { index: number }) {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Other Link"
-              class="text-gray-400 hover:text-white transition-colors"
+              class="text-gray-400 hover:text-white transition-colors opacity-0 group-hover:opacity-100 transition-opacity duration-300"
             >
               <Link size={24} />
             </a>
@@ -122,10 +118,15 @@ export default function Project(props: ProjectProps & { index: number }) {
         ) : null}
       </div>
 
-      <p
-        class="text-gray-400 text-left text-xs p-2"
-        innerHTML={props.overview}
-      />
+      {/* overview overlay: absolutely positioned, hidden by translate/opacity so it doesn't change layout */}
+      <div class="relative">
+        <div class="absolute left-0 right-0 bottom-0 transform translate-y-full group-hover:translate-y-0  transition-all duration-300 bg-black/80 pointer-events-auto">
+          <p
+            class="text-gray-200 text-left text-xs p-3 m-0"
+            innerHTML={props.overview}
+          />
+        </div>
+      </div>
     </div>
   );
 }
