@@ -191,7 +191,7 @@ export default function Project(props: ProjectProps & { index: number }) {
             ref={(el) => (videoEl = el)}
             src={props.video}
             class="w-full h-full object-cover"
-            preload="metadata"
+            preload="none"
             muted
             loop
             playsinline
