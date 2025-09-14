@@ -101,7 +101,7 @@ export const projects: ProjectProps[] = [
       "12th iteration of Hack Western in 2025, Western University's flagship hackathon. co-leading the web team of 7 this year; building the event website, the application portal and live dashboard for hackers. Next.js web app with a postgres db.",
     repoUrl: "https://github.com/hackwestern/hackwestern",
     demoUrl: "https://hackwestern.com",
-    video: "/projects/hw12/video.mp4",
+    video: "/projects/hw12/video.webm",
     technologies: [
       Technology.TypeScript,
       Technology.React,
@@ -128,7 +128,7 @@ export const projects: ProjectProps[] = [
     repoUrl: "https://github.com/hunterchen7/stabl",
     technologies: [Technology.Python],
     tags: [Tags.AI, Tags.fun],
-    video: "/projects/stabl/video.mp4",
+    video: "/projects/stabl/video.webm",
     images: [
       "https://raw.githubusercontent.com/hunterchen7/stabl/main/examples/f18_1_visualization.gif",
     ],
@@ -207,7 +207,7 @@ export const projects: ProjectProps[] = [
       "/projects/pawfect/3.webp",
       "/projects/pawfect/4.webp",
     ],
-    video: "/projects/pawfect/video.mp4",
+    video: "/projects/pawfect/video.webm",
   },
   {
     title: "hack western 11",
@@ -226,7 +226,7 @@ export const projects: ProjectProps[] = [
     ],
     tags: [Tags.frontend, Tags.backend, Tags.database],
     images: ["/projects/hw11/image.webp", "/projects/hw11/live.webp"],
-    video: "/projects/hw11/video.mp4",
+    video: "/projects/hw11/video.webm",
     favourite: true,
   },
   {
@@ -283,7 +283,7 @@ export const projects: ProjectProps[] = [
       "https://rustwasm.github.io/book/game-of-life/introduction.html",
       "rustwasm book."
     )}`,
-    video: "/projects/gameoflife/video.mp4",
+    video: "/projects/gameoflife/video.webm",
     repoUrl: "https://github.com/hunterchen7/wasm-game-of-life",
     demoUrl: "https://hunterchen7.github.io/wasm-game-of-life/",
     otherUrl: "https://rustwasm.github.io/book/game-of-life/introduction.html",
@@ -304,7 +304,7 @@ export const projects: ProjectProps[] = [
       "scavenger hunt game for the first hack western 11 organizer social; updated/reused for hack western 12",
     description:
       "a scavenger hunt game for the first hack western 11 organizer social, and updated/reused for hack western 12.  built with TypeScript, React, and Next.js. Postgres db hosted on Hasura. use code 1023 for a demo.",
-    video: "/projects/scavenger/video.mp4",
+    video: "/projects/scavenger/video.webm",
     repoUrl: "https://github.com/hunterchen7/scavenger-hunt",
     demoUrl: "https://scavenger-hunt-pink.vercel.app/",
     technologies: [Technology.TypeScript, Technology.React, Technology.NextJS],
@@ -363,7 +363,7 @@ export const projects: ProjectProps[] = [
     technologies: [Technology.TypeScript, Technology.React, Technology.NextJS],
     tags: [Tags.web3, Tags.frontend],
     images: ["/projects/daovoz/image.webp"],
-    video: "/projects/daovoz/video.mp4",
+    video: "/projects/daovoz/video.webm",
   },
   {
     title: "spacestagram",
@@ -378,7 +378,7 @@ export const projects: ProjectProps[] = [
       "/projects/spacestagram/image.webp",
       "/projects/spacestagram/image2.webp",
     ],
-    video: "/projects/spacestagram/video.mp4",
+    video: "/projects/spacestagram/video.webm",
   },
   {
     title: "deChess",
@@ -409,7 +409,7 @@ export const projects: ProjectProps[] = [
     technologies: [Technology.Python, Technology.JavaScript],
     tags: [Tags.web3, Tags.frontend, Tags.backend],
     images: ["/projects/coinport/image.webp", "/projects/coinport/image2.webp"],
-    video: "/projects/coinport/video.mp4",
+    video: "/projects/coinport/video.webm",
   },
   {
     title: "human benchmark bot",
@@ -451,5 +451,6 @@ export const projects: ProjectProps[] = [
       "/projects/tank/level2.webp",
       "/projects/tank/level3.webp",
     ],
+    video: "/projects/tank/video.webm",
   },
 ];
