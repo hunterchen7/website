@@ -1,4 +1,12 @@
-import { DEFAULT_MAX_SPEED, DEFAULT_MAX_FORCE, DEFAULT_SEPARATION_RADIUS, DEFAULT_ALIGNMENT_RADIUS, DEFAULT_COHESION_RADIUS, DEFAULT_MOUSE_AVOID_RADIUS, DEFAULT_MOUSE_AVOID_FORCE } from "../constants/bird";
+import {
+  DEFAULT_MAX_SPEED,
+  DEFAULT_MAX_FORCE,
+  DEFAULT_SEPARATION_RADIUS,
+  DEFAULT_ALIGNMENT_RADIUS,
+  DEFAULT_COHESION_RADIUS,
+  DEFAULT_MOUSE_AVOID_RADIUS,
+  DEFAULT_MOUSE_AVOID_FORCE,
+} from "../constants/bird";
 
 export interface Boid {
   id: number;
@@ -18,26 +26,31 @@ function len(v: { x: number; y: number }) {
   return Math.sqrt(v.x * v.x + v.y * v.y);
 }
 
+// Small epsilon to avoid division by zero producing extreme forces
+const EPS = 1e-6;
 
-
-export function separate(boid: Boid, neighbors: Boid[], separationRadius = DEFAULT_SEPARATION_RADIUS, maxSpeed = DEFAULT_MAX_SPEED, maxForce = DEFAULT_MAX_FORCE) {
+export function separate(
+  boid: Boid,
+  neighbors: Boid[],
+  separationRadius = DEFAULT_SEPARATION_RADIUS,
+  maxSpeed = DEFAULT_MAX_SPEED,
+  maxForce = DEFAULT_MAX_FORCE
+) {
   let steer = { x: 0, y: 0 };
   let count = 0;
 
   neighbors.forEach((other) => {
-    const distance = Math.sqrt((boid.x - other.x) ** 2 + (boid.y - other.y) ** 2);
-    if (distance > 0 && distance < separationRadius) {
-      const diff = { x: boid.x - other.x, y: boid.y - other.y };
-      const length = len(diff);
-      if (length > 0) {
-        diff.x /= length;
-        diff.y /= length;
-        diff.x /= distance; // Weight by distance
-        diff.y /= distance;
-        steer.x += diff.x;
-        steer.y += diff.y;
-        count++;
-      }
+    const dx = boid.x - other.x;
+    const dy = boid.y - other.y;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+    if (distance > EPS && distance < separationRadius) {
+      const diff = { x: dx / (distance + EPS), y: dy / (distance + EPS) };
+      // Weight inversely by distance to push harder when very close
+      diff.x /= distance;
+      diff.y /= distance;
+      steer.x += diff.x;
+      steer.y += diff.y;
+      count++;
     }
   });
 
@@ -45,11 +58,15 @@ export function separate(boid: Boid, neighbors: Boid[], separationRadius = DEFAU
     steer.x /= count;
     steer.y /= count;
     const length = len(steer);
-    if (length > 0) {
-      steer.x = (steer.x / length) * maxSpeed;
-      steer.y = (steer.y / length) * maxSpeed;
-      steer.x -= 0; // caller will subtract boid.vx
-      steer.y -= 0; // caller will subtract boid.vy
+    if (length > EPS) {
+      // Desired velocity
+      const desired = {
+        x: (steer.x / length) * maxSpeed,
+        y: (steer.y / length) * maxSpeed,
+      };
+      // Steering = desired - current velocity
+      steer.x = desired.x - boid.vx;
+      steer.y = desired.y - boid.vy;
       // Limit force
       const forceLength = len(steer);
       if (forceLength > maxForce) {
@@ -62,13 +79,21 @@ export function separate(boid: Boid, neighbors: Boid[], separationRadius = DEFAU
   return steer;
 }
 
-export function align(boid: Boid, neighbors: Boid[], alignmentRadius = DEFAULT_ALIGNMENT_RADIUS, maxSpeed = DEFAULT_MAX_SPEED, maxForce = DEFAULT_MAX_FORCE) {
+export function align(
+  boid: Boid,
+  neighbors: Boid[],
+  alignmentRadius = DEFAULT_ALIGNMENT_RADIUS,
+  maxSpeed = DEFAULT_MAX_SPEED,
+  maxForce = DEFAULT_MAX_FORCE
+) {
   let sum = { x: 0, y: 0 };
   let count = 0;
 
   neighbors.forEach((other) => {
-    const distance = Math.sqrt((boid.x - other.x) ** 2 + (boid.y - other.y) ** 2);
-    if (distance > 0 && distance < alignmentRadius) {
+    const dx = boid.x - other.x;
+    const dy = boid.y - other.y;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+    if (distance > EPS && distance < alignmentRadius) {
       sum.x += other.vx;
       sum.y += other.vy;
       count++;
@@ -79,30 +104,39 @@ export function align(boid: Boid, neighbors: Boid[], alignmentRadius = DEFAULT_A
     sum.x /= count;
     sum.y /= count;
     const length = len(sum);
-    if (length > 0) {
-      sum.x = (sum.x / length) * maxSpeed;
-      sum.y = (sum.y / length) * maxSpeed;
-      sum.x -= 0; // caller will subtract boid.vx
-      sum.y -= 0; // caller will subtract boid.vy
-      // Limit force
-      const forceLength = len(sum);
+    if (length > EPS) {
+      const desired = {
+        x: (sum.x / length) * maxSpeed,
+        y: (sum.y / length) * maxSpeed,
+      };
+      const steer = { x: desired.x - boid.vx, y: desired.y - boid.vy };
+      const forceLength = len(steer);
       if (forceLength > maxForce) {
-        sum.x = (sum.x / forceLength) * maxForce;
-        sum.y = (sum.y / forceLength) * maxForce;
+        steer.x = (steer.x / forceLength) * maxForce;
+        steer.y = (steer.y / forceLength) * maxForce;
       }
+      return steer;
     }
   }
 
-  return sum;
+  return { x: 0, y: 0 };
 }
 
-export function cohesion(boid: Boid, neighbors: Boid[], cohesionRadius = DEFAULT_COHESION_RADIUS, maxSpeed = DEFAULT_MAX_SPEED, maxForce = DEFAULT_MAX_FORCE) {
+export function cohesion(
+  boid: Boid,
+  neighbors: Boid[],
+  cohesionRadius = DEFAULT_COHESION_RADIUS,
+  maxSpeed = DEFAULT_MAX_SPEED,
+  maxForce = DEFAULT_MAX_FORCE
+) {
   let sum = { x: 0, y: 0 };
   let count = 0;
 
   neighbors.forEach((other) => {
-    const distance = Math.sqrt((boid.x - other.x) ** 2 + (boid.y - other.y) ** 2);
-    if (distance > 0 && distance < cohesionRadius) {
+    const dx = boid.x - other.x;
+    const dy = boid.y - other.y;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+    if (distance > EPS && distance < cohesionRadius) {
       sum.x += other.x;
       sum.y += other.y;
       count++;
@@ -112,47 +146,48 @@ export function cohesion(boid: Boid, neighbors: Boid[], cohesionRadius = DEFAULT
   if (count > 0) {
     sum.x /= count;
     sum.y /= count;
-    const steer = { x: sum.x - boid.x, y: sum.y - boid.y };
-    const length = len(steer);
-    if (length > 0) {
-      steer.x = (steer.x / length) * maxSpeed;
-      steer.y = (steer.y / length) * maxSpeed;
-      steer.x -= 0; // caller will subtract boid.vx
-      steer.y -= 0; // caller will subtract boid.vy
-      // Limit force
+    const steerToCenter = { x: sum.x - boid.x, y: sum.y - boid.y };
+    const length = len(steerToCenter);
+    if (length > EPS) {
+      const desired = {
+        x: (steerToCenter.x / length) * maxSpeed,
+        y: (steerToCenter.y / length) * maxSpeed,
+      };
+      const steer = { x: desired.x - boid.vx, y: desired.y - boid.vy };
       const forceLength = len(steer);
       if (forceLength > maxForce) {
         steer.x = (steer.x / forceLength) * maxForce;
         steer.y = (steer.y / forceLength) * maxForce;
       }
+      return steer;
     }
-    return steer;
   }
 
   return { x: 0, y: 0 };
 }
 
-export function avoidMouse(boid: Boid, mouse: MousePosition, mouseAvoidRadius = DEFAULT_MOUSE_AVOID_RADIUS, maxSpeed = DEFAULT_MAX_SPEED, mouseAvoidForce = DEFAULT_MOUSE_AVOID_FORCE) {
-  const distance = Math.sqrt((boid.x - mouse.x) ** 2 + (boid.y - mouse.y) ** 2);
+export function avoidMouse(
+  boid: Boid,
+  mouse: MousePosition,
+  mouseAvoidRadius = DEFAULT_MOUSE_AVOID_RADIUS,
+  maxSpeed = DEFAULT_MAX_SPEED,
+  mouseAvoidForce = DEFAULT_MOUSE_AVOID_FORCE
+) {
+  const dx = boid.x - mouse.x;
+  const dy = boid.y - mouse.y;
+  const distance = Math.sqrt(dx * dx + dy * dy);
 
-  if (distance > 0 && distance < mouseAvoidRadius) {
-    const steer = { x: boid.x - mouse.x, y: boid.y - mouse.y };
-    const length = len(steer);
-    if (length > 0) {
-      steer.x = (steer.x / length) * maxSpeed;
-      steer.y = (steer.y / length) * maxSpeed;
-      steer.x -= 0; // caller subtracts boid.vx
-      steer.y -= 0;
-      // Stronger force for mouse avoidance
-      const forceLength = len(steer);
-      if (forceLength > mouseAvoidForce) {
-        steer.x = (steer.x / forceLength) * mouseAvoidForce;
-        steer.y = (steer.y / forceLength) * mouseAvoidForce;
-      }
-      // Increase force based on proximity
-      const intensity = (mouseAvoidRadius - distance) / mouseAvoidRadius;
-      steer.x *= intensity * 4; // Increased panic response
-      steer.y *= intensity * 4;
+  if (distance > EPS && distance < mouseAvoidRadius) {
+    const steerDir = { x: dx / (distance + EPS), y: dy / (distance + EPS) };
+    const desired = { x: steerDir.x * maxSpeed, y: steerDir.y * maxSpeed };
+    const steer = { x: desired.x - boid.vx, y: desired.y - boid.vy };
+    const intensity = (mouseAvoidRadius - distance) / mouseAvoidRadius;
+    steer.x *= intensity * 4;
+    steer.y *= intensity * 4;
+    const forceLength = len(steer);
+    if (forceLength > mouseAvoidForce) {
+      steer.x = (steer.x / forceLength) * mouseAvoidForce;
+      steer.y = (steer.y / forceLength) * mouseAvoidForce;
     }
     return steer;
   }
