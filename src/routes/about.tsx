@@ -1,6 +1,7 @@
 import { Title } from "@solidjs/meta";
 import Link from "~/components/Link";
 import Geneial from "~/components/logos/Geneial";
+import TechIcon from "~/components/TechIcon";
 
 export default function About() {
   return (
@@ -11,11 +12,25 @@ export default function About() {
       >
         about me..
       </h1>
-      <p
-        class={`mx-auto content-fade-in`}
+      <span
+        class="content-fade-in flex flex-wrap justify-center max-w-[80vw] mx-auto"
         style={{ "animation-delay": "0.1s" }}
       >
-        I was born in Taiwan 🇹🇼, and grew up in Calgary, Canada 🇨🇦. I&apos;m
+        building with
+        <TechIcon src="/icons/typescript.svg" label="TypeScript" />,
+        <TechIcon src="/icons/react.svg" label="React" />,
+        <TechIcon src="/icons/python.svg" label="Python" />,
+        <TechIcon src="/icons/rust.svg" label="Rust" />,
+        <TechIcon src="/icons/java.svg" label="Java" />, and{" "}
+        <Link href="/projects" class="ml-2">
+          more
+        </Link>
+        ..
+      </span>
+      <p
+        class={`mx-auto content-fade-in`}
+        style={{ "animation-delay": "0.2s" }}
+      >
         currently studying computer science @{" "}
         <Link href="https://www.uwo.ca" external>
           western university
@@ -29,7 +44,7 @@ export default function About() {
       </p>
       <p
         class={`mx-auto content-fade-in`}
-        style={{ "animation-delay": "0.2s" }}
+        style={{ "animation-delay": "0.3s" }}
       >
         at <Geneial />, I work on react & react native apps. I work with AG grid
         on web to build performant data-heavy applications. On mobile, I build
@@ -37,19 +52,19 @@ export default function About() {
       </p>
       <p
         class={`mx-auto content-fade-in`}
-        style={{ "animation-delay": "0.3s" }}
+        style={{ "animation-delay": "0.4s" }}
       >
         previously, I contracted as a frontend developer @{" "}
         <Link href="https://aramid.finance" external>
           <img
             src="/aramid.webp"
             alt="aramid finance"
-            class="inline w-18 rounded-lg hover:scale-105 transition-all -mr-1.5"
+            class="inline w-15 md:w-18 rounded-lg hover:scale-105 transition-all -mr-1.5"
           />
         </Link>
-        , where I built the landing website, the frontend core web3 bridge
-        application, as well as a web app to track usage. I've also contracted
-        at{" "}
+        , where I built the landing website, the frontend of the core web3
+        bridge application, as well as a fullstack web app to track usage. I've
+        also contracted at{" "}
         <Link href="https://mora.do" external>
           mora.do
         </Link>{" "}
@@ -57,14 +72,14 @@ export default function About() {
       </p>
       <p
         class={`mx-auto content-fade-in`}
-        style={{ "animation-delay": "0.4s" }}
+        style={{ "animation-delay": "0.5s" }}
       >
         outside of tech, I spend most of my time climbing rocks 🧗‍♂️, playing
         video games, taking pictures 📷, and reading books 📖..
       </p>
       <div
         class={`mx-auto content-fade-in`}
-        style={{ "animation-delay": "0.5s" }}
+        style={{ "animation-delay": "0.6s" }}
       >
         <div class="relative h-64 max-w-md aspect-[3/2] mx-auto mb-1 rounded-xl overflow-hidden">
           <img

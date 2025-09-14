@@ -45,11 +45,10 @@ export default function Project(props: ProjectProps & { index: number }) {
           if (target.closest("a")) return;
           const el = e.currentTarget as HTMLElement;
           setRect(el.getBoundingClientRect());
-          setIsOpen(true);
         }}
-        class="project-card group bg-violet-900/30 hover:bg-violet-900/20 shadow-md shadow-violet-800/40 rounded border border-gray-400/50 hover:shadow-lg transition-all duration-300 content-fade-in overflow-visible cursor-pointer"
+        class="project-card group bg-violet-900/30 hover:bg-violet-800/40 shadow-md shadow-violet-800/40 rounded border border-gray-400/50 hover:shadow-lg transition-all duration-300 content-fade-in overflow-visible"
         style={{
-          "animation-delay": `${Math.min(0.2 + props.index * 0.25, 2)}s`,
+          "animation-delay": `${Math.min(0.4 + props.index * 0.25, 2)}s`,
         }}
       >
         <div class="flex justify-between">
@@ -117,11 +116,11 @@ export default function Project(props: ProjectProps & { index: number }) {
         </div>
 
         {/* wrap media + overview so bottom overflow is clipped, but allow top overflow from header/tooltips */}
-        <div class="relative overflow-hidden">
+        <div class="relative overflow-hidden cursor-nesw-resize transition-all" onClick={() => setIsOpen(true)}>
           {/* media preview: borderless video or first image */}
           <div
             ref={(el) => (mediaRoot = el)}
-            class="w-full h-96 overflow-hidden bg-gray-900 flex items-center justify-center hover:brightness-90 transition-all duration-300"
+            class="w-full h-72 md:h-84 lg:h-96 xl:h-108 overflow-hidden bg-gray-900 flex items-center justify-center hover:brightness-105 transition-all duration-300 hover:scale-105"
           >
             {props.video ? (
               <video
@@ -147,9 +146,12 @@ export default function Project(props: ProjectProps & { index: number }) {
           </div>
 
           {/* overview overlay: absolutely positioned, hidden by translate/opacity so it doesn't change layout */}
-          <div class="absolute left-0 right-0 bottom-0 transform sm:translate-y-full group-hover:translate-y-0 transition-all duration-300 bg-black/80 pointer-events-auto cursor-auto">
+          <div
+            class="absolute left-0 right-0 bottom-0 transform sm:translate-y-full group-hover:translate-y-0 transition-all duration-300 bg-black/80 pointer-events-auto cursor-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
             <p
-              class="text-gray-200 text-left text-xs p-3 m-0"
+              class="text-gray-200 text-left font-thin sm:font-normal text-[10.5px] md:text-xs p-1.5 sm:p-3 m-0"
               innerHTML={props.overview}
             />
           </div>

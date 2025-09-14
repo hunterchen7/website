@@ -232,7 +232,7 @@ export const projects: ProjectProps[] = [
     title: "typing game",
     overview: "typing game where you destroy falling asteroids by typing words",
     description:
-      "led a group of 4 to build a Java/LibGDX typing game where you type words to destroy asteroids.",
+      "led a group of 4 to build a Java/LibGDX typing game where you type words to destroy asteroids. designed database schema to store user profiles, game stats and word lists. implemented user authentication and level generation.",
     repoUrl: "https://github.com/hunterchen7/typing-game",
     demoUrl: "https://www.youtube.com/watch?v=1PN8l_tNcNQ",
     technologies: [Technology.Java, Technology.SQLite, Technology.SQL],
@@ -243,8 +243,7 @@ export const projects: ProjectProps[] = [
   {
     title: "docket",
     overview: "markdown note-taking chrome extension",
-    description:
-      "markdown note-taking chrome extension, my friend built most of it but I implemented a couple features :)",
+    description: `markdown note-taking chrome extension, my ${link("https://awwscar.ca/", "friend")} built most of it but I implemented a couple features :)`,
     repoUrl: "https://github.com/LordExodius/docket",
     demoUrl:
       "https://chromewebstore.google.com/detail/docket/hlfjljigolpdfpljaogaiklelolbemfc?hl=en&authuser=0&pli=1",
@@ -270,7 +269,7 @@ export const projects: ProjectProps[] = [
   {
     title: "pointless",
     overview: "Infinite drawing canvas desktop app built with Tauri & React",
-    description: `infinite drawing canvas desktop app built with Tauri (Rust) and React. added the colour picker feature, not that impressive, but it's my first open source contribution so I wanted to share :^)`,
+    description: `not my app! infinite drawing canvas desktop app built with Tauri (Rust) and React. added the colour picker feature, not that impressive, but it's my first open source contribution so I wanted to share :^)`,
     repoUrl: "https://github.com/kkoomen/pointless",
     technologies: [Technology.Rust, Technology.React, Technology.JavaScript],
     tags: [Tags.frontend, Tags.fun],
@@ -304,7 +303,12 @@ export const projects: ProjectProps[] = [
     video: "/projects/scavenger/video.webm",
     repoUrl: "https://github.com/hunterchen7/scavenger-hunt",
     demoUrl: "https://scavenger-hunt-pink.vercel.app/",
-    technologies: [Technology.TypeScript, Technology.React, Technology.NextJS],
+    technologies: [
+      Technology.TypeScript,
+      Technology.React,
+      Technology.NextJS,
+      Technology.PostgreSQL,
+    ],
     tags: [Tags.frontend, Tags.database, Tags.fun],
     images: [
       "/projects/scavenger/image.webp",
@@ -325,8 +329,7 @@ export const projects: ProjectProps[] = [
   {
     title: "voyage",
     overview: `WIP (abandoned) magic-bitboard chess move-generator, based on ${link("https://www.codeproject.com/Articles/5313417/Worlds-Fastest-Bitboard-Chess-Movegenerator", "World's Fastest Bitboard Chess Movegenerator")}.`,
-    description:
-      'a WIP (abandoned) magic-bitboard chess move-generator intended for use in bluefin (my WIP chess engine). written in Rust. based on a C++ move generator called ${link("https://github.com/Gigantua/Gigantua","Gigantua")}.',
+    description: `a WIP (abandoned) magic-bitboard chess move-generator intended for use in bluefin (my WIP chess engine). written in Rust. based on a C++ move generator called ${link("https://github.com/Gigantua/Gigantua", "Gigantua")}.`,
     repoUrl: "https://github.com/bluefin-chess/voyage",
     otherUrl:
       "https://www.codeproject.com/Articles/5313417/Worlds-Fastest-Bitboard-Chess-Movegenerator",
@@ -420,7 +423,7 @@ export const projects: ProjectProps[] = [
     )} using pyautogui, tesseract, and other libraries, getting in the top 0.1% of 5 tasks and 0.4% of another.`,
     repoUrl: "https://github.com/hunterchen7/HumanBenchmarkBot",
     technologies: [Technology.Python],
-    tags: [Tags.AI, Tags.backend, Tags.fun],
+    tags: [Tags.AI, Tags.fun],
     images: ["/projects/benchmark/image.webp"],
     favourite: true,
   },
@@ -431,12 +434,13 @@ export const projects: ProjectProps[] = [
       "a simple file encryption/decryption tool built with python using tkinter and fernet.",
     repoUrl: "https://github.com/hunterchen7/SeCrypt",
     technologies: [Technology.Python],
-    tags: [Tags.backend],
+    tags: [Tags.fun],
     images: ["/projects/secrypt/image.webp", "/projects/secrypt/image2.webp"],
   },
   {
     title: "tank game",
-    overview: "birds-eye view tank game built with gamemaker",
+    overview:
+      "birds-eye view tank game built with gamemaker, links are .exe & .gmz files",
     description:
       "a birds-eye view tank game I made in high school with gamemaker, has a tutorial, 3 normal levels, and a boss level. has different enemy types, ammo types and a menu screen. download & install the .exe at your own discretion, also has a .gmz file if you want to compile it yourself with gamemaker studio.",
     demoUrl: "https://hunterchen.ca/tank/tankgame.exe",

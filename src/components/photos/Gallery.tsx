@@ -57,7 +57,7 @@ export function Gallery(props: GalleryProps) {
   };
 
   return (
-    <main class="text-center mx-auto font-mono text-violet-200 pb-20 h-screen overflow-y-auto">
+    <main class="text-center mx-auto font-mono text-violet-200 pb-20">
       <h1 class="text-2xl sm:text-4xl font-thin leading-tight mt-2 md:mt-12 mb-8 mx-auto max-w-[14rem] md:max-w-none content-fade-in">
         gallery
       </h1>

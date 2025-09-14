@@ -83,6 +83,11 @@ html {
   scrollbar-width: thin;
 }
 
+/* Reserve scrollbar gutter to prevent layout shift when the scrollbar appears/disappears */
+html, body, main {
+  scrollbar-gutter: stable;
+}
+
 /* Loading Animation Styles */
 @keyframes contentFadeIn {
   0% {

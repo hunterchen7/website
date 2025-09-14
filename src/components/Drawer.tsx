@@ -1,6 +1,7 @@
 import { createSignal, onCleanup, onMount } from "solid-js";
 import Link from "./Link";
 import AnimatedHamburger from "./AnimatedHamburger";
+import { A } from "@solidjs/router";
 
 export default function Drawer() {
   const [isOpen, setIsOpen] = createSignal(false);
@@ -22,8 +23,50 @@ export default function Drawer() {
     // start at right center
     setPosition({
       x: window.innerWidth - BUTTON_SIZE - PADDING,
-      y: window.innerHeight / 2 - BUTTON_SIZE / 2,
+      y: window.innerHeight - BUTTON_SIZE - PADDING,
     });
+    // Track last window width so we can scale X positions on resize
+    lastWindowWidth = window.innerWidth;
+
+    const handleResize = () => {
+      // If dragging, don't interfere
+      if (isDragging()) return;
+
+      const current = position();
+      const screenW = window.innerWidth;
+      const screenH = window.innerHeight;
+
+      // Scale X according to change in width to roughly preserve relative position
+      let newX = current.x;
+      if (lastWindowWidth && lastWindowWidth > 0) {
+        const rel = current.x / lastWindowWidth;
+        newX = rel * screenW;
+      }
+
+      // Clamp X and Y within bounds
+      newX = clamp(newX, PADDING, screenW - BUTTON_SIZE - PADDING);
+      const newY = clamp(current.y, PADDING, screenH - BUTTON_SIZE - PADDING);
+
+      setPosition({ x: newX, y: newY });
+
+      // Snap horizontally to nearest edge on resize for cleaner UX
+      const centerX = newX + BUTTON_SIZE / 2;
+      const targetX =
+        centerX < screenW / 2 ? PADDING : screenW - BUTTON_SIZE - PADDING;
+      // Use a small delay to avoid janky consecutive resize events
+      if (typeof window !== "undefined") {
+        // cancel any existing frame and animate snap to target
+        if (animationFrameId) cancelAnimationFrame(animationFrameId);
+        animateSnap(targetX, newY);
+      }
+
+      lastWindowWidth = screenW;
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    // store for cleanup
+    _resizeHandler = handleResize;
   });
 
   const toggleDrawer = () => {
@@ -106,8 +149,6 @@ export default function Drawer() {
   const animateThrow = () => {
     const friction = 0.95;
     const minVelocity = 0.1;
-    const padding = 16;
-    const buttonSize = 50;
 
     const step = () => {
       let currentPos = position();
@@ -235,7 +276,22 @@ export default function Drawer() {
     if (typeof window !== "undefined") {
       cancelAnimationFrame(animationFrameId);
     }
+    if (typeof window !== "undefined" && _resizeHandler) {
+      window.removeEventListener("resize", _resizeHandler);
+    }
   });
+
+  // Helper to clamp numbers
+  function clamp(v: number, a: number, b: number) {
+    return Math.min(Math.max(v, a), b);
+  }
+
+  // Trackers for resize handler
+  let lastWindowWidth: number | null = null;
+  let _resizeHandler: ((this: Window, ev: UIEvent) => any) | null = null;
+
+  const linkClass = "hover:text-violet-400 text-violet-700";
+  const activeClass = "!text-purple-500 font-bold";
 
   return (
     <div>
@@ -275,19 +331,29 @@ export default function Drawer() {
       >
         <nav class="flex flex-wrap justify-center items-center gap-6 font-mono text-lg py-6 px-6">
           <div onClick={closeDrawer}>
-            <Link href="/">home</Link>
+            <A href="/" end class={linkClass} activeClass={activeClass}>
+              home
+            </A>
           </div>
           <div onClick={closeDrawer}>
-            <Link href="/about">about</Link>
+            <A href="/about" class={linkClass} activeClass={activeClass}>
+              about
+            </A>
           </div>
           <div onClick={closeDrawer}>
-            <Link href="/projects">projects</Link>
+            <A href="/projects" class={linkClass} activeClass={activeClass}>
+              projects
+            </A>
           </div>
           <div onClick={closeDrawer}>
-            <Link href="/gallery">gallery</Link>
+            <A href="/gallery" class={linkClass} activeClass={activeClass}>
+              gallery
+            </A>
           </div>
           <div onClick={closeDrawer}>
-            <Link href="/contact">contact</Link>
+            <A href="/contact" class={linkClass} activeClass={activeClass}>
+              contact
+            </A>
           </div>
           <div onClick={closeDrawer}>
             <Link href="/resume.pdf" class="underline" external>
