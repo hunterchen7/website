@@ -4,7 +4,7 @@ import { FileRoutes } from "@solidjs/start/router";
 import { Suspense } from "solid-js";
 import "./app.css";
 import Drawer from "~/components/Drawer";
-import Bird from "./components/Bird";
+import Bird from "./components/boids/Bird";
 
 export default function App() {
   return (

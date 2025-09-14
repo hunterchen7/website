@@ -6,6 +6,9 @@ export default function Drawer() {
   const [isOpen, setIsOpen] = createSignal(false);
   const [position, setPosition] = createSignal({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = createSignal(false);
+  // Button sizing and padding constants
+  const BUTTON_SIZE = 50;
+  const PADDING = 16;
   let dragStart = { x: 0, y: 0 };
   let velocity = { x: 0, y: 0 };
   let lastMove = { x: 0, y: 0, time: 0 };
@@ -16,7 +19,11 @@ export default function Drawer() {
     if (isDesktop) {
       setIsOpen(true);
     }
-    setPosition({ x: window.innerWidth - 60, y: window.innerHeight - 60 });
+    // start at right center
+    setPosition({
+      x: window.innerWidth - BUTTON_SIZE - PADDING,
+      y: window.innerHeight / 2 - BUTTON_SIZE / 2,
+    });
   });
 
   const toggleDrawer = () => {
@@ -28,7 +35,7 @@ export default function Drawer() {
   const closeDrawer = () => {
     if (window.innerWidth >= 640) return; // Don't close on desktop
     setIsOpen(false);
-  }
+  };
 
   const handleStart = (clientX: number, clientY: number) => {
     if (typeof window !== "undefined") {
@@ -60,7 +67,12 @@ export default function Drawer() {
 
       if (isDragging()) {
         const newX = moveClientX - dragStart.x;
-        const newY = moveClientY - dragStart.y;
+        let newY = moveClientY - dragStart.y;
+        // clamp Y so the button cannot go off-screen vertically
+        newY = Math.min(
+          Math.max(newY, PADDING),
+          window.innerHeight - BUTTON_SIZE - PADDING
+        );
 
         setPosition({ x: newX, y: newY });
       }
@@ -108,19 +120,19 @@ export default function Drawer() {
       const screenWidth = window.innerWidth;
       const screenHeight = window.innerHeight;
 
-      if (newPos.x <= padding) {
-        newPos.x = padding;
+      if (newPos.x <= PADDING) {
+        newPos.x = PADDING;
         velocity.x = 0;
-      } else if (newPos.x >= screenWidth - buttonSize - padding) {
-        newPos.x = screenWidth - buttonSize - padding;
+      } else if (newPos.x >= screenWidth - BUTTON_SIZE - PADDING) {
+        newPos.x = screenWidth - BUTTON_SIZE - PADDING;
         velocity.x = 0;
       }
 
-      if (newPos.y <= padding) {
-        newPos.y = padding;
+      if (newPos.y <= PADDING) {
+        newPos.y = PADDING;
         velocity.y = 0;
-      } else if (newPos.y >= screenHeight - buttonSize - padding) {
-        newPos.y = screenHeight - buttonSize - padding;
+      } else if (newPos.y >= screenHeight - BUTTON_SIZE - PADDING) {
+        newPos.y = screenHeight - BUTTON_SIZE - PADDING;
         velocity.y = 0;
       }
 
@@ -137,41 +149,23 @@ export default function Drawer() {
           animationFrameId = requestAnimationFrame(step);
         }
       } else {
-        // Snap to nearest edge (all four sides)
+        // Snap to nearest horizontal edge (left or right)
         const finalPos = position();
         const screenWidth = window.innerWidth;
         const screenHeight = window.innerHeight;
 
-        // Calculate distances to each edge
-        const distanceToLeft = finalPos.x;
-        const distanceToRight = screenWidth - (finalPos.x + buttonSize);
-        const distanceToTop = finalPos.y;
-        const distanceToBottom = screenHeight - (finalPos.y + buttonSize);
-
-        // Find the minimum distance to determine which edge to snap to
-        const minDistance = Math.min(
-          distanceToLeft,
-          distanceToRight,
-          distanceToTop,
-          distanceToBottom
+        // clamp Y within bounds
+        let targetY = Math.min(
+          Math.max(finalPos.y, PADDING),
+          screenHeight - BUTTON_SIZE - PADDING
         );
 
-        let targetX = finalPos.x;
-        let targetY = finalPos.y;
-
-        if (minDistance === distanceToLeft) {
-          // Snap to left edge
-          targetX = padding;
-        } else if (minDistance === distanceToRight) {
-          // Snap to right edge
-          targetX = screenWidth - buttonSize - padding;
-        } else if (minDistance === distanceToTop) {
-          // Snap to top edge
-          targetY = padding;
-        } else {
-          // Snap to bottom edge
-          targetY = screenHeight - buttonSize - padding;
-        }
+        // Decide left or right based on center distance
+        const centerX = finalPos.x + BUTTON_SIZE / 2;
+        const targetX =
+          centerX < screenWidth / 2
+            ? PADDING
+            : screenWidth - BUTTON_SIZE - PADDING;
 
         // Wait 100ms before snapping to let the button settle
         setTimeout(() => {

@@ -84,17 +84,6 @@ html {
 }
 
 /* Loading Animation Styles */
-@keyframes letterReveal {
-  0% {
-    opacity: 0;
-    transform: translateY(20px) scale(0.8);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
 @keyframes contentFadeIn {
   0% {
     opacity: 0;
@@ -113,12 +102,6 @@ html {
   100% {
     transform: scale(1) translateY(0);
   }
-}
-
-.letter-reveal {
-  opacity: 0;
-  display: inline-block;
-  animation: letterReveal 0.05s ease-out forwards;
 }
 
 .content-fade-in {

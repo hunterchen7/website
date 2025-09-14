@@ -4,10 +4,10 @@ import Geneial from "~/components/logos/Geneial";
 
 export default function About() {
   return (
-    <main class="text-center p-4 mx-auto my-auto flex flex-col md:justify-center md:h-screen font-mono text-violet-200 pb-20 md:max-w-[47rem] text-sm text-base gap-8 mt-0 leading-6">
+    <main class="text-center p-4 mx-auto my-auto flex flex-col md:justify-center md:h-screen font-mono text-violet-200 pb-20 md:max-w-[47rem] text-xs md:text-sm gap-8 mt-0 leading-6">
       <Title>About Me</Title>
       <h1
-        class={`text-2xl sm:text-4xl font-thin leading-tight mx-auto max-w-[14rem] md:max-w-none content-fade-in}`}
+        class={`text-2xl sm:text-4xl font-thin leading-tight mx-auto max-w-[14rem] md:max-w-none content-fade-in`}
       >
         about me..
       </h1>
@@ -59,12 +59,11 @@ export default function About() {
         class={`mx-auto content-fade-in`}
         style={{ "animation-delay": "0.4s" }}
       >
-        outside of tech, I spend most of my time rock climbing (on real rocks
-        when possible! 🧗‍♂️), playing video games, taking pictures, and reading
-        books..
+        outside of tech, I spend most of my time climbing rocks 🧗‍♂️, playing
+        video games, taking pictures 📷, and reading books 📖..
       </p>
       <div
-        class={`mx-auto text-sm content-fade-in`}
+        class={`mx-auto content-fade-in`}
         style={{ "animation-delay": "0.5s" }}
       >
         <div class="relative h-64 max-w-md aspect-[3/2] mx-auto mb-1 rounded-xl overflow-hidden">
