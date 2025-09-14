@@ -123,7 +123,33 @@ const ProjectModal = (props: {
                 </>
               )}
 
-              <div class="w-full h-full flex items-center justify-center bg-violet-800/30 overflow-hidden relative">
+              <div class="w-full h-full flex items-center justify-center overflow-hidden relative">
+                {/* blurred background from current image */}
+                {images()[index()] &&
+                (images()[index()].endsWith(".webm") ||
+                  images()[index()].endsWith(".mp4")) ? (
+                  // blurred video background when the current slide is a video
+                  <video
+                    src={images()[index()]}
+                    class="absolute inset-0 w-full h-full object-cover filter blur-2xl scale-110 opacity-60"
+                    autoplay
+                    muted
+                    loop
+                    playsinline
+                    draggable={false}
+                    onContextMenu={(e) => e.preventDefault()}
+                  />
+                ) : images()[index()] ? (
+                  <div
+                    class="absolute inset-0 bg-center bg-cover filter blur-2xl scale-110 opacity-70"
+                    style={{
+                      "background-image": `url(${images()[index()]})`,
+                    }}
+                  />
+                ) : (
+                  <div class="absolute inset-0 bg-black/20" />
+                )}
+
                 {images().map((src, i) => (
                   <div
                     class={`w-full h-full transition-opacity duration-300 absolute top-0 left-0 flex items-center justify-center ${
