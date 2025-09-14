@@ -29,9 +29,13 @@ export default function Project(props: ProjectProps & { index: number }) {
   onCleanup(() => {
     observer?.disconnect();
   });
+
+  const linkClass =
+    "text-gray-400 hover:text-white sm:opacity-0 group-hover:opacity-100 transition-all duration-300";
+
   return (
     <div
-      class="project-card group bg-violet-900/20 hover:bg-violet-900/40 shadow-md shadow-violet-800/40 rounded border border-gray-400/50 hover:shadow-lg transition-all duration-300 content-fade-in overflow-visible cursor-pointer"
+      class="project-card group bg-violet-900/30 hover:bg-violet-900/20 shadow-md shadow-violet-800/40 rounded border border-gray-400/50 hover:shadow-lg transition-all duration-300 content-fade-in overflow-visible cursor-pointer"
       style={{ "animation-delay": `${Math.min(0.2 + props.index * 0.25, 2)}s` }}
     >
       <div class="flex justify-between">
@@ -58,7 +62,7 @@ export default function Project(props: ProjectProps & { index: number }) {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="GitHub Repository"
-              class="text-gray-400 hover:text-white opacity-0 group-hover:opacity-100 transition-all duration-300"
+              class={linkClass}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -79,7 +83,7 @@ export default function Project(props: ProjectProps & { index: number }) {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Live Website"
-              class="text-gray-400 hover:text-white opacity-0 group-hover:opacity-100 transition-all duration-300"
+              class={linkClass}
             >
               <Globe size={24} />
             </a>
@@ -90,7 +94,7 @@ export default function Project(props: ProjectProps & { index: number }) {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Other Link"
-              class="text-gray-400 hover:text-white opacity-0 group-hover:opacity-100 transition-all duration-300"
+              class={linkClass}
             >
               <Link size={24} />
             </a>
@@ -103,7 +107,7 @@ export default function Project(props: ProjectProps & { index: number }) {
         {/* media preview: borderless video or first image */}
         <div
           ref={(el) => (mediaRoot = el)}
-          class="w-full h-96 overflow-hidden bg-gray-900 flex items-center justify-center"
+          class="w-full h-96 overflow-hidden bg-gray-900 flex items-center justify-center hover:brightness-90 transition-all duration-300"
         >
           {props.video ? (
             <video
@@ -129,7 +133,7 @@ export default function Project(props: ProjectProps & { index: number }) {
         </div>
 
         {/* overview overlay: absolutely positioned, hidden by translate/opacity so it doesn't change layout */}
-        <div class="absolute left-0 right-0 bottom-0 transform translate-y-full group-hover:translate-y-0  transition-all duration-300 bg-black/80 pointer-events-auto">
+        <div class="absolute left-0 right-0 bottom-0 transform sm:translate-y-full group-hover:translate-y-0 transition-all duration-300 bg-black/80 pointer-events-auto cursor-auto">
           <p
             class="text-gray-200 text-left text-xs p-3 m-0"
             innerHTML={props.overview}

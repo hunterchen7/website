@@ -301,7 +301,7 @@ export const projects: ProjectProps[] = [
     ],
   },
   {
-    title: "scavenger hunt",
+    title: "HW scavenger hunt",
     overview:
       "scavenger hunt game for the first hack western 11 organizer social; updated/reused for hack western 12",
     description:
@@ -355,7 +355,7 @@ export const projects: ProjectProps[] = [
     ],
   },
   {
-    title: "DAOVOZ",
+    title: "DAOVOZ website",
     overview: `Website for DAOVOZ, a DAO (decentralized autonomous organization) forum for DAOs based in Davos, Switzerland.`,
     description:
       "DAOVOZ is a DAO (decentralized autonomous organiztion) forum for DAOs; built website to promote & sell tickets to in-person event in Davos, Switzerland.",
@@ -454,5 +454,6 @@ export const projects: ProjectProps[] = [
       "/projects/tank/level3.webp",
     ],
     video: "/projects/tank/video.webm",
+    favourite: true,
   },
 ];
