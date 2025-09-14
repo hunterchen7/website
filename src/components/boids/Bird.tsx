@@ -26,6 +26,8 @@ export default function Bird() {
 
   // boid flock configuration
   const boidCount = randomBoidCount(); // 20-30 boids - random flock size
+  // responsiveness >1 => snappier steering, <1 => smoother
+  const responsiveness = 1.3;
 
   const animate = () => {
     if (typeof window === "undefined") return;
@@ -47,10 +49,18 @@ export default function Bird() {
         // Weight the forces (bird-like behavior)
         sep.x *= 2.5; // Strong separation - prevent birds from overlapping
         sep.y *= 2.5;
-        ali.x *= 1.8; // Moderate alignment - birds fly in same direction
-        ali.y *= 1.8;
+        ali.x *= 2; // Moderate alignment - birds fly in same direction
+        ali.y *= 2;
         coh.x *= 1.0; // Moderate cohesion - stay together but not too tight
         coh.y *= 1.0;
+
+        // Make overall steering more responsive (snappier) when desired
+        sep.x *= responsiveness;
+        sep.y *= responsiveness;
+        ali.x *= responsiveness;
+        ali.y *= responsiveness;
+        coh.x *= responsiveness;
+        coh.y *= responsiveness;
 
         // Apply forces
         let newVx = boid.vx + sep.x + ali.x + coh.x + mouse.x + upward.x;
@@ -59,9 +69,11 @@ export default function Bird() {
         // Limit speed
         const speed = Math.sqrt(newVx ** 2 + newVy ** 2);
         // maxSpeed is handled inside helper functions; keep a safety cap here if needed
-        if (speed > 3) {
-          newVx = (newVx / speed) * 3;
-          newVy = (newVy / speed) * 3;
+        // Slightly higher safety cap for more energetic motion
+        const MAX_SAFE_SPEED = 3.2;
+        if (speed > MAX_SAFE_SPEED) {
+          newVx = (newVx / speed) * MAX_SAFE_SPEED;
+          newVy = (newVy / speed) * MAX_SAFE_SPEED;
         }
 
         // Update position
