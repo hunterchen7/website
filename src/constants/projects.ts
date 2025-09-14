@@ -239,6 +239,7 @@ export const projects: ProjectProps[] = [
     technologies: [Technology.Java, Technology.SQLite, Technology.SQL],
     tags: [Tags.game, Tags.backend, Tags.database, Tags.school],
     images: ["/projects/typing/demo.gif"],
+    video: "/projects/typing/video.webm",
   },
   {
     title: "docket",
@@ -262,8 +263,8 @@ export const projects: ProjectProps[] = [
     tags: [Tags.backend, Tags.fun],
     images: [
       "/projects/waveformer/demo.webp",
-      "/projects/waveformer/toronto.webp",
       "/projects/waveformer/graph.webp",
+      "/projects/waveformer/toronto.webp",
     ],
     favourite: true,
   },
