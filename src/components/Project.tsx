@@ -35,12 +35,12 @@ export default function Project(props: ProjectProps & { index: number }) {
   });
   return (
     <div
-      class="project-card bg-gray-800 p-4 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 content-fade-in"
+      class="project-card bg-violet-900/20 shadow-lg rounded border hover:shadow-xl transition-shadow duration-300 content-fade-in"
       style={{ "animation-delay": `${Math.min(0.2 + props.index * 0.25, 2)}s` }}
     >
       <div class="flex justify-between">
-        <div class="flex items-center gap-2">
-          <h2 class="text-xl font-semibold text-violet-200">{props.title}</h2>
+        <div class="flex items-center gap-2 px-2 pt-1 pb-0.5">
+          <h2 class="text-base text-violet-200">{props.title}</h2>
           {props.favourite && (
             <span class="relative group select-none">
               <Star
@@ -55,14 +55,14 @@ export default function Project(props: ProjectProps & { index: number }) {
             </span>
           )}
         </div>
-        <div class="flex gap-3 items-center">
+        <div class="flex gap-1 items-center px-2 p-1">
           {props.repoUrl && (
             <a
               href={props.repoUrl}
               target="_blank"
               rel="noopener noreferrer"
               aria-label="GitHub Repository"
-              class="text-blue-400 hover:text-white transition-colors"
+              class="text-gray-400 hover:text-white transition-colors"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -83,7 +83,7 @@ export default function Project(props: ProjectProps & { index: number }) {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Live Website"
-              class="text-blue-400 hover:text-white transition-colors"
+              class="text-gray-400 hover:text-white transition-colors"
             >
               <Globe size={24} />
             </a>
@@ -94,97 +94,18 @@ export default function Project(props: ProjectProps & { index: number }) {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Other Link"
-              class="text-blue-400 hover:text-white transition-colors"
+              class="text-gray-400 hover:text-white transition-colors"
             >
               <Link size={24} />
             </a>
           )}
         </div>
       </div>
-      {/*
-      <div class="flex justify-between items-center mt-2">
-        {props.tags && (
-          <div class="mt-2 flex flex-wrap gap-2">
-            {props.tags.map((tag) => (
-              <span
-                class={`group relative w-6 h-6 rounded-full flex items-center justify-center cursor-pointer bg-${TagColorsHover[tag]}`}
-              >
-                <span class="opacity-0 group-hover:opacity-100 absolute left-1/2 top-full -translate-x-1/2 mt-2 bg-black text-white text-xs px-2 py-1 rounded z-10 whitespace-nowrap pointer-events-none">
-                  {tag}
-                </span>
-              </span>
-            ))}
-          </div>
-        )}
-        {props.technologies && (
-          <div class="mt-2 flex flex-wrap gap-2 cursor-pointer">
-            {props.technologies.map((tech) => (
-              <span class="relative group">
-                <img
-                  src={`/icons/${TechnologyIcons[tech]}`}
-                  alt={tech}
-                  class="w-6 h-6"
-                  style={{ display: "inline-block" }}
-                />
-                <span class="opacity-0 group-hover:opacity-100 absolute left-1/2 top-full -translate-x-1/2 mt-2 bg-black text-white text-xs px-2 py-1 rounded z-10 whitespace-nowrap pointer-events-none">
-                  {tech}
-                </span>
-              </span>
-            ))}
-          </div>
-        )}
-      </div>
-      {props.images && props.images.length > 0 && (
-        <div class="mt-4 flex flex-col items-center">
-          {(() => {
-            const [current, setCurrent] = createSignal(0);
-            const total = props.images.length;
-            const arrowClass =
-              total > 1
-                ? "absolute top-1/2 -translate-y-1/2 bg-black/60 text-white rounded-full p-1 px-2 hover:bg-black/80 cursor-pointer border"
-                : "hidden";
-            return (
-              <>
-                <div class="relative flex items-center justify-center h-96 w-full bg-gray-900 rounded-lg overflow-hidden">
-                  <button
-                    type="button"
-                    class={arrowClass + " left-0"}
-                    disabled={current() === 0}
-                    onClick={() =>
-                      setCurrent((i: number) => Math.max(i - 1, 0))
-                    }
-                  >
-                    &#8592;
-                  </button>
-                  <img
-                    src={props.images[current()]}
-                    alt={props.title}
-                    class="w-full h-full object-contain"
-                  />
-                  <button
-                    type="button"
-                    class={arrowClass + " right-0"}
-                    disabled={current() === total - 1}
-                    onClick={() =>
-                      setCurrent((i: number) => Math.min(i + 1, total - 1))
-                    }
-                  >
-                    &#8594;
-                  </button>
-                </div>
-                <div class="mt-2 text-xs text-gray-400">
-                  {current() + 1} / {total}
-                </div>
-              </>
-            );
-          })()}
-        </div>
-      )}*/}
 
       {/* media preview: borderless video or first image */}
       <div
         ref={(el) => (mediaRoot = el)}
-        class="mt-4 w-full h-96 rounded-lg overflow-hidden bg-gray-900 flex items-center justify-center"
+        class="w-full h-96 overflow-hidden bg-gray-900 flex items-center justify-center"
       >
         {props.video ? (
           <video
@@ -202,7 +123,7 @@ export default function Project(props: ProjectProps & { index: number }) {
       </div>
 
       <p
-        class="text-gray-400 mt-2 text-left text-sm"
+        class="text-gray-400 text-left text-xs p-2"
         innerHTML={props.overview}
       />
     </div>

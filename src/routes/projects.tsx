@@ -79,7 +79,7 @@ export default function Projects() {
           chronological order.
         </h3>
       </div>
-      <section class="grid grid-cols-1 md:grid-cols-2 gap-8 justify-center mx-auto md:max-w-6xl three-xl-grid-cols-3 three-xl-max-w">
+      <section class="grid grid-cols-1 md:grid-cols-2 gap-3 justify-center mx-auto md:max-w-6xl three-xl-grid-cols-3 three-xl-max-w">
         <For each={projects}>
           {(project, index) => <Project {...project} index={index()} />}
         </For>
