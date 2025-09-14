@@ -31,7 +31,7 @@ export default function Project(props: ProjectProps & { index: number }) {
   });
   return (
     <div
-      class="project-card group bg-violet-900/20 hover:bg-violet-900/80 shadow-lg rounded border border-gray-400/50 hover:shadow-xl transition-all duration-300 content-fade-in overflow-hidden cursor-pointer"
+      class="project-card group bg-violet-900/20 hover:bg-violet-900/40 shadow-md shadow-violet-800/40 rounded border border-gray-400/50 hover:shadow-lg transition-all duration-300 content-fade-in overflow-visible cursor-pointer"
       style={{ "animation-delay": `${Math.min(0.2 + props.index * 0.25, 2)}s` }}
     >
       <div class="flex justify-between">
@@ -58,7 +58,7 @@ export default function Project(props: ProjectProps & { index: number }) {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="GitHub Repository"
-              class="text-gray-400 hover:text-white transition-colors opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+              class="text-gray-400 hover:text-white opacity-0 group-hover:opacity-100 transition-all duration-300"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -79,7 +79,7 @@ export default function Project(props: ProjectProps & { index: number }) {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Live Website"
-              class="text-gray-400 hover:text-white transition-colors opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+              class="text-gray-400 hover:text-white opacity-0 group-hover:opacity-100 transition-all duration-300"
             >
               <Globe size={24} />
             </a>
@@ -90,7 +90,7 @@ export default function Project(props: ProjectProps & { index: number }) {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Other Link"
-              class="text-gray-400 hover:text-white transition-colors opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+              class="text-gray-400 hover:text-white opacity-0 group-hover:opacity-100 transition-all duration-300"
             >
               <Link size={24} />
             </a>
@@ -98,28 +98,37 @@ export default function Project(props: ProjectProps & { index: number }) {
         </div>
       </div>
 
-      {/* media preview: borderless video or first image */}
-      <div
-        ref={(el) => (mediaRoot = el)}
-        class="w-full h-96 overflow-hidden bg-gray-900 flex items-center justify-center"
-      >
-        {props.video ? (
-          <video
-            ref={(el) => (videoEl = el)}
-            src={props.video}
-            class="w-full h-full object-cover"
-            preload="none"
-            muted
-            loop
-            playsinline
-          />
-        ) : props.images && props.images.length > 0 ? (
-          <img src={props.images[0]} alt={props.title} class="object-fit" />
-        ) : null}
-      </div>
+      {/* wrap media + overview so bottom overflow is clipped, but allow top overflow from header/tooltips */}
+      <div class="relative overflow-hidden">
+        {/* media preview: borderless video or first image */}
+        <div
+          ref={(el) => (mediaRoot = el)}
+          class="w-full h-96 overflow-hidden bg-gray-900 flex items-center justify-center"
+        >
+          {props.video ? (
+            <video
+              ref={(el) => (videoEl = el)}
+              src={props.video}
+              class="w-full h-full object-cover"
+              preload="none"
+              muted
+              loop
+              playsinline
+              draggable={false}
+              onContextMenu={(e) => e.preventDefault()}
+            />
+          ) : props.images && props.images.length > 0 ? (
+            <img
+              src={props.images[0]}
+              alt={props.title}
+              class="object-fit"
+              draggable={false}
+              onContextMenu={(e) => e.preventDefault()}
+            />
+          ) : null}
+        </div>
 
-      {/* overview overlay: absolutely positioned, hidden by translate/opacity so it doesn't change layout */}
-      <div class="relative">
+        {/* overview overlay: absolutely positioned, hidden by translate/opacity so it doesn't change layout */}
         <div class="absolute left-0 right-0 bottom-0 transform translate-y-full group-hover:translate-y-0  transition-all duration-300 bg-black/80 pointer-events-auto">
           <p
             class="text-gray-200 text-left text-xs p-3 m-0"

@@ -175,6 +175,7 @@ export const projects: ProjectProps[] = [
     technologies: [Technology.TypeScript],
     tags: [Tags.AI, Tags.backend, Tags.fun],
     images: ["/projects/marvin/image.webp"],
+    video: "/projects/marvin/video.webm",
     favourite: true,
   },
   {
