@@ -84,7 +84,7 @@ export function Photo({
       class={`flex-grow rounded shadow-lg overflow-hidden border border-violet-700/50 bg-violet-900/20 flex flex-col min-w-[135px] max-w-[600px] min-h-[135px] content-fade-in hover:scale-[1.01] transition-transform`}
       style={`
         flex-basis: ${baseWidth() * aspectRatio()}px;
-        animation-delay: ${Math.min(index * 0.08, 1)}s;
+        animation-delay: ${Math.min(index * 0.08, 2)}s;
       `}
     >
       <div class="relative flex-1">
