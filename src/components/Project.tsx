@@ -3,24 +3,53 @@ import {
   TechnologyIcons,
   ProjectProps,
 } from "~/constants/projects";
-import { createSignal } from "solid-js";
+import { createSignal, onMount, onCleanup } from "solid-js";
 import { Globe, Link, Star } from "lucide-solid";
 
-export default function Project(props: ProjectProps) {
+export default function Project(props: ProjectProps & { index: number }) {
+  let mediaRoot: HTMLElement | undefined;
+  let videoEl: HTMLVideoElement | undefined;
+  let observer: IntersectionObserver | undefined;
+
+  onMount(() => {
+    if (!mediaRoot || !videoEl) return;
+    observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            // start playing when on screen
+            videoEl?.play().catch(() => {});
+          } else {
+            // pause when off screen
+            videoEl?.pause();
+          }
+        });
+      },
+      { threshold: 0.25 }
+    );
+    observer.observe(mediaRoot);
+  });
+
+  onCleanup(() => {
+    observer?.disconnect();
+  });
   return (
-    <div class="project-card bg-gray-800 p-4 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
+    <div
+      class="project-card bg-gray-800 p-4 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 content-fade-in"
+      style={{ "animation-delay": `${Math.min(0.2 + props.index * 0.25, 2)}s` }}
+    >
       <div class="flex justify-between">
         <div class="flex items-center gap-2">
           <h2 class="text-xl font-semibold text-violet-200">{props.title}</h2>
           {props.favourite && (
-            <span class="relative group select-none hover:scale-105">
+            <span class="relative group select-none">
               <Star
                 size={16}
                 fill="currentColor"
                 stroke="currentColor"
-                class="text-yellow-400 cursor-pointer transition-transform duration-300 hover:rotate-72"
+                class="text-yellow-400 cursor-pointer transition-transform duration-300 hover:rotate-72 hover:scale-105"
               />
-              <span class="opacity-0 group-hover:opacity-100 absolute left-1/2 bottom-full -translate-x-1/2 mb-2 bg-black text-white text-xs px-2 py-1 rounded z-10 whitespace-nowrap pointer-events-none">
+              <span class="opacity-0 group-hover:opacity-100 absolute left-1/2 bottom-full -translate-x-1/2 mb-2 bg-black text-white text-xs px-2 py-1 rounded z-10 whitespace-nowrap pointer-events-none transition-opacity duration-300">
                 a personal favourite!
               </span>
             </span>
@@ -72,6 +101,7 @@ export default function Project(props: ProjectProps) {
           )}
         </div>
       </div>
+      {/*
       <div class="flex justify-between items-center mt-2">
         {props.tags && (
           <div class="mt-2 flex flex-wrap gap-2">
@@ -149,13 +179,31 @@ export default function Project(props: ProjectProps) {
             );
           })()}
         </div>
-      )}
-      {props.description && (
-        <p
-          class="text-gray-400 mt-2 text-left text-sm"
-          innerHTML={props.description}
-        />
-      )}
+      )}*/}
+
+      {/* media preview: borderless video or first image */}
+      <div
+        ref={(el) => (mediaRoot = el)}
+        class="mt-4 w-full h-96 rounded-lg overflow-hidden bg-gray-900 flex items-center justify-center"
+      >
+        {props.video ? (
+          <video
+            ref={(el) => (videoEl = el)}
+            src={props.video}
+            class="w-full h-full object-cover"
+            muted
+            loop
+            playsinline
+          />
+        ) : props.images && props.images.length > 0 ? (
+          <img src={props.images[0]} alt={props.title} class="object-fit" />
+        ) : null}
+      </div>
+
+      <p
+        class="text-gray-400 mt-2 text-left text-sm"
+        innerHTML={props.overview}
+      />
     </div>
   );
 }
