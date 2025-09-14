@@ -110,7 +110,7 @@ export const projects: ProjectProps[] = [
       Technology.SQL,
     ],
     tags: [Tags.frontend, Tags.backend, Tags.database],
-    images: ["/projects/hw12/image.webp"],
+    images: [],
     favourite: true,
   },
   {
@@ -129,9 +129,7 @@ export const projects: ProjectProps[] = [
     technologies: [Technology.Python],
     tags: [Tags.AI, Tags.fun],
     video: "/projects/stabl/video.webm",
-    images: [
-      "https://raw.githubusercontent.com/hunterchen7/stabl/main/examples/f18_1_visualization.gif",
-    ],
+    images: [],
     favourite: true,
   },
   {
@@ -174,7 +172,7 @@ export const projects: ProjectProps[] = [
     repoUrl: "https://github.com/hunterchen7/marvin",
     technologies: [Technology.TypeScript],
     tags: [Tags.AI, Tags.backend, Tags.fun],
-    images: ["/projects/marvin/image.webp"],
+    images: [],
     video: "/projects/marvin/video.webm",
     favourite: true,
   },
@@ -239,7 +237,7 @@ export const projects: ProjectProps[] = [
     demoUrl: "https://www.youtube.com/watch?v=1PN8l_tNcNQ",
     technologies: [Technology.Java, Technology.SQLite, Technology.SQL],
     tags: [Tags.game, Tags.backend, Tags.database, Tags.school],
-    images: ["/projects/typing/demo.gif"],
+    images: [],
     video: "/projects/typing/video.webm",
   },
   {
@@ -295,10 +293,7 @@ export const projects: ProjectProps[] = [
       Technology.JavaScript,
     ],
     tags: [Tags.game, Tags.frontend, Tags.fun],
-    images: [
-      "/projects/gameoflife/demo.gif",
-      "/projects/gameoflife/image.webp",
-    ],
+    images: [],
   },
   {
     title: "HW scavenger hunt",
@@ -364,7 +359,7 @@ export const projects: ProjectProps[] = [
     otherUrl: "https://www.eventbrite.ch/e/daovoz-tickets-511821651337",
     technologies: [Technology.TypeScript, Technology.React, Technology.NextJS],
     tags: [Tags.web3, Tags.frontend],
-    images: ["/projects/daovoz/image.webp"],
+    images: [],
     video: "/projects/daovoz/video.webm",
   },
   {
