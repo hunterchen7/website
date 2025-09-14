@@ -67,13 +67,17 @@ def encode_file(ffmpeg_cmd: str, src: Path, dst: Path, overwrite: bool = False):
         "-rc",
         "vbr_hq",
         "-cq",
-        "19",
+        "25",
         "-b:v",
         "3M",
         "-maxrate",
         "3M",
         "-bufsize",
         "10M",
+        # scale to exactly half width and half height, ensuring even dimensions
+        # iw/2 and ih/2 may produce non-integer for odd inputs; force to even with trunc() and *2
+        "-vf",
+        "scale=trunc(iw/2/2)*2:trunc(ih/2/2)*2",
         "-an",
         str(dst),
     ]
