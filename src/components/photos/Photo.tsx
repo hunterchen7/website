@@ -99,7 +99,7 @@ export function Photo({
           alt="Gallery photo"
           class={`w-full h-full object-cover transition-opacity duration-300 max-h-96 max-w-[600px] ${
             loaded() ? "opacity-100" : "opacity-0"
-          } hover:scale-[1.02] transition-transform cursor-pointer`}
+          } hover:scale-[1.02] transition-transform cursor-nesw-resize`}
           loading="lazy"
           draggable="true"
           onLoad={handleImageLoad}
@@ -107,7 +107,7 @@ export function Photo({
         />
       </div>
       <div class="p-1 flex-shrink-0">
-        <span class="text-xs text-violet-300 font-mono">
+        <span class="text-xs text-violet-300 font-mono inline cursor-text">
           {photo.date ? formatDate(photo.date) : ""}
         </span>
       </div>

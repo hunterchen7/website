@@ -77,8 +77,8 @@ export function BirdIcon(props: { size?: number; showBird: () => boolean }) {
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       aria-hidden
+      class="cursor-pointer"
       style={{
-        cursor: "pointer",
         opacity: mounted() ? "1" : "0",
         transition: "opacity 0.5s ease-in-out",
       }}

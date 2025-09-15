@@ -231,7 +231,7 @@ const ProjectModal = (props: {
         </div>
 
         <p
-          class="text-xs sm:text-sm text-gray-300 m-2 p-1 md:p-2"
+          class="text-xs sm:text-sm text-gray-300 m-2 p-1 md:p-2 inline cursor-text"
           innerHTML={props.project?.description}
         />
       </div>

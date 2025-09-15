@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 16 16" fill="none">
+  <!-- white semi-transparent outline (slightly larger) -->
+  <g stroke="rgba(0, 0, 0, 0.45)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M8 5v6"/>
+    <path d="M5 8h6"/>
+  </g>
+  <!-- purple plus sign (smaller) -->
+  <g stroke="#be8dffff" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M8 5v6"/>
+    <path d="M5 8h6"/>
+  </g>
+</svg>

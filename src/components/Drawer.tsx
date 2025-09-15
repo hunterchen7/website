@@ -292,6 +292,9 @@ export default function Drawer() {
 
   const linkClass = "hover:text-violet-400 text-violet-700";
   const activeClass = "!text-purple-500 font-bold";
+  const cursorStyle = {
+    cursor: `url('/icons/cursors/cursor-pointer.svg') 8 8, pointer`,
+  };
 
   return (
     <div>
@@ -300,7 +303,7 @@ export default function Drawer() {
         onMouseDown={handleMouseDown}
         onTouchStart={handleTouchStart}
         onClick={toggleDrawer}
-        class="fixed z-50 p-2 bg-black/80 backdrop-blur-md border border-violet-600/30 rounded-lg text-white hover:bg-violet-600/20 transition-colors cursor-move select-none touch-none"
+        class="fixed z-50 p-2 bg-black/80 backdrop-blur-md border border-violet-600/30 rounded-lg text-white hover:bg-violet-600/20 transition-colors cursor-pointer select-none touch-none"
         style={{
           left: `${position().x}px`,
           top: `${position().y}px`,
@@ -331,27 +334,53 @@ export default function Drawer() {
       >
         <nav class="flex flex-wrap justify-center items-center gap-6 font-mono text-lg py-6 px-6">
           <div onClick={closeDrawer}>
-            <A href="/" end class={linkClass} activeClass={activeClass}>
+            <A
+              href="/"
+              end
+              class={linkClass}
+              activeClass={activeClass}
+              style={cursorStyle}
+            >
               home
             </A>
           </div>
           <div onClick={closeDrawer}>
-            <A href="/about" class={linkClass} activeClass={activeClass}>
+            <A
+              href="/about"
+              class={linkClass}
+              activeClass={activeClass}
+              style={cursorStyle}
+            >
               about
             </A>
           </div>
           <div onClick={closeDrawer}>
-            <A href="/projects" class={linkClass} activeClass={activeClass}>
+            <A
+              href="/projects"
+              class={linkClass}
+              activeClass={activeClass}
+              style={cursorStyle}
+            >
               projects
             </A>
           </div>
           <div onClick={closeDrawer}>
-            <A href="/gallery" class={linkClass} activeClass={activeClass}>
+            <A
+              href="/gallery"
+              class={linkClass}
+              activeClass={activeClass}
+              style={cursorStyle}
+            >
               gallery
             </A>
           </div>
           <div onClick={closeDrawer}>
-            <A href="/contact" class={linkClass} activeClass={activeClass}>
+            <A
+              href="/contact"
+              class={linkClass}
+              activeClass={activeClass}
+              style={cursorStyle}
+            >
               contact
             </A>
           </div>

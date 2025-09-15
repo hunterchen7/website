@@ -27,10 +27,13 @@ export function Lightbox({
   const [imgWidth, setImgWidth] = createSignal<number>(0);
   const [imgHeight, setImgHeight] = createSignal<number>(0);
   const [isMobile, setIsMobile] = createSignal(false);
+  const [imageLoaded, setImageLoaded] = createSignal(false);
 
   onMount(() => {
     setIsMobile(window.matchMedia("(pointer: coarse)").matches);
   });
+
+  const photoUrl = `${S3_PREFIX}${photo().url}`;
 
   const magnifierStyle = (): JSX.CSSProperties => {
     if (
@@ -72,7 +75,7 @@ export function Lightbox({
       border: "2px solid #eee",
       overflow: "hidden",
       "z-index": 10,
-      "background-image": `url(${S3_PREFIX + photo().url})`,
+      "background-image": `url(${photoUrl})`,
       "background-repeat": "no-repeat",
       "background-size": `${imgWidth() * magnifierZoom}px ${
         imgHeight() * magnifierZoom
@@ -128,17 +131,18 @@ export function Lightbox({
           {shouldLoad() && (
             <img
               ref={setImgRef}
-              src={`${S3_PREFIX}${photo().url}`}
+              src={photoUrl}
               alt="photo"
               onLoad={(e) => {
                 setImgWidth(e.currentTarget.naturalWidth);
                 setImgHeight(e.currentTarget.naturalHeight);
+                setImageLoaded(true);
               }}
               class="max-h-[95vh] max-w-[95vw] rounded-lg shadow-lg relative z-1 select-none"
               style={{
                 display: "block",
                 cursor: (() => {
-                  if (isMobile()) return "default";
+                  if (!imageLoaded()) return "url('/icons/cursors/cursor-wait.svg') 8 8, wait";
                   if (isZoomMode()) return "zoom-out";
                   return "zoom-in";
                 })(),
@@ -165,7 +169,7 @@ export function Lightbox({
           )}
 
           {/* Magnifier lens */}
-          {isZoomMode() && shouldLoad() && (
+          {isZoomMode() && shouldLoad() && imageLoaded() && (
             <div style={magnifierStyle()} />
           )}
         </div>

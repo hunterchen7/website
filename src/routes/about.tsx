@@ -8,7 +8,7 @@ export default function About() {
     <main class="text-center p-4 mx-auto my-auto flex flex-col md:justify-center md:h-screen font-mono text-violet-200 pb-20 md:max-w-[47rem] text-xs md:text-sm gap-8 mt-0 leading-6">
       <Title>About Me</Title>
       <h1
-        class={`text-2xl sm:text-4xl font-thin leading-tight mx-auto max-w-[14rem] md:max-w-none content-fade-in`}
+        class={`text-2xl sm:text-4xl font-thin leading-tight mx-auto max-w-[14rem] md:max-w-none content-fade-in select-none`}
       >
         about me..
       </h1>
@@ -75,7 +75,7 @@ export default function About() {
         style={{ "animation-delay": "0.5s" }}
       >
         outside of tech, I spend most of my time climbing rocks 🧗‍♂️, playing
-        video games, taking pictures 📷, and reading books 📖..
+        video games, taking pictures 📷, playing chess ♟️, and reading books 📖..
       </p>
       <div
         class={`mx-auto content-fade-in`}

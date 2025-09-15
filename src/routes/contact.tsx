@@ -5,7 +5,7 @@ export default function Contact() {
   return (
     <main class="text-center p-4 mx-auto font-mono text-violet-200 pb-20 flex flex-col items-center justify-center h-screen">
       <Title>Contact</Title>
-      <h1 class="text-2xl sm:text-4xl font-thin leading-tight my-8 mx-auto max-w-[14rem] md:max-w-none content-fade-in">
+      <h1 class="text-2xl sm:text-4xl font-thin leading-tight my-8 mx-auto max-w-[14rem] md:max-w-none content-fade-in inline cursor-text">
         say hello!
       </h1>
       <a

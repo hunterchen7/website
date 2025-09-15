@@ -62,8 +62,8 @@ export default function Project(props: ProjectProps & { index: number }) {
                   stroke="currentColor"
                   class="peer text-yellow-400 cursor-pointer transition-transform duration-300 hover:rotate-72 hover:scale-105"
                 />
-                <span class="opacity-0 peer-hover:opacity-100 absolute left-1/2 bottom-full -translate-x-1/2 mb-2 bg-black text-white text-xs px-2 py-1 rounded z-10 whitespace-nowrap pointer-events-none transition-opacity duration-300">
-                  a personal favourite!
+                <span class="absolute left-full top-1/2 -translate-y-1/2 ml-2 origin-left scale-x-0 opacity-0 peer-hover:scale-x-100 peer-hover:opacity-100 bg-black text-white text-xs px-2 py-1 rounded z-10 whitespace-nowrap pointer-events-none transform transition-all duration-300">
+                  <span class="inline-block">a personal favourite!</span>
                 </span>
               </span>
             )}
@@ -116,11 +116,14 @@ export default function Project(props: ProjectProps & { index: number }) {
         </div>
 
         {/* wrap media + overview so bottom overflow is clipped, but allow top overflow from header/tooltips */}
-        <div class="relative overflow-hidden cursor-nesw-resize transition-all" onClick={() => setIsOpen(true)}>
+        <div
+          class="relative overflow-hidden  transition-all"
+          onClick={() => setIsOpen(true)}
+        >
           {/* media preview: borderless video or first image */}
           <div
             ref={(el) => (mediaRoot = el)}
-            class="w-full h-72 md:h-84 lg:h-96 xl:h-108 overflow-hidden bg-gray-900 flex items-center justify-center hover:brightness-105 transition-all duration-300 hover:scale-105"
+            class="w-full h-72 md:h-84 lg:h-96 xl:h-108 overflow-hidden bg-gray-900 flex items-center justify-center hover:brightness-105 transition-all duration-300 hover:scale-105 cursor-nesw-resize"
           >
             {props.video ? (
               <video
@@ -147,11 +150,11 @@ export default function Project(props: ProjectProps & { index: number }) {
 
           {/* overview overlay: absolutely positioned, hidden by translate/opacity so it doesn't change layout */}
           <div
-            class="absolute left-0 right-0 bottom-0 transform sm:translate-y-full group-hover:translate-y-0 transition-all duration-300 bg-black/80 pointer-events-auto cursor-auto"
+            class="absolute left-0 right-0 bottom-0 transform sm:translate-y-full group-hover:translate-y-0 transition-all duration-300 bg-black/80 pointer-events-auto md:py-1"
             onClick={(e) => e.stopPropagation()}
           >
             <p
-              class="text-gray-200 text-left font-thin sm:font-normal text-[10.5px] md:text-xs p-1.5 sm:p-3 m-0"
+              class="text-gray-200 text-left font-thin sm:font-normal text-[10.5px] md:text-xs p-1.5 sm:p-3 m-0 md:inline cursor-text "
               innerHTML={props.overview}
             />
           </div>

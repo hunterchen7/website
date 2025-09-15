@@ -115,11 +115,11 @@ export const projects: ProjectProps[] = [
   },
   {
     title: "stabl",
-    overview: `AI-powered video stabilization tool, built to stabilize some footage I shot from ${link(
+    overview: `AI-powered video stabilization tool built to stabilize my ${link(
       "/airshow",
       "London Airshow 2025",
       false
-    )}`,
+    )} footage`,
     description: `a python program that stabilizes video footage by tracking a subject & cropping to center on it. uses YOLOv8, OpenCV and FFMPEG. built to stabilize some footage I shot from ${link(
       "/airshow",
       "London Airshow 2025",
@@ -276,7 +276,7 @@ export const projects: ProjectProps[] = [
     images: ["/projects/pointless/image.webp"],
   },
   {
-    title: "wasm game of life",
+    title: "WASM game of life",
     overview: "Conway's Game of Life in Rust & WebAssembly",
     description: `a Rust implementation of Conway's Game of Life, compiled to WebAssembly. based on a tutorial from the ${link(
       "https://rustwasm.github.io/book/game-of-life/introduction.html",
@@ -297,7 +297,7 @@ export const projects: ProjectProps[] = [
   {
     title: "HW scavenger hunt",
     overview:
-      "scavenger hunt game for the first hack western 11 organizer social; updated/reused for hack western 12",
+      "scavenger hunt game for a hack western 11 and 12 organizer social",
     description:
       "a scavenger hunt game for the first hack western 11 organizer social, and updated/reused for hack western 12.  built with TypeScript, React, and Next.js. Postgres db hosted on Hasura. use code 1023 for a demo.",
     video: "/projects/scavenger/video.webm",

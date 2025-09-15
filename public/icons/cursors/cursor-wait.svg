@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none">
+  <!-- outer faded circle (opacity25) -->
+  <circle cx="12" cy="12" r="10" stroke="rgba(124,58,237,0.25)" stroke-width="4" fill="none" />
+  <!-- rotating filled arc (opacity75) -->
+  <g>
+    <path d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" fill="#be8dffff" fill-opacity="0.9">
+      <animateTransform attributeName="transform" type="rotate" from="0 12 12" to="360 12 12" dur="1s" repeatCount="indefinite" />
+    </path>
+  </g>
+</svg>

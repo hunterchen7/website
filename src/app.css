@@ -2,6 +2,8 @@
 
 body {
   background-color: rgb(0, 0, 0);
+  /* Custom default cursor (dot) */
+  cursor: url('/icons/cursors/cursor-dot.svg') 4 4, auto;
 }
 
 ::selection {
@@ -86,6 +88,37 @@ html {
 /* Reserve scrollbar gutter to prevent layout shift when the scrollbar appears/disappears */
 html, body, main {
   scrollbar-gutter: stable;
+}
+
+/* Custom cursor overrides */
+/* Pointer */
+.cursor-pointer, button, [role="button"], input[type="checkbox"], input[type="radio"], label[for] {
+  cursor: url('/icons/cursors/cursor-pointer.svg') 8 8, pointer;
+}
+
+/* Text selection */
+.cursor-text, input[type="text"], textarea, [contenteditable="true"] {
+  cursor: url('/icons/cursors/cursor-text.svg') 8 8, text;
+}
+
+/* Move */
+.cursor-move, [draggable="true"], .drag-handle {
+  cursor: url('/icons/cursors/cursor-move.svg') 8 8, move;
+}
+
+/* NESW resize (diagonal). Mapping to custom diagonal arrow */
+.cursor-nesw-resize {
+  cursor: url('/icons/cursors/cursor-nesw-resize.svg') 8 8, nesw-resize;
+}
+
+/* Link/external link */
+.cursor-link, a[href] {
+  cursor: url('/icons/cursors/cursor-link.svg') 4 4, alias;
+}
+
+/* Default utility to dot */
+.cursor-default, body, main, #root, .app-root {
+  cursor: url('/icons/cursors/cursor-dot.svg') 4 4, auto;
 }
 
 /* Loading Animation Styles */
